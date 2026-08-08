@@ -5,7 +5,7 @@
  * earned from each. Not what those customers actually bought: the API does not
  * return the order value, so this screen could not show it even by mistake.
  */
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Layout,
     Card,
@@ -19,15 +19,19 @@ import {
     Tabs,
     Space,
     App,
+    Modal,
+    Form,
+    Input,
 } from 'antd';
-import { LogoutOutlined, CopyOutlined, TeamOutlined } from '@ant-design/icons';
-import { useQuery } from '@tanstack/react-query';
+import { LogoutOutlined, CopyOutlined, TeamOutlined, UserAddOutlined } from '@ant-design/icons';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { partnerApi } from '../api/partner.api';
 import type {
     PartnerCustomer,
     PartnerRecruit,
     PartnerCommission,
+    RecruitPartnerPayload,
 } from '../api/partner.api';
 
 const { Header, Content } = Layout;
@@ -56,6 +60,9 @@ const statusTag = (s: PartnerCommission['status']) => {
 const Dashboard: React.FC = () => {
     const navigate = useNavigate();
     const { message } = App.useApp();
+    const queryClient = useQueryClient();
+    const [recruitOpen, setRecruitOpen] = useState(false);
+    const [recruitForm] = Form.useForm<RecruitPartnerPayload>();
 
     const { data: me, isLoading } = useQuery({
         queryKey: ['partner-me'],
@@ -74,6 +81,20 @@ const Dashboard: React.FC = () => {
         queryFn: partnerApi.commissions,
     });
 
+    const recruitMutation = useMutation({
+        mutationFn: (payload: RecruitPartnerPayload) => partnerApi.recruit(payload),
+        onSuccess: () => {
+            message.success('Partner recruited. Share their login details with them.');
+            setRecruitOpen(false);
+            recruitForm.resetFields();
+            queryClient.invalidateQueries({ queryKey: ['partner-recruits'] });
+        },
+        onError: (err: any) =>
+            message.error(
+                err.response?.data?.detail?.error?.message ?? 'Could not recruit this partner.'
+            ),
+    });
+
     const signOut = () => {
         partnerApi.logout();
         navigate('/login', { replace: true });
@@ -83,6 +104,16 @@ const Dashboard: React.FC = () => {
         if (!me?.referralCode) return;
         await navigator.clipboard.writeText(me.referralCode);
         message.success('Referral code copied');
+    };
+
+    const submitRecruit = async () => {
+        const values = await recruitForm.validateFields();
+        recruitMutation.mutate({
+            full_name: values.full_name.trim(),
+            email: values.email.trim(),
+            phone: values.phone?.trim() || undefined,
+            password: values.password,
+        });
     };
 
     const customerColumns = [
@@ -234,6 +265,13 @@ const Dashboard: React.FC = () => {
                                 <Button icon={<CopyOutlined />} onClick={copyCode}>
                                     Copy
                                 </Button>
+                                <Button
+                                    type="primary"
+                                    icon={<UserAddOutlined />}
+                                    onClick={() => setRecruitOpen(true)}
+                                >
+                                    Recruit a partner
+                                </Button>
                             </div>
                             <Text type="secondary" style={{ fontSize: 12 }}>
                                 {me
@@ -341,6 +379,57 @@ const Dashboard: React.FC = () => {
                     statement it is reconciled against.
                 </Text>
             </Content>
+
+            <Modal
+                title="Recruit a partner"
+                open={recruitOpen}
+                onOk={submitRecruit}
+                onCancel={() => {
+                    setRecruitOpen(false);
+                    recruitForm.resetFields();
+                }}
+                okText="Recruit"
+                confirmLoading={recruitMutation.isPending}
+                destroyOnHidden
+            >
+                <Text type="secondary" style={{ display: 'block', marginBottom: 16 }}>
+                    They join your team and you earn level-2 commission on their
+                    customers. Set their password here and share it with them
+                    yourself — there is no automatic invite email.
+                </Text>
+                <Form form={recruitForm} layout="vertical" requiredMark={false}>
+                    <Form.Item
+                        label="Full Name"
+                        name="full_name"
+                        rules={[{ required: true, message: 'Name is required' }]}
+                    >
+                        <Input size="large" placeholder="e.g. Nadeesha Fernando" />
+                    </Form.Item>
+                    <Form.Item
+                        label="Email"
+                        name="email"
+                        rules={[
+                            { required: true, message: 'Email is required' },
+                            { type: 'email', message: 'Enter a valid email' },
+                        ]}
+                    >
+                        <Input size="large" placeholder="partner@example.com" />
+                    </Form.Item>
+                    <Form.Item label="Phone" name="phone">
+                        <Input size="large" placeholder="+94 7XX XXX XXX" />
+                    </Form.Item>
+                    <Form.Item
+                        label="Password"
+                        name="password"
+                        rules={[
+                            { required: true, message: 'Set a password for them' },
+                            { min: 8, message: 'At least 8 characters' },
+                        ]}
+                    >
+                        <Input.Password size="large" placeholder="Min 8 characters" />
+                    </Form.Item>
+                </Form>
+            </Modal>
         </Layout>
     );
 };

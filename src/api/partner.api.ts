@@ -45,6 +45,13 @@ export interface PartnerCommission {
     status: 'pending' | 'claimable' | 'paid' | 'reversed';
 }
 
+export interface RecruitPartnerPayload {
+    full_name: string;
+    email: string;
+    phone?: string;
+    password: string;
+}
+
 export const partnerApi = {
     login: async (email: string, password: string): Promise<PartnerProfile['fullName']> => {
         const res = await apiClient.post<{
@@ -81,5 +88,9 @@ export const partnerApi = {
             '/partner/commissions'
         );
         return res.data.data.commissions;
+    },
+
+    recruit: async (payload: RecruitPartnerPayload): Promise<void> => {
+        await apiClient.post('/partner/recruits', payload);
     },
 };
