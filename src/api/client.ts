@@ -13,8 +13,10 @@ import axios from 'axios';
 
 export const TOKEN_KEY = 'sribees_partner_token';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
+
 const apiClient = axios.create({
-    baseURL: '/api/v1',
+    baseURL: API_BASE_URL,
     headers: { 'Content-Type': 'application/json' },
 });
 
