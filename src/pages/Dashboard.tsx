@@ -265,13 +265,15 @@ const Dashboard: React.FC = () => {
                                 <Button icon={<CopyOutlined />} onClick={copyCode}>
                                     Copy
                                 </Button>
-                                <Button
-                                    type="primary"
-                                    icon={<UserAddOutlined />}
-                                    onClick={() => setRecruitOpen(true)}
-                                >
-                                    Recruit a partner
-                                </Button>
+                                {!me?.hasUpline && (
+                                    <Button
+                                        type="primary"
+                                        icon={<UserAddOutlined />}
+                                        onClick={() => setRecruitOpen(true)}
+                                    >
+                                        Recruit a partner
+                                    </Button>
+                                )}
                             </div>
                             <Text type="secondary" style={{ fontSize: 12 }}>
                                 {me
@@ -335,23 +337,27 @@ const Dashboard: React.FC = () => {
                                     />
                                 ),
                             },
-                            {
-                                key: 'recruits',
-                                label: `My Team (${recruits.length})`,
-                                children: (
-                                    <Table<PartnerRecruit>
-                                        rowKey="partner_id"
-                                        size="small"
-                                        pagination={false}
-                                        columns={recruitColumns}
-                                        dataSource={recruits}
-                                        locale={{
-                                            emptyText:
-                                                'You have not recruited any partners yet.',
-                                        }}
-                                    />
-                                ),
-                            },
+                            ...(!me?.hasUpline
+                                ? [
+                                      {
+                                          key: 'recruits',
+                                          label: `My Team (${recruits.length})`,
+                                          children: (
+                                              <Table<PartnerRecruit>
+                                                  rowKey="partner_id"
+                                                  size="small"
+                                                  pagination={false}
+                                                  columns={recruitColumns}
+                                                  dataSource={recruits}
+                                                  locale={{
+                                                      emptyText:
+                                                          'You have not recruited any partners yet.',
+                                                  }}
+                                              />
+                                          ),
+                                      },
+                                  ]
+                                : []),
                             {
                                 key: 'commissions',
                                 label: 'Commission Ledger',
