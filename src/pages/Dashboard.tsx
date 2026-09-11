@@ -269,7 +269,10 @@ const Dashboard: React.FC = () => {
                                     <Button
                                         type="primary"
                                         icon={<UserAddOutlined />}
-                                        onClick={() => setRecruitOpen(true)}
+                                        onClick={() => {
+                                            recruitForm.resetFields();
+                                            setRecruitOpen(true);
+                                        }}
                                     >
                                         Recruit a partner
                                     </Button>
@@ -403,13 +406,22 @@ const Dashboard: React.FC = () => {
                     customers. Set their password here and share it with them
                     yourself — there is no automatic invite email.
                 </Text>
-                <Form form={recruitForm} layout="vertical" requiredMark={false}>
+                <Form
+                    form={recruitForm}
+                    layout="vertical"
+                    requiredMark={false}
+                    autoComplete="off"
+                >
                     <Form.Item
                         label="Full Name"
                         name="full_name"
                         rules={[{ required: true, message: 'Name is required' }]}
                     >
-                        <Input size="large" placeholder="e.g. Nadeesha Fernando" />
+                        <Input
+                            size="large"
+                            placeholder="e.g. Nadeesha Fernando"
+                            autoComplete="off"
+                        />
                     </Form.Item>
                     <Form.Item
                         label="Email"
@@ -419,10 +431,33 @@ const Dashboard: React.FC = () => {
                             { type: 'email', message: 'Enter a valid email' },
                         ]}
                     >
-                        <Input size="large" placeholder="partner@example.com" />
+                        <Input
+                            size="large"
+                            placeholder="partner@example.com"
+                            autoComplete="off"
+                        />
                     </Form.Item>
-                    <Form.Item label="Phone" name="phone">
-                        <Input size="large" placeholder="+94 7XX XXX XXX" />
+                    <Form.Item
+                        label="Phone"
+                        name="phone"
+                        rules={[
+                            {
+                                pattern: /^0\d{9}$/,
+                                message: 'Enter a valid 10-digit phone number starting with 0 (e.g. 0771234567)',
+                            },
+                        ]}
+                    >
+                        <Input
+                            size="large"
+                            placeholder="07XXXXXXXX"
+                            maxLength={10}
+                            inputMode="numeric"
+                            autoComplete="off"
+                            onChange={(e) => {
+                                const cleaned = e.target.value.replace(/\D/g, '').slice(0, 10);
+                                recruitForm.setFieldValue('phone', cleaned);
+                            }}
+                        />
                     </Form.Item>
                     <Form.Item
                         label="Password"
@@ -432,7 +467,11 @@ const Dashboard: React.FC = () => {
                             { min: 8, message: 'At least 8 characters' },
                         ]}
                     >
-                        <Input.Password size="large" placeholder="Min 8 characters" />
+                        <Input.Password
+                            size="large"
+                            placeholder="Min 8 characters"
+                            autoComplete="new-password"
+                        />
                     </Form.Item>
                 </Form>
             </Modal>
