@@ -107,7 +107,14 @@ const Dashboard: React.FC = () => {
     };
 
     const submitRecruit = async () => {
-        const values = await recruitForm.validateFields();
+        let values: RecruitPartnerPayload;
+        try {
+            values = await recruitForm.validateFields();
+        } catch {
+            // The form already shows what is missing; an invalid form is not
+            // an error to throw (it surfaced as an unhandled rejection).
+            return;
+        }
         recruitMutation.mutate({
             full_name: values.full_name.trim(),
             email: values.email.trim(),
