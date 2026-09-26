@@ -7,5 +7,7 @@ export default defineConfig({
         environment: 'jsdom',
         include: ['src/**/*.test.{ts,tsx}'],
         setupFiles: ['./src/test-setup.ts'],
+        // Page tests render real Ant Design screens in jsdom: seconds, not ms.
+        testTimeout: 30000,
     },
 });
