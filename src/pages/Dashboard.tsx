@@ -1,9 +1,10 @@
 /**
  * Partner dashboard — invite code, earnings, customers and recruits.
  *
- * A partner sees their customers' names and member ids and the commission
- * earned from each. Not what those customers actually bought: the API does not
- * return the order value, so this screen could not show it even by mistake.
+ * A partner sees their customers' names and member ids, the commission earned
+ * from each, and which products it came from (name, units, rate, earned).
+ * Never what a customer paid: the API does not return the order or line value,
+ * so this screen could not show it even by mistake.
  */
 import React, { useState } from 'react';
 import {
@@ -31,6 +32,8 @@ import type {
     PartnerCustomer,
     PartnerRecruit,
     PartnerCommission,
+    PartnerCommissionLine,
+    PartnerTopProduct,
     RecruitPartnerPayload,
 } from '../api/partner.api';
 
@@ -57,6 +60,59 @@ const statusTag = (s: PartnerCommission['status']) => {
     return <Tag color={m.colour}>{m.label}</Tag>;
 };
 
+/** The products one commission row was earned on. */
+const CommissionLines: React.FC<{ row: PartnerCommission }> = ({ row }) => {
+    const lines = row.lines ?? [];
+    if (lines.length === 0) {
+        return (
+            <Text type="secondary">
+                Earned on the whole order at {row.rate_percentage}% (before per-product rates).
+            </Text>
+        );
+    }
+    return (
+        <Table<PartnerCommissionLine>
+            rowKey={(l) => `${l.product_id}-${l.quantity}-${l.amount}`}
+            size="small"
+            pagination={false}
+            dataSource={lines}
+            columns={[
+                { title: 'Product', dataIndex: 'product_name', key: 'product_name' },
+                {
+                    title: 'Qty',
+                    key: 'quantity',
+                    align: 'right' as const,
+                    render: (_: unknown, l: PartnerCommissionLine) =>
+                        l.returned_quantity > 0 ? (
+                            <Space size={4}>
+                                {l.quantity - l.returned_quantity}
+                                <Text type="secondary" style={{ fontSize: 12 }}>
+                                    ({l.returned_quantity} returned)
+                                </Text>
+                            </Space>
+                        ) : (
+                            l.quantity
+                        ),
+                },
+                {
+                    title: 'Rate',
+                    dataIndex: 'rate_percentage',
+                    key: 'rate_percentage',
+                    align: 'right' as const,
+                    render: (v: number) => `${v}%`,
+                },
+                {
+                    title: 'Earned',
+                    dataIndex: 'amount',
+                    key: 'amount',
+                    align: 'right' as const,
+                    render: (v: number) => money(v),
+                },
+            ]}
+        />
+    );
+};
+
 const Dashboard: React.FC = () => {
     const navigate = useNavigate();
     const { message } = App.useApp();
@@ -79,6 +135,10 @@ const Dashboard: React.FC = () => {
     const { data: commissions = [] } = useQuery({
         queryKey: ['partner-commissions'],
         queryFn: partnerApi.commissions,
+    });
+    const { data: topProducts = [] } = useQuery({
+        queryKey: ['partner-top-products'],
+        queryFn: partnerApi.topProducts,
     });
 
     const recruitMutation = useMutation({
@@ -193,10 +253,12 @@ const Dashboard: React.FC = () => {
             ),
         },
         {
-            title: 'Rate',
-            dataIndex: 'rate_percentage',
-            key: 'rate_percentage',
-            render: (v: number) => `${v}%`,
+            title: 'Products',
+            key: 'products',
+            render: (_: unknown, row: PartnerCommission) => {
+                const n = row.lines?.length ?? 0;
+                return n > 0 ? `${n} product${n === 1 ? '' : 's'}` : 'Whole order';
+            },
         },
         {
             title: 'Amount',
@@ -287,7 +349,8 @@ const Dashboard: React.FC = () => {
                             </div>
                             <Text type="secondary" style={{ fontSize: 12 }}>
                                 {me
-                                    ? `${me.commissionPercent}% of every order your customers place`
+                                    ? me.commissionText ??
+                                      `Earn up to ${me.commissionPercent}% on selected products your customers buy.`
                                     : ''}
                             </Text>
                         </Col>
@@ -377,8 +440,52 @@ const Dashboard: React.FC = () => {
                                         size="small"
                                         columns={commissionColumns}
                                         dataSource={commissions}
+                                        expandable={{
+                                            expandedRowRender: (row) => <CommissionLines row={row} />,
+                                        }}
                                         locale={{
                                             emptyText: 'No commission recorded yet.',
+                                        }}
+                                    />
+                                ),
+                            },
+                            {
+                                key: 'products',
+                                label: 'Top Products',
+                                children: (
+                                    <Table<PartnerTopProduct>
+                                        rowKey="product_id"
+                                        size="small"
+                                        pagination={false}
+                                        dataSource={topProducts}
+                                        columns={[
+                                            {
+                                                title: 'Product',
+                                                dataIndex: 'product_name',
+                                                key: 'product_name',
+                                            },
+                                            {
+                                                title: 'Orders',
+                                                dataIndex: 'orders',
+                                                key: 'orders',
+                                                align: 'right' as const,
+                                            },
+                                            {
+                                                title: 'Units',
+                                                dataIndex: 'units',
+                                                key: 'units',
+                                                align: 'right' as const,
+                                            },
+                                            {
+                                                title: 'You earned',
+                                                dataIndex: 'total_earned',
+                                                key: 'total_earned',
+                                                align: 'right' as const,
+                                                render: (v: number) => <Text strong>{money(v)}</Text>,
+                                            },
+                                        ]}
+                                        locale={{
+                                            emptyText: 'No product has earned you commission yet.',
                                         }}
                                     />
                                 ),
