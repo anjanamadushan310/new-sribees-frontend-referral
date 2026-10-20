@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
 
 // Runs on its own port (and, in production, its own subdomain) so the partner
 // portal never shares an origin — and therefore never shares localStorage or
@@ -13,7 +14,7 @@ const apiProxy = {
 }
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   server: { proxy: apiProxy },
   preview: { proxy: apiProxy },
 })

@@ -4,6 +4,7 @@ import { ConfigProvider, App as AntApp } from 'antd';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import AppRouter from './router';
 import 'antd/dist/reset.css';
+import './index.css';
 
 const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: 1, refetchOnWindowFocus: false } },
