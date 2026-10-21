@@ -6,591 +6,157 @@
  * Never what a customer paid: the API does not return the order or line value,
  * so this screen could not show it even by mistake.
  */
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { Layout, Typography, App, Form } from "antd";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { partnerApi } from "../api/partner.api";
+import type { RecruitPartnerPayload } from "../api/partner.api";
+import { SideBar } from "../components/SideBar";
+import { Header } from "../components/Header";
 import {
-    Layout,
-    Card,
-    Row,
-    Col,
-    Statistic,
-    Table,
-    Tag,
-    Typography,
-    Button,
-    Tabs,
-    Space,
-    App,
-    Modal,
-    Form,
-    Input,
-} from 'antd';
-import { LogoutOutlined, CopyOutlined, TeamOutlined, UserAddOutlined } from '@ant-design/icons';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
-import { partnerApi } from '../api/partner.api';
-import type {
-    PartnerCustomer,
-    PartnerRecruit,
-    PartnerCommission,
-    PartnerCommissionLine,
-    PartnerTopProduct,
-    RecruitPartnerPayload,
-} from '../api/partner.api';
+  ReferralSection,
+  EarningsOverview,
+  CommissionBreakdown,
+  DashboardTabs,
+  RecruitModal,
+} from "../components/Page/Dashboard";
 
-const { Header, Content } = Layout;
-const { Title, Text } = Typography;
-
-const money = (v: number) =>
-    `Rs ${v.toLocaleString('en-LK', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-    })}`;
-
-const shortDate = (v: string | null) =>
-    v ? new Date(v).toLocaleDateString('en-LK') : '—';
-
-const statusTag = (s: PartnerCommission['status']) => {
-    const map: Record<string, { colour: string; label: string }> = {
-        pending: { colour: 'gold', label: 'Pending' },
-        claimable: { colour: 'green', label: 'Ready' },
-        paid: { colour: 'default', label: 'Paid' },
-        reversed: { colour: 'red', label: 'Cancelled' },
-    };
-    const m = map[s] ?? map.pending;
-    return <Tag color={m.colour}>{m.label}</Tag>;
-};
-
-/** The products one commission row was earned on. */
-const CommissionLines: React.FC<{ row: PartnerCommission }> = ({ row }) => {
-    const lines = row.lines ?? [];
-    if (lines.length === 0) {
-        return (
-            <Text type="secondary">
-                Earned on the whole order at {row.rate_percentage}% (before per-product rates).
-            </Text>
-        );
-    }
-    return (
-        <Table<PartnerCommissionLine>
-            rowKey={(l) => `${l.product_id}-${l.quantity}-${l.amount}`}
-            size="small"
-            pagination={false}
-            dataSource={lines}
-            columns={[
-                { title: 'Product', dataIndex: 'product_name', key: 'product_name' },
-                {
-                    title: 'Qty',
-                    key: 'quantity',
-                    align: 'right' as const,
-                    render: (_: unknown, l: PartnerCommissionLine) =>
-                        l.returned_quantity > 0 ? (
-                            <Space size={4}>
-                                {l.quantity - l.returned_quantity}
-                                <Text type="secondary" style={{ fontSize: 12 }}>
-                                    ({l.returned_quantity} returned)
-                                </Text>
-                            </Space>
-                        ) : (
-                            l.quantity
-                        ),
-                },
-                {
-                    title: 'Rate',
-                    dataIndex: 'rate_percentage',
-                    key: 'rate_percentage',
-                    align: 'right' as const,
-                    render: (v: number) => `${v}%`,
-                },
-                {
-                    title: 'Earned',
-                    dataIndex: 'amount',
-                    key: 'amount',
-                    align: 'right' as const,
-                    render: (v: number) => money(v),
-                },
-            ]}
-        />
-    );
-};
+const { Content } = Layout;
+const { Text } = Typography;
 
 const Dashboard: React.FC = () => {
-    const navigate = useNavigate();
-    const { message } = App.useApp();
-    const queryClient = useQueryClient();
-    const [recruitOpen, setRecruitOpen] = useState(false);
-    const [recruitForm] = Form.useForm<RecruitPartnerPayload>();
+  const navigate = useNavigate();
+  const { message } = App.useApp();
+  const queryClient = useQueryClient();
+  const [recruitOpen, setRecruitOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [activeTab, setActiveTab] = useState("customers");
+  const [recruitForm] = Form.useForm<RecruitPartnerPayload>();
 
-    const { data: me, isLoading } = useQuery({
-        queryKey: ['partner-me'],
-        queryFn: partnerApi.me,
+  const { data: me, isLoading } = useQuery({
+    queryKey: ["partner-me"],
+    queryFn: partnerApi.me,
+  });
+  const { data: customers = [] } = useQuery({
+    queryKey: ["partner-customers"],
+    queryFn: partnerApi.customers,
+  });
+  const { data: recruits = [] } = useQuery({
+    queryKey: ["partner-recruits"],
+    queryFn: partnerApi.recruits,
+  });
+  const { data: commissions = [] } = useQuery({
+    queryKey: ["partner-commissions"],
+    queryFn: partnerApi.commissions,
+  });
+  const { data: topProducts = [] } = useQuery({
+    queryKey: ["partner-top-products"],
+    queryFn: partnerApi.topProducts,
+  });
+
+  const recruitMutation = useMutation({
+    mutationFn: (payload: RecruitPartnerPayload) => partnerApi.recruit(payload),
+    onSuccess: () => {
+      message.success(
+        "Partner recruited. Share their login details with them.",
+      );
+      setRecruitOpen(false);
+      recruitForm.resetFields();
+      queryClient.invalidateQueries({ queryKey: ["partner-recruits"] });
+    },
+    onError: (err: any) =>
+      message.error(
+        err.response?.data?.detail?.error?.message ??
+          "Could not recruit this partner.",
+      ),
+  });
+
+  const signOut = () => {
+    partnerApi.logout();
+    navigate("/login", { replace: true });
+  };
+
+  const copyCode = async () => {
+    if (!me?.referralCode) return;
+    await navigator.clipboard.writeText(me.referralCode);
+    message.success("Referral code copied");
+  };
+
+  const submitRecruit = async () => {
+    let values: RecruitPartnerPayload;
+    try {
+      values = await recruitForm.validateFields();
+    } catch {
+      // The form already shows what is missing; an invalid form is not
+      // an error to throw (it surfaced as an unhandled rejection).
+      return;
+    }
+    recruitMutation.mutate({
+      full_name: values.full_name.trim(),
+      email: values.email.trim(),
+      phone: values.phone?.trim() || undefined,
+      password: values.password,
     });
-    const { data: customers = [] } = useQuery({
-        queryKey: ['partner-customers'],
-        queryFn: partnerApi.customers,
-    });
-    const { data: recruits = [] } = useQuery({
-        queryKey: ['partner-recruits'],
-        queryFn: partnerApi.recruits,
-    });
-    const { data: commissions = [] } = useQuery({
-        queryKey: ['partner-commissions'],
-        queryFn: partnerApi.commissions,
-    });
-    const { data: topProducts = [] } = useQuery({
-        queryKey: ['partner-top-products'],
-        queryFn: partnerApi.topProducts,
-    });
+  };
 
-    const recruitMutation = useMutation({
-        mutationFn: (payload: RecruitPartnerPayload) => partnerApi.recruit(payload),
-        onSuccess: () => {
-            message.success('Partner recruited. Share their login details with them.');
-            setRecruitOpen(false);
-            recruitForm.resetFields();
-            queryClient.invalidateQueries({ queryKey: ['partner-recruits'] });
-        },
-        onError: (err: any) =>
-            message.error(
-                err.response?.data?.detail?.error?.message ?? 'Could not recruit this partner.'
-            ),
-    });
+  return (
+    <Layout className="!min-h-[calc(100vh-24px)] !box-border !bg-gradient-to-br !from-[#D81B60] !via-[#C2185B] !to-[#880E4F] !p-3">
+      <SideBar
+        collapsed={sidebarCollapsed}
+        onToggleCollapse={() => setSidebarCollapsed((value) => !value)}
+        activeTab={activeTab}
+        onSelectTab={setActiveTab}
+        hasUpline={me?.hasUpline}
+        onOpenRecruit={() => {
+          recruitForm.resetFields();
+          setRecruitOpen(true);
+        }}
+        onSignOut={signOut}
+      />
+      <div className="min-w-0 flex-1 overflow-hidden rounded-[17px] bg-slate-50 shadow-[0_20px_40px_rgba(15,23,42,.25)]">
+        <Header onSignOut={signOut} />
 
-    const signOut = () => {
-        partnerApi.logout();
-        navigate('/login', { replace: true });
-    };
+        <Content className="!m-0 !w-auto !max-w-none !bg-slate-50 !px-7 !pb-[30px] !pt-1">
+          <ReferralSection
+            profile={me}
+            loading={isLoading}
+            onCopy={copyCode}
+          />
 
-    const copyCode = async () => {
-        if (!me?.referralCode) return;
-        await navigator.clipboard.writeText(me.referralCode);
-        message.success('Referral code copied');
-    };
+          <EarningsOverview totals={me?.totals} />
 
-    const submitRecruit = async () => {
-        let values: RecruitPartnerPayload;
-        try {
-            values = await recruitForm.validateFields();
-        } catch {
-            // The form already shows what is missing; an invalid form is not
-            // an error to throw (it surfaced as an unhandled rejection).
-            return;
-        }
-        recruitMutation.mutate({
-            full_name: values.full_name.trim(),
-            email: values.email.trim(),
-            phone: values.phone?.trim() || undefined,
-            password: values.password,
-        });
-    };
+          <CommissionBreakdown byLevel={me?.byLevel} />
 
-    const customerColumns = [
-        { title: 'Customer', dataIndex: 'name', key: 'name' },
-        { title: 'ID', dataIndex: 'member_id', key: 'member_id' },
-        {
-            title: 'Joined',
-            dataIndex: 'joined_at',
-            key: 'joined_at',
-            render: (v: string | null) => shortDate(v),
-        },
-        {
-            title: 'Orders',
-            dataIndex: 'orders',
-            key: 'orders',
-            align: 'right' as const,
-        },
-        {
-            title: 'You earned',
-            dataIndex: 'total_earned',
-            key: 'total_earned',
-            align: 'right' as const,
-            render: (v: number) => <Text strong>{money(v)}</Text>,
-        },
-    ];
+          <DashboardTabs
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            customers={customers}
+            recruits={recruits}
+            commissions={commissions}
+            topProducts={topProducts}
+            hasUpline={me?.hasUpline}
+          />
 
-    const recruitColumns = [
-        { title: 'Partner', dataIndex: 'name', key: 'name' },
-        {
-            title: 'Joined',
-            dataIndex: 'joined_at',
-            key: 'joined_at',
-            render: (v: string | null) => shortDate(v),
-        },
-        {
-            title: 'Status',
-            dataIndex: 'is_active',
-            key: 'is_active',
-            render: (v: boolean) =>
-                v ? <Tag color="green">Active</Tag> : <Tag>Inactive</Tag>,
-        },
-        {
-            title: 'Level 2 earned',
-            dataIndex: 'total_earned',
-            key: 'total_earned',
-            align: 'right' as const,
-            render: (v: number) => <Text strong>{money(v)}</Text>,
-        },
-    ];
+          <Text type="secondary" className="!mt-4 !block !text-xs">
+            Commission is settled by the finance team; this ledger is the
+            statement it is reconciled against.
+          </Text>
+        </Content>
+      </div>
 
-    const commissionColumns = [
-        {
-            title: 'Date',
-            dataIndex: 'date',
-            key: 'date',
-            render: (v: string | null) => shortDate(v),
-        },
-        {
-            title: 'Order',
-            dataIndex: 'order_number',
-            key: 'order_number',
-            render: (v: string | null) => v ?? '—',
-        },
-        {
-            title: 'Level',
-            dataIndex: 'level',
-            key: 'level',
-            render: (v: number) => (
-                <Tag color={v === 1 ? 'blue' : 'purple'}>L{v}</Tag>
-            ),
-        },
-        {
-            title: 'Products',
-            key: 'products',
-            render: (_: unknown, row: PartnerCommission) => {
-                const n = row.lines?.length ?? 0;
-                return n > 0 ? `${n} product${n === 1 ? '' : 's'}` : 'Whole order';
-            },
-        },
-        {
-            title: 'Amount',
-            dataIndex: 'amount',
-            key: 'amount',
-            align: 'right' as const,
-            render: (v: number, row: PartnerCommission) => (
-                <Text strong delete={row.status === 'reversed'}>
-                    {money(v)}
-                </Text>
-            ),
-        },
-        {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-            render: (v: PartnerCommission['status']) => statusTag(v),
-        },
-    ];
-
-    return (
-        <Layout style={{ minHeight: '100vh', background: '#F1F5F4' }}>
-            <Header
-                style={{
-                    background: '#0F766E',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                }}
-            >
-                <Space>
-                    <TeamOutlined style={{ color: '#fff', fontSize: 18 }} />
-                    <Text style={{ color: '#fff', fontWeight: 700, fontSize: 16 }}>
-                        SRIBEES Partners
-                    </Text>
-                </Space>
-                <Space>
-                    <Text style={{ color: '#D5E8E5' }}>{me?.fullName}</Text>
-                    <Button
-                        type="text"
-                        icon={<LogoutOutlined />}
-                        onClick={signOut}
-                        style={{ color: '#fff' }}
-                    >
-                        Sign out
-                    </Button>
-                </Space>
-            </Header>
-
-            <Content
-                style={{
-                    padding: 24,
-                    maxWidth: 1100,
-                    margin: '0 auto',
-                    width: '100%',
-                }}
-            >
-                <Card loading={isLoading} style={{ marginBottom: 16 }}>
-                    <Row gutter={[16, 16]} align="middle">
-                        <Col xs={24} md={10}>
-                            <Text type="secondary">Your referral code</Text>
-                            <div
-                                style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: 12,
-                                    marginTop: 6,
-                                }}
-                            >
-                                <Title level={2} style={{ margin: 0, letterSpacing: 4 }}>
-                                    {me?.referralCode ?? '—'}
-                                </Title>
-                                <Button icon={<CopyOutlined />} onClick={copyCode}>
-                                    Copy
-                                </Button>
-                                {!me?.hasUpline && (
-                                    <Button
-                                        type="primary"
-                                        icon={<UserAddOutlined />}
-                                        onClick={() => {
-                                            recruitForm.resetFields();
-                                            setRecruitOpen(true);
-                                        }}
-                                    >
-                                        Recruit a partner
-                                    </Button>
-                                )}
-                            </div>
-                            <Text type="secondary" style={{ fontSize: 12 }}>
-                                {me
-                                    ? me.commissionText ??
-                                      `Earn up to ${me.commissionPercent}% on selected products your customers buy.`
-                                    : ''}
-                            </Text>
-                        </Col>
-                        <Col xs={12} md={4}>
-                            <Statistic
-                                title="Level 1"
-                                value={me?.byLevel.level1 ?? 0}
-                                prefix="Rs"
-                                precision={2}
-                            />
-                        </Col>
-                        <Col xs={12} md={4}>
-                            <Statistic
-                                title="Level 2"
-                                value={me?.byLevel.level2 ?? 0}
-                                prefix="Rs"
-                                precision={2}
-                            />
-                        </Col>
-                        <Col xs={12} md={3}>
-                            <Statistic
-                                title="Pending"
-                                value={me?.totals.pending ?? 0}
-                                prefix="Rs"
-                                precision={2}
-                            />
-                        </Col>
-                        <Col xs={12} md={3}>
-                            <Statistic
-                                title="Ready"
-                                value={me?.totals.claimable ?? 0}
-                                prefix="Rs"
-                                precision={2}
-                                valueStyle={{ color: '#0F766E' }}
-                            />
-                        </Col>
-                    </Row>
-                </Card>
-
-                <Card>
-                    <Tabs
-                        items={[
-                            {
-                                key: 'customers',
-                                label: `My Customers (${customers.length})`,
-                                children: (
-                                    <Table<PartnerCustomer>
-                                        rowKey="user_id"
-                                        size="small"
-                                        pagination={false}
-                                        columns={customerColumns}
-                                        dataSource={customers}
-                                        locale={{
-                                            emptyText:
-                                                'No one has signed up with your code yet.',
-                                        }}
-                                    />
-                                ),
-                            },
-                            ...(!me?.hasUpline
-                                ? [
-                                      {
-                                          key: 'recruits',
-                                          label: `My Team (${recruits.length})`,
-                                          children: (
-                                              <Table<PartnerRecruit>
-                                                  rowKey="partner_id"
-                                                  size="small"
-                                                  pagination={false}
-                                                  columns={recruitColumns}
-                                                  dataSource={recruits}
-                                                  locale={{
-                                                      emptyText:
-                                                          'You have not recruited any partners yet.',
-                                                  }}
-                                              />
-                                          ),
-                                      },
-                                  ]
-                                : []),
-                            {
-                                key: 'commissions',
-                                label: 'Commission Ledger',
-                                children: (
-                                    <Table<PartnerCommission>
-                                        rowKey="commission_id"
-                                        size="small"
-                                        columns={commissionColumns}
-                                        dataSource={commissions}
-                                        expandable={{
-                                            expandedRowRender: (row) => <CommissionLines row={row} />,
-                                        }}
-                                        locale={{
-                                            emptyText: 'No commission recorded yet.',
-                                        }}
-                                    />
-                                ),
-                            },
-                            {
-                                key: 'products',
-                                label: 'Top Products',
-                                children: (
-                                    <Table<PartnerTopProduct>
-                                        rowKey="product_id"
-                                        size="small"
-                                        pagination={false}
-                                        dataSource={topProducts}
-                                        columns={[
-                                            {
-                                                title: 'Product',
-                                                dataIndex: 'product_name',
-                                                key: 'product_name',
-                                            },
-                                            {
-                                                title: 'Orders',
-                                                dataIndex: 'orders',
-                                                key: 'orders',
-                                                align: 'right' as const,
-                                            },
-                                            {
-                                                title: 'Units',
-                                                dataIndex: 'units',
-                                                key: 'units',
-                                                align: 'right' as const,
-                                            },
-                                            {
-                                                title: 'You earned',
-                                                dataIndex: 'total_earned',
-                                                key: 'total_earned',
-                                                align: 'right' as const,
-                                                render: (v: number) => <Text strong>{money(v)}</Text>,
-                                            },
-                                        ]}
-                                        locale={{
-                                            emptyText: 'No product has earned you commission yet.',
-                                        }}
-                                    />
-                                ),
-                            },
-                        ]}
-                    />
-                </Card>
-
-                <Text
-                    type="secondary"
-                    style={{ display: 'block', marginTop: 16, fontSize: 12 }}
-                >
-                    Commission is settled by the finance team; this ledger is the
-                    statement it is reconciled against.
-                </Text>
-            </Content>
-
-            <Modal
-                title="Recruit a partner"
-                open={recruitOpen}
-                onOk={submitRecruit}
-                onCancel={() => {
-                    setRecruitOpen(false);
-                    recruitForm.resetFields();
-                }}
-                okText="Recruit"
-                confirmLoading={recruitMutation.isPending}
-                destroyOnHidden
-            >
-                <Text type="secondary" style={{ display: 'block', marginBottom: 16 }}>
-                    They join your team and you earn level-2 commission on their
-                    customers. Set their password here and share it with them
-                    yourself — there is no automatic invite email.
-                </Text>
-                <Form
-                    form={recruitForm}
-                    layout="vertical"
-                    requiredMark={false}
-                    autoComplete="off"
-                >
-                    <Form.Item
-                        label="Full Name"
-                        name="full_name"
-                        rules={[{ required: true, message: 'Name is required' }]}
-                    >
-                        <Input
-                            size="large"
-                            placeholder="e.g. Nadeesha Fernando"
-                            autoComplete="off"
-                        />
-                    </Form.Item>
-                    <Form.Item
-                        label="Email"
-                        name="email"
-                        rules={[
-                            { required: true, message: 'Email is required' },
-                            { type: 'email', message: 'Enter a valid email' },
-                        ]}
-                    >
-                        <Input
-                            size="large"
-                            placeholder="partner@example.com"
-                            autoComplete="off"
-                        />
-                    </Form.Item>
-                    <Form.Item
-                        label="Phone"
-                        name="phone"
-                        rules={[
-                            {
-                                pattern: /^0\d{9}$/,
-                                message: 'Enter a valid 10-digit phone number starting with 0 (e.g. 0771234567)',
-                            },
-                        ]}
-                    >
-                        <Input
-                            size="large"
-                            placeholder="07XXXXXXXX"
-                            maxLength={10}
-                            inputMode="numeric"
-                            autoComplete="off"
-                            onChange={(e) => {
-                                const cleaned = e.target.value.replace(/\D/g, '').slice(0, 10);
-                                recruitForm.setFieldValue('phone', cleaned);
-                            }}
-                        />
-                    </Form.Item>
-                    <Form.Item
-                        label="Password"
-                        name="password"
-                        rules={[
-                            { required: true, message: 'Set a password for them' },
-                            { min: 8, message: 'At least 8 characters' },
-                        ]}
-                    >
-                        <Input.Password
-                            size="large"
-                            placeholder="Min 8 characters"
-                            autoComplete="new-password"
-                        />
-                    </Form.Item>
-                </Form>
-            </Modal>
-        </Layout>
-    );
+      <RecruitModal
+        open={recruitOpen}
+        onOk={submitRecruit}
+        onCancel={() => {
+          setRecruitOpen(false);
+          recruitForm.resetFields();
+        }}
+        confirmLoading={recruitMutation.isPending}
+        form={recruitForm}
+      />
+    </Layout>
+  );
 };
 
 export default Dashboard;
