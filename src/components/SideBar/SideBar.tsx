@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { useSidebarCollapse } from "../../hooks/useSidebarCollapse";
+import LogoutModal from "./LogoutModal";
 
 import type { SideBarProps } from "../../interface/common";
 
@@ -33,6 +34,7 @@ const SideBar: React.FC<SideBarProps> = ({
   const isMobile = useIsMobile(640);
   const [internalCollapsed, setInternalCollapsed] = useSidebarCollapse();
   const [isMoreOpen, setIsMoreOpen] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   const effectiveCollapsed =
     propCollapsed !== undefined ? propCollapsed : internalCollapsed;
@@ -92,7 +94,7 @@ const SideBar: React.FC<SideBarProps> = ({
     {
       key: "products",
       icon: <Package className="h-5 w-5 shrink-0" />,
-      label: "Products",
+      label: "Top Products",
     },
     {
       key: "commissions",
@@ -222,7 +224,7 @@ const SideBar: React.FC<SideBarProps> = ({
             )}
             <button
               type="button"
-              onClick={onSignOut}
+              onClick={() => setIsLogoutModalOpen(true)}
               className={`h-[40px] w-full rounded-xl border border-white/20 bg-white/10 text-white hover:bg-white/20 flex items-center justify-center transition-all cursor-pointer ${
                 isCollapsed
                   ? "p-0 flex items-center justify-center"
@@ -272,7 +274,7 @@ const SideBar: React.FC<SideBarProps> = ({
                 <span className="text-[11px] leading-tight mt-0.5">Dashboard</span>
               </button>
 
-              {/* Product */}
+              {/* Top Products */}
               <button
                 type="button"
                 onClick={() => {
@@ -284,7 +286,7 @@ const SideBar: React.FC<SideBarProps> = ({
                     ? "text-[#A51F60] font-bold"
                     : "text-slate-500 hover:text-slate-800 font-medium"
                 }`}
-                aria-label="Product"
+                aria-label="Top Products"
               >
                 <div
                   className={`p-1 rounded-xl transition-all ${
@@ -295,7 +297,7 @@ const SideBar: React.FC<SideBarProps> = ({
                 >
                   <Package className="h-5 w-5 shrink-0" />
                 </div>
-                <span className="text-[11px] leading-tight mt-0.5">Product</span>
+                <span className="text-[11px] leading-tight mt-0.5">Top Products</span>
               </button>
 
               {/* Ledger */}
@@ -479,7 +481,7 @@ const SideBar: React.FC<SideBarProps> = ({
                     type="button"
                     onClick={() => {
                       setIsMoreOpen(false);
-                      onSignOut();
+                      setIsLogoutModalOpen(true);
                     }}
                     className="w-full flex items-center justify-between p-3 rounded-2xl bg-rose-50/60 hover:bg-rose-100/70 border border-rose-200/60 text-rose-700 transition-all cursor-pointer"
                   >
@@ -500,6 +502,16 @@ const SideBar: React.FC<SideBarProps> = ({
           )}
         </>
       )}
+
+      {/* Logout Confirmation Modal */}
+      <LogoutModal
+        open={isLogoutModalOpen}
+        onConfirm={() => {
+          setIsLogoutModalOpen(false);
+          onSignOut();
+        }}
+        onCancel={() => setIsLogoutModalOpen(false)}
+      />
     </>
   );
 };

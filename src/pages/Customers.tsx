@@ -126,7 +126,7 @@ const Customers: React.FC = () => {
   }, [customers, searchQuery, sortBy]);
 
   return (
-    <div className="h-screen max-h-screen overflow-hidden box-border bg-gradient-to-br from-[#A51F60] to-[#880E4F] p-1.5 sm:p-3 flex">
+    <div className="h-screen max-h-screen overflow-hidden box-border bg-slate-50 sm:bg-gradient-to-br sm:from-[#A51F60] sm:to-[#880E4F] p-0 sm:p-3 flex">
       <SideBar
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
@@ -140,7 +140,7 @@ const Customers: React.FC = () => {
         onSignOut={signOut}
       />
 
-      <div className="custom-scrollbar min-w-0 flex-1 h-[calc(100vh-12px)] sm:h-[calc(100vh-24px)] max-h-[calc(100vh-12px)] sm:max-h-[calc(100vh-24px)] overflow-y-auto rounded-[14px] sm:rounded-[17px] bg-slate-50 shadow-[0_20px_40px_rgba(15,23,42,.25)]">
+      <div className="custom-scrollbar min-w-0 flex-1 h-screen sm:h-[calc(100vh-24px)] max-h-screen sm:max-h-[calc(100vh-24px)] overflow-y-auto rounded-none sm:rounded-[17px] bg-slate-50 shadow-none sm:shadow-[0_20px_40px_rgba(15,23,42,.25)]">
         <Header onSignOut={signOut} title="My Customers" />
 
         <main className="m-0 w-auto max-w-none bg-slate-50 px-3 sm:px-7 pb-24 sm:pb-[30px] pt-1">
@@ -155,6 +155,7 @@ const Customers: React.FC = () => {
                   title="TOTAL CUSTOMERS"
                   value={totalCustomers}
                   prefix=""
+                  precision={0}
                   icon={<Users className="h-6 w-6" />}
                   gradientClass="bg-gradient-to-br from-pink-500 to-rose-600"
                 />
@@ -172,6 +173,7 @@ const Customers: React.FC = () => {
                   title="TOTAL ORDERS"
                   value={totalOrders}
                   prefix=""
+                  precision={0}
                   icon={<ShoppingBag className="h-6 w-6" />}
                   gradientClass="bg-gradient-to-br from-blue-500 to-indigo-600"
                 />

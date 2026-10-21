@@ -118,6 +118,8 @@ describe('Partner dashboard', () => {
         renderDashboard();
         await screen.findByText('KAMAL7');
         fireEvent.click(screen.getByRole('button', { name: /sign out/i }));
+        expect(screen.getByText('Confirm Log Out')).toBeInTheDocument();
+        fireEvent.click(screen.getByRole('button', { name: /yes, log out/i }));
         expect(api.logout).toHaveBeenCalled();
         expect(await screen.findByText('login page')).toBeInTheDocument();
     });
