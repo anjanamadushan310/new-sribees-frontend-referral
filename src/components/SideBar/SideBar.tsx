@@ -35,21 +35,31 @@ const SideBar: React.FC<SideBarProps> = ({
   const location = useLocation();
 
   const handleMenuClick = (key: string) => {
-    if (key === "products") {
-      if (location.pathname !== "/products") {
-        navigate("/products");
-      }
-      onSelectTab("products");
-    } else if (key === "dashboard") {
+    onSelectTab(key);
+    if (key === "dashboard") {
       if (location.pathname !== "/") {
         navigate("/");
       }
-      onSelectTab("customers");
+    } else if (key === "products") {
+      if (location.pathname !== "/products") {
+        navigate("/products");
+      }
+    } else if (key === "commissions") {
+      if (location.pathname !== "/ledger") {
+        navigate("/ledger");
+      }
+    } else if (key === "customers") {
+      if (location.pathname !== "/customers") {
+        navigate("/customers");
+      }
+    } else if (key === "recruits") {
+      if (location.pathname !== "/team") {
+        navigate("/team");
+      }
     } else {
       if (location.pathname !== "/") {
         navigate(`/?tab=${key}`);
       }
-      onSelectTab(key);
     }
   };
 

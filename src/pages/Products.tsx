@@ -123,11 +123,7 @@ const Products: React.FC = () => {
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed((value) => !value)}
         activeTab="products"
-        onSelectTab={(tab) => {
-          if (tab !== "products") {
-            navigate(`/?tab=${tab}`);
-          }
-        }}
+        onSelectTab={() => {}}
         hasUpline={me?.hasUpline}
         onOpenRecruit={() => {
           recruitForm.resetFields();

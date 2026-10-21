@@ -111,8 +111,8 @@ const Dashboard: React.FC = () => {
       <SideBar
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed((value) => !value)}
-        activeTab={activeTab}
-        onSelectTab={setActiveTab}
+        activeTab="dashboard"
+        onSelectTab={() => {}}
         hasUpline={me?.hasUpline}
         onOpenRecruit={() => {
           recruitForm.resetFields();
