@@ -11,6 +11,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { TOKEN_KEY } from './api/client';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import Products from './pages/Products';
 
 const RequireAuth: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     // Presence of a token only decides what to render; the API is the actual
@@ -28,6 +29,14 @@ const AppRouter: React.FC = () => (
                 element={
                     <RequireAuth>
                         <Dashboard />
+                    </RequireAuth>
+                }
+            />
+            <Route
+                path="/products"
+                element={
+                    <RequireAuth>
+                        <Products />
                     </RequireAuth>
                 }
             />

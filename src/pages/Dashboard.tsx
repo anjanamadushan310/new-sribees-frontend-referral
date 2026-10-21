@@ -9,7 +9,7 @@
 import React, { useState } from "react";
 import { Layout, Typography, App, Form } from "antd";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { partnerApi } from "../api/partner.api";
 import type { RecruitPartnerPayload } from "../api/partner.api";
 import { SideBar } from "../components/SideBar";
@@ -27,12 +27,20 @@ const { Text } = Typography;
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const urlTab = searchParams.get("tab");
   const { message } = App.useApp();
   const queryClient = useQueryClient();
   const [recruitOpen, setRecruitOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [activeTab, setActiveTab] = useState("customers");
+  const [activeTab, setActiveTab] = useState(urlTab || "customers");
   const [recruitForm] = Form.useForm<RecruitPartnerPayload>();
+
+  React.useEffect(() => {
+    if (urlTab) {
+      setActiveTab(urlTab);
+    }
+  }, [urlTab]);
 
   const { data: me, isLoading } = useQuery({
     queryKey: ["partner-me"],

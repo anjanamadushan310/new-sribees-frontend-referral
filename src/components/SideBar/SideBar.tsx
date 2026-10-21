@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Layout, Menu, Button, Space, Typography } from "antd";
 import {
   DashboardOutlined,
@@ -34,6 +35,27 @@ const SideBar: React.FC<SideBarProps> = ({
   onOpenRecruit,
   onSignOut,
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleMenuClick = (key: string) => {
+    if (key === "products") {
+      if (location.pathname !== "/products") {
+        navigate("/products");
+      }
+      onSelectTab("products");
+    } else if (key === "dashboard") {
+      if (location.pathname !== "/") {
+        navigate("/");
+      }
+      onSelectTab("customers");
+    } else {
+      if (location.pathname !== "/") {
+        navigate(`/?tab=${key}`);
+      }
+      onSelectTab(key);
+    }
+  };
   return (
     <Sider
       collapsible
@@ -73,9 +95,7 @@ const SideBar: React.FC<SideBarProps> = ({
         mode="inline"
         inlineCollapsed={collapsed}
         selectedKeys={[activeTab]}
-        onClick={({ key }) =>
-          onSelectTab(key === "dashboard" ? "customers" : key)
-        }
+        onClick={({ key }) => handleMenuClick(key)}
         className={`!border-e-0 !bg-transparent !py-1.5 transition-all duration-300 [&_.ant-menu-item]:!mb-1 [&_.ant-menu-item]:!h-[42px] [&_.ant-menu-item]:!rounded-xl [&_.ant-menu-item]:!border [&_.ant-menu-item]:!border-transparent [&_.ant-menu-item]:!text-[15px] [&_.ant-menu-item]:!font-bold [&_.ant-menu-title-content]:!font-bold [&_.ant-menu-item]:!text-white [&_.ant-menu-item:hover]:!bg-white/15 [&_.ant-menu-item:hover]:!text-white [&_.ant-menu-item-selected]:!border-white/20 [&_.ant-menu-item-selected]:!bg-white/25 [&_.ant-menu-item-selected]:!text-white [&_.ant-menu-item-selected]:!shadow-sm [&_.ant-menu-item-selected]:after:!hidden [&_.ant-menu-item-icon]:!text-[18px] [&_.ant-menu-item]:!transition-colors [&_.ant-menu-item]:!duration-150 ${
           collapsed
             ? "!px-2 [&_.ant-menu-item]:!px-0 [&_.ant-menu-item]:!flex [&_.ant-menu-item]:!items-center [&_.ant-menu-item]:!justify-center"
