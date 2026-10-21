@@ -65,7 +65,7 @@ const Dashboard: React.FC = () => {
     mutationFn: (payload: RecruitPartnerPayload) => partnerApi.recruit(payload),
     onSuccess: () => {
       message.success(
-        "Partner recruited. Share their login details with them."
+        "Partner recruited. Share their login details with them.",
       );
       setRecruitOpen(false);
       recruitForm.resetFields();
@@ -74,7 +74,7 @@ const Dashboard: React.FC = () => {
     onError: (err: any) =>
       message.error(
         err.response?.data?.detail?.error?.message ??
-          "Could not recruit this partner."
+          "Could not recruit this partner.",
       ),
   });
 
@@ -124,30 +124,11 @@ const Dashboard: React.FC = () => {
         <Header onSignOut={signOut} />
 
         <main className="m-0 w-auto max-w-none bg-slate-50 px-7 pb-[30px] pt-1">
-          <ReferralSection
-            profile={me}
-            loading={isLoading}
-            onCopy={copyCode}
-          />
+          <ReferralSection profile={me} loading={isLoading} onCopy={copyCode} />
 
           <EarningsOverview totals={me?.totals} />
 
           <CommissionBreakdown byLevel={me?.byLevel} />
-
-          <DashboardTabs
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-            customers={customers}
-            recruits={recruits}
-            commissions={commissions}
-            topProducts={topProducts}
-            hasUpline={me?.hasUpline}
-          />
-
-          <p className="mt-4 block text-xs text-slate-500 m-0">
-            Commission is settled by the finance team; this ledger is the
-            statement it is reconciled against.
-          </p>
         </main>
       </div>
 

@@ -11,6 +11,7 @@ import {
   UserPlus,
   LogOut,
 } from "lucide-react";
+import { useIsMobile } from "../../hooks/useIsMobile";
 
 export interface SideBarProps {
   collapsed: boolean;
@@ -31,6 +32,8 @@ const SideBar: React.FC<SideBarProps> = ({
   onOpenRecruit,
   onSignOut,
 }) => {
+  const isMobile = useIsMobile(768);
+  const isCollapsed = isMobile || collapsed;
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -98,7 +101,7 @@ const SideBar: React.FC<SideBarProps> = ({
   return (
     <aside
       className={`sticky top-3 h-[calc(100vh-24px)] max-h-[calc(100vh-24px)] self-start overflow-hidden bg-transparent transition-all duration-300 ease-in-out flex flex-col ${
-        collapsed
+        isCollapsed
           ? "w-[76px] min-w-[76px] max-w-[76px] flex-[0_0_76px]"
           : "w-[264px] min-w-[264px] max-w-[264px] flex-[0_0_264px]"
       }`}
@@ -106,10 +109,10 @@ const SideBar: React.FC<SideBarProps> = ({
       {/* Top Logo Bar */}
       <div
         className={`flex h-[62px] items-center text-white transition-all duration-300 ${
-          collapsed ? "justify-center px-0" : "justify-between px-5"
+          isCollapsed ? "justify-center px-0" : "justify-between px-5"
         }`}
       >
-        {!collapsed && (
+        {!isCollapsed && (
           <div className="flex items-center gap-2.5">
             <span className="grid h-8 w-8 place-items-center rounded-lg border border-white/30 bg-white/15 text-lg text-white">
               <LayoutDashboard className="h-4 w-4" />
@@ -119,24 +122,32 @@ const SideBar: React.FC<SideBarProps> = ({
             </span>
           </div>
         )}
-        <button
-          type="button"
-          onClick={onToggleCollapse}
-          className="text-lg text-white hover:bg-white/10 w-8 h-8 p-0 grid place-items-center rounded-lg transition-colors cursor-pointer border-0 bg-transparent"
-          aria-label="Toggle sidebar"
-        >
-          {collapsed ? (
-            <PanelLeftOpen className="h-5 w-5" />
-          ) : (
-            <PanelLeftClose className="h-5 w-5" />
-          )}
-        </button>
+        {!isMobile ? (
+          <button
+            type="button"
+            onClick={onToggleCollapse}
+            className="text-lg text-white hover:bg-white/10 w-8 h-8 p-0 grid place-items-center rounded-lg transition-colors cursor-pointer border-0 bg-transparent"
+            aria-label="Toggle sidebar"
+          >
+            {isCollapsed ? (
+              <PanelLeftOpen className="h-5 w-5" />
+            ) : (
+              <PanelLeftClose className="h-5 w-5" />
+            )}
+          </button>
+        ) : (
+          <div className="flex items-center justify-center">
+            <span className="grid h-8 w-8 place-items-center rounded-lg border border-white/30 bg-white/15 text-lg text-white">
+              <LayoutDashboard className="h-4 w-4" />
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Navigation Menu */}
       <nav
         className={`py-1.5 transition-all duration-300 ${
-          collapsed ? "px-2" : "px-3.5"
+          isCollapsed ? "px-2" : "px-3.5"
         }`}
       >
         <ul className="flex flex-col gap-1 list-none p-0 m-0">
@@ -147,9 +158,9 @@ const SideBar: React.FC<SideBarProps> = ({
                 <button
                   type="button"
                   onClick={() => handleMenuClick(item.key)}
-                  title={collapsed ? item.label : undefined}
+                  title={isCollapsed ? item.label : undefined}
                   className={`w-full h-[42px] rounded-xl border transition-all duration-150 flex items-center cursor-pointer text-[15px] font-bold ${
-                    collapsed
+                    isCollapsed
                       ? "justify-center px-0"
                       : "justify-start px-3.5 gap-3"
                   } ${
@@ -159,7 +170,7 @@ const SideBar: React.FC<SideBarProps> = ({
                   }`}
                 >
                   {item.icon}
-                  {!collapsed && (
+                  {!isCollapsed && (
                     <span className="truncate">{item.label}</span>
                   )}
                 </button>
@@ -172,7 +183,7 @@ const SideBar: React.FC<SideBarProps> = ({
       {/* Bottom Actions */}
       <div
         className={`mt-auto border-t border-white/15 pt-3 pb-3 transition-all duration-300 ${
-          collapsed ? "px-2" : "px-3.5"
+          isCollapsed ? "px-2" : "px-3.5"
         }`}
       >
         {!hasUpline && (
@@ -180,14 +191,14 @@ const SideBar: React.FC<SideBarProps> = ({
             type="button"
             onClick={onOpenRecruit}
             className={`mb-2 h-[40px] w-full rounded-xl border-0 bg-white text-sm font-semibold text-fuchsia-700 hover:bg-white/95 shadow-sm transition-all cursor-pointer ${
-              collapsed
+              isCollapsed
                 ? "p-0 flex items-center justify-center"
                 : "flex items-center justify-center gap-1.5 px-3"
             }`}
-            title={collapsed ? "Recruit a partner" : undefined}
+            title={isCollapsed ? "Recruit a partner" : undefined}
           >
             <UserPlus className="h-4 w-4 shrink-0" />
-            {!collapsed && <span>Recruit a partner</span>}
+            {!isCollapsed && <span>Recruit a partner</span>}
           </button>
         )}
         <button
