@@ -154,20 +154,98 @@ describe("SideBar", () => {
       }));
     });
 
-    it("remains collapsed even if collapsed=false is passed", () => {
-      const { container } = renderSideBar({ collapsed: false, onToggleCollapse: vi.fn() });
+    it("renders mobile bottom navigation bar with Dashboard, Product, Ledger, and More", () => {
+      const { container } = renderSideBar();
 
-      // Labels should not be visible
-      expect(screen.queryByText("SRIBEES")).not.toBeInTheDocument();
-      expect(screen.queryByText("Dashboard")).not.toBeInTheDocument();
-      expect(screen.queryByText("Products")).not.toBeInTheDocument();
+      // Desktop sidebar aside should not be rendered
+      expect(container.querySelector("aside")).toBeNull();
 
-      // Toggle button should not be displayed on mobile
-      expect(screen.queryByRole("button", { name: "Toggle sidebar" })).not.toBeInTheDocument();
+      // Mobile bottom nav should be present
+      const nav = screen.getByRole("navigation", { name: "Mobile Navigation" });
+      expect(nav).toBeInTheDocument();
 
-      // Sidebar should have collapsed width class (w-[76px])
-      const aside = container.querySelector("aside");
-      expect(aside?.className).toContain("w-[76px]");
+      expect(screen.getByRole("button", { name: "Dashboard" })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Product" })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Ledger" })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "More" })).toBeInTheDocument();
+    });
+
+    it("clicking More opens bottom sheet with My Customers, My Team, Recruit Partner, and Logout", () => {
+      renderSideBar();
+
+      const moreButton = screen.getByRole("button", { name: "More" });
+      fireEvent.click(moreButton);
+
+      // Sheet header
+      expect(screen.getByText("More Options")).toBeInTheDocument();
+
+      // Items inside sheet
+      expect(screen.getByText("My Customers")).toBeInTheDocument();
+      expect(screen.getByText("My Team")).toBeInTheDocument();
+      expect(screen.getByText("Recruit a Partner")).toBeInTheDocument();
+      expect(screen.getByText("Log Out")).toBeInTheDocument();
+    });
+
+    it("clicking Recruit a Partner calls onOpenRecruit and closes the sheet", () => {
+      const onOpenRecruit = vi.fn();
+      renderSideBar({ onOpenRecruit });
+
+      fireEvent.click(screen.getByRole("button", { name: "More" }));
+
+      const recruitButton = screen.getByText("Recruit a Partner").closest("button")!;
+      fireEvent.click(recruitButton);
+
+      expect(onOpenRecruit).toHaveBeenCalledTimes(1);
+      expect(screen.queryByText("More Options")).not.toBeInTheDocument();
+    });
+
+    it("clicking Log Out calls onSignOut and closes the sheet", () => {
+      const onSignOut = vi.fn();
+      renderSideBar({ onSignOut });
+
+      fireEvent.click(screen.getByRole("button", { name: "More" }));
+
+      const logoutButton = screen.getByText("Log Out").closest("button")!;
+      fireEvent.click(logoutButton);
+
+      expect(onSignOut).toHaveBeenCalledTimes(1);
+      expect(screen.queryByText("More Options")).not.toBeInTheDocument();
+    });
+
+    it("clicking My Customers calls onSelectTab and closes the sheet", () => {
+      const onSelectTab = vi.fn();
+      renderSideBar({ onSelectTab });
+
+      fireEvent.click(screen.getByRole("button", { name: "More" }));
+
+      const customersButton = screen.getByText("My Customers").closest("button")!;
+      fireEvent.click(customersButton);
+
+      expect(onSelectTab).toHaveBeenCalledWith("customers");
+      expect(screen.queryByText("More Options")).not.toBeInTheDocument();
+    });
+
+    it("does not show My Team or Recruit Partner in More sheet when hasUpline is true", () => {
+      renderSideBar({ hasUpline: true });
+
+      fireEvent.click(screen.getByRole("button", { name: "More" }));
+
+      expect(screen.getByText("My Customers")).toBeInTheDocument();
+      expect(screen.getByText("Log Out")).toBeInTheDocument();
+      expect(screen.queryByText("My Team")).not.toBeInTheDocument();
+      expect(screen.queryByText("Recruit a Partner")).not.toBeInTheDocument();
+    });
+
+    it("closes the More sheet when close button is clicked", () => {
+      renderSideBar();
+
+      fireEvent.click(screen.getByRole("button", { name: "More" }));
+      expect(screen.getByText("More Options")).toBeInTheDocument();
+
+      const closeButton = screen.getByRole("button", { name: "Close menu" });
+      fireEvent.click(closeButton);
+
+      expect(screen.queryByText("More Options")).not.toBeInTheDocument();
     });
   });
 });

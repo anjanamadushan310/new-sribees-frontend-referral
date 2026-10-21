@@ -141,7 +141,7 @@ const Products: React.FC = () => {
       <div className="custom-scrollbar min-w-0 flex-1 h-[calc(100vh-12px)] sm:h-[calc(100vh-24px)] max-h-[calc(100vh-12px)] sm:max-h-[calc(100vh-24px)] overflow-y-auto rounded-[14px] sm:rounded-[17px] bg-slate-50 shadow-[0_20px_40px_rgba(15,23,42,.25)]">
         <Header onSignOut={signOut} title="Products" />
 
-        <main className="m-0 w-auto max-w-none bg-slate-50 px-3 sm:px-7 pb-6 sm:pb-[30px] pt-1">
+        <main className="m-0 w-auto max-w-none bg-slate-50 px-3 sm:px-7 pb-24 sm:pb-[30px] pt-1">
           {/* Overview Stat Cards */}
           <SectionCard
             title="Products Performance Overview"
