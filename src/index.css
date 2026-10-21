@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
 html,
 body,
 #root {
@@ -11,11 +15,12 @@ html,
 body {
     overflow-x: hidden;
     overflow-y: auto;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #17233b;
 }
 
-body {
-    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    color: #17233b;
+button, input, optgroup, select, textarea {
+    font-family: inherit;
 }
 
 /* Custom sleek scrollbar for scrollable panels */

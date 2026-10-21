@@ -76,7 +76,7 @@ const Login = ({ loading, error, onSubmit }: LoginProps) => (
           <h2 className="m-0 text-[28px] text-[#2f3440] max-[720px]:text-[25px]">
             Partner Login
           </h2>
-          <p className="!-mt-4 text-sm text-[#9ba1ad]">
+          <p className="text-sm text-[#9ba1ad]">
             Enter your details to continue
           </p>
         </div>
