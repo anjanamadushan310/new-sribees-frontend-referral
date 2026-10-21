@@ -143,13 +143,17 @@ const COLOR_THEMES: Record<string, ColorTheme> = {
 function resolveTheme(
   colorScheme?: string,
   gradientClass?: string,
-  title?: string
+  title?: string,
 ): ColorTheme {
   if (colorScheme && COLOR_THEMES[colorScheme]) {
     return COLOR_THEMES[colorScheme];
   }
   const str = `${gradientClass || ""} ${title || ""}`.toLowerCase();
-  if (str.includes("amber") || str.includes("orange") || str.includes("pending")) {
+  if (
+    str.includes("amber") ||
+    str.includes("orange") ||
+    str.includes("pending")
+  ) {
     return COLOR_THEMES.orange;
   }
   if (
@@ -170,7 +174,11 @@ function resolveTheme(
   ) {
     return COLOR_THEMES.rose;
   }
-  if (str.includes("purple") || str.includes("violet") || str.includes("level 02")) {
+  if (
+    str.includes("purple") ||
+    str.includes("violet") ||
+    str.includes("level 02")
+  ) {
     return COLOR_THEMES.purple;
   }
   return COLOR_THEMES.blue;
@@ -183,7 +191,7 @@ const StatCard: React.FC<StatCardProps> = ({
   precision = 2,
   tagText,
   icon,
-  leftIcon,
+  leftIcon: _leftIcon,
   gradientClass,
   colorScheme,
   className = "",
@@ -199,7 +207,6 @@ const StatCard: React.FC<StatCardProps> = ({
       : value;
 
   const theme = resolveTheme(colorScheme, gradientClass, title);
-  const primaryLeftIcon = leftIcon || icon;
   const secondaryRightIcon = icon;
 
   return (
@@ -209,11 +216,11 @@ const StatCard: React.FC<StatCardProps> = ({
       {/* Left side: Icon + Content */}
       <div className="flex items-start gap-4 min-w-0">
         {/* Left circular icon badge */}
-        <div
+        {/*         <div
           className={`grid h-11 w-11 shrink-0 place-items-center rounded-full ${theme.leftBadgeBg} ${theme.leftBadgeText} shadow-sm`}
         >
           {primaryLeftIcon}
-        </div>
+        </div> */}
 
         {/* Content column: Title, Value, Tag */}
         <div className="min-w-0">

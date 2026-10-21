@@ -98,8 +98,9 @@ describe('Ledger Page', () => {
 
         expect(await screen.findByRole('heading', { level: 1, name: 'Commission Ledger' })).toBeInTheDocument();
         expect(screen.getByText('READY TO CLAIM')).toBeInTheDocument();
-        expect(screen.getByText('SETTLED & PAID')).toBeInTheDocument();
-        expect(screen.getByText('PENDING SETTLEMENT')).toBeInTheDocument();
+        expect(screen.getByText('LEVEL 1 EARNED')).toBeInTheDocument();
+        expect(screen.getByText('LEVEL 2 EARNED')).toBeInTheDocument();
+        expect(screen.getByText('TOTAL EARNED')).toBeInTheDocument();
         expect(await screen.findByText('SB-1001')).toBeInTheDocument();
         expect(screen.getByText('SB-1002')).toBeInTheDocument();
         expect(screen.getByText('Ready')).toBeInTheDocument();

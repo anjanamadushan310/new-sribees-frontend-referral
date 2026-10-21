@@ -2,13 +2,13 @@ import React, { useState, useMemo } from "react";
 import {
   FileText,
   DollarSign,
-  Clock,
-  CheckCircle2,
   TrendingUp,
   Search,
   ChevronDown,
   X,
   RotateCcw,
+  Crown,
+  GitFork,
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
@@ -88,8 +88,27 @@ const Ledger: React.FC = () => {
 
   // KPI Calculations
   const claimable = me?.totals?.claimable ?? 0;
-  const paid = me?.totals?.paid ?? 0;
-  const pending = me?.totals?.pending ?? 0;
+
+  const level1Earned = useMemo(() => {
+    if (me?.byLevel?.level1 !== undefined && me.byLevel.level1 > 0) {
+      return me.byLevel.level1;
+    }
+    const computed = commissions
+      .filter((c) => c.level === 1 && c.status !== "reversed")
+      .reduce((sum, c) => sum + c.amount, 0);
+    return computed > 0 ? computed : (me?.byLevel?.level1 ?? 0);
+  }, [me?.byLevel?.level1, commissions]);
+
+  const level2Earned = useMemo(() => {
+    if (me?.byLevel?.level2 !== undefined && me.byLevel.level2 > 0) {
+      return me.byLevel.level2;
+    }
+    const computed = commissions
+      .filter((c) => c.level === 2 && c.status !== "reversed")
+      .reduce((sum, c) => sum + c.amount, 0);
+    return computed > 0 ? computed : (me?.byLevel?.level2 ?? 0);
+  }, [me?.byLevel?.level2, commissions]);
+
   const totalRecorded = useMemo(
     () =>
       commissions.reduce(
@@ -98,6 +117,16 @@ const Ledger: React.FC = () => {
       ),
     [commissions],
   );
+
+  const totalEarned = useMemo(() => {
+    if (totalRecorded > 0) return totalRecorded;
+    const totalsSum =
+      (me?.totals?.pending ?? 0) +
+      (me?.totals?.claimable ?? 0) +
+      (me?.totals?.paid ?? 0);
+    if (totalsSum > 0) return totalsSum;
+    return level1Earned + level2Earned;
+  }, [totalRecorded, me?.totals, level1Earned, level2Earned]);
 
   // Filter and sort commissions
   const filteredCommissions = useMemo(() => {
@@ -185,34 +214,34 @@ const Ledger: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
                 <StatCard
+                  title="LEVEL 1 EARNED"
+                  value={level1Earned}
+                  icon={<Crown className="h-6 w-6" />}
+                  colorScheme="rose"
+                />
+              </div>
+              <div>
+                <StatCard
+                  title="LEVEL 2 EARNED"
+                  value={level2Earned}
+                  icon={<GitFork className="h-6 w-6" />}
+                  colorScheme="purple"
+                />
+              </div>
+              <div>
+                <StatCard
+                  title="TOTAL EARNED"
+                  value={totalEarned}
+                  icon={<TrendingUp className="h-6 w-6" />}
+                  colorScheme="blue"
+                />
+              </div>
+              <div>
+                <StatCard
                   title="READY TO CLAIM"
                   value={claimable}
                   icon={<DollarSign className="h-6 w-6" />}
-                  gradientClass="bg-gradient-to-br from-emerald-500 to-teal-600"
-                />
-              </div>
-              <div>
-                <StatCard
-                  title="SETTLED & PAID"
-                  value={paid}
-                  icon={<CheckCircle2 className="h-6 w-6" />}
-                  gradientClass="bg-gradient-to-br from-blue-500 to-indigo-600"
-                />
-              </div>
-              <div>
-                <StatCard
-                  title="PENDING SETTLEMENT"
-                  value={pending}
-                  icon={<Clock className="h-6 w-6" />}
-                  gradientClass="bg-gradient-to-br from-amber-500 to-orange-600"
-                />
-              </div>
-              <div>
-                <StatCard
-                  title="TOTAL EARNED (NET)"
-                  value={totalRecorded}
-                  icon={<TrendingUp className="h-6 w-6" />}
-                  gradientClass="bg-gradient-to-br from-pink-500 to-rose-600"
+                  colorScheme="emerald"
                 />
               </div>
             </div>

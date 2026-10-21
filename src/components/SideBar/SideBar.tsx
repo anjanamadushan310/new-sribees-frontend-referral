@@ -116,11 +116,15 @@ const SideBar: React.FC<SideBarProps> = ({
       >
         {!isCollapsed && (
           <div className="flex items-center gap-2.5">
-            <span className="grid h-8 w-8 place-items-center rounded-lg border border-white/30 bg-white/15 text-lg text-white">
-              <LayoutDashboard className="h-4 w-4" />
-            </span>
+            <div className="grid h-8 w-8 place-items-center rounded-lg bg-white p-1 shadow-sm shrink-0">
+              <img
+                src="/logo.png"
+                alt="SRIBEES Logo"
+                className="h-full w-full object-contain"
+              />
+            </div>
             <span className="text-white font-bold text-lg tracking-tight">
-              Main Logo
+              SRIBEES
             </span>
           </div>
         )}
@@ -139,9 +143,13 @@ const SideBar: React.FC<SideBarProps> = ({
           </button>
         ) : (
           <div className="flex items-center justify-center">
-            <span className="grid h-8 w-8 place-items-center rounded-lg border border-white/30 bg-white/15 text-lg text-white">
-              <LayoutDashboard className="h-4 w-4" />
-            </span>
+            <div className="grid h-8 w-8 place-items-center rounded-lg bg-white p-1 shadow-sm shrink-0">
+              <img
+                src="/logo.png"
+                alt="SRIBEES Logo"
+                className="h-full w-full object-contain"
+              />
+            </div>
           </div>
         )}
       </div>

@@ -155,7 +155,6 @@ const Customers: React.FC = () => {
                   title="TOTAL CUSTOMERS"
                   value={totalCustomers}
                   prefix=""
-                  tagText="Registered Users"
                   icon={<Users className="h-6 w-6" />}
                   gradientClass="bg-gradient-to-br from-pink-500 to-rose-600"
                 />
@@ -164,7 +163,6 @@ const Customers: React.FC = () => {
                 <StatCard
                   title="TOTAL EARNED"
                   value={totalEarned}
-                  tagText="Direct Commission"
                   icon={<DollarSign className="h-6 w-6" />}
                   gradientClass="bg-gradient-to-br from-emerald-500 to-teal-600"
                 />
@@ -174,7 +172,6 @@ const Customers: React.FC = () => {
                   title="TOTAL ORDERS"
                   value={totalOrders}
                   prefix=""
-                  tagText="Placed by Customers"
                   icon={<ShoppingBag className="h-6 w-6" />}
                   gradientClass="bg-gradient-to-br from-blue-500 to-indigo-600"
                 />
@@ -183,7 +180,6 @@ const Customers: React.FC = () => {
                 <StatCard
                   title="AVG. EARNINGS / USER"
                   value={avgEarned}
-                  tagText="Average Per Customer"
                   icon={<TrendingUp className="h-6 w-6" />}
                   gradientClass="bg-gradient-to-br from-purple-500 to-indigo-600"
                 />

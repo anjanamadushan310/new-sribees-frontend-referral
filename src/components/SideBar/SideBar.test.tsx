@@ -42,7 +42,7 @@ describe("SideBar", () => {
     it("defaults to expanded state with labels and toggle button when uncontrolled", () => {
       const { container } = renderSideBar();
 
-      expect(screen.getByText("Main Logo")).toBeInTheDocument();
+      expect(screen.getByText("SRIBEES")).toBeInTheDocument();
       expect(screen.getByText("Dashboard")).toBeInTheDocument();
       expect(screen.getByText("Products")).toBeInTheDocument();
 
@@ -56,7 +56,7 @@ describe("SideBar", () => {
     it("renders expanded state with labels and toggle button when collapsed=false", () => {
       const { container } = renderSideBar({ collapsed: false, onToggleCollapse: vi.fn() });
 
-      expect(screen.getByText("Main Logo")).toBeInTheDocument();
+      expect(screen.getByText("SRIBEES")).toBeInTheDocument();
       expect(screen.getByText("Dashboard")).toBeInTheDocument();
       expect(screen.getByText("Products")).toBeInTheDocument();
       expect(screen.getByText("Ledger")).toBeInTheDocument();
@@ -83,7 +83,7 @@ describe("SideBar", () => {
     it("renders collapsed state when collapsed=true", () => {
       const { container } = renderSideBar({ collapsed: true, onToggleCollapse: vi.fn() });
 
-      expect(screen.queryByText("Main Logo")).not.toBeInTheDocument();
+      expect(screen.queryByText("SRIBEES")).not.toBeInTheDocument();
       expect(screen.queryByText("Dashboard")).not.toBeInTheDocument();
 
       const toggleButton = screen.getByRole("button", { name: "Toggle sidebar" });
@@ -113,7 +113,7 @@ describe("SideBar", () => {
       const { container } = renderSideBar();
 
       // Labels should not be visible by default
-      expect(screen.queryByText("Main Logo")).not.toBeInTheDocument();
+      expect(screen.queryByText("SRIBEES")).not.toBeInTheDocument();
       expect(screen.queryByText("Dashboard")).not.toBeInTheDocument();
 
       // But toggle button SHOULD be present
@@ -131,7 +131,7 @@ describe("SideBar", () => {
       fireEvent.click(toggleButton);
 
       // Now it should be expanded
-      expect(screen.getByText("Main Logo")).toBeInTheDocument();
+      expect(screen.getByText("SRIBEES")).toBeInTheDocument();
       expect(screen.getByText("Dashboard")).toBeInTheDocument();
 
       const aside = container.querySelector("aside");
@@ -158,7 +158,7 @@ describe("SideBar", () => {
       const { container } = renderSideBar({ collapsed: false, onToggleCollapse: vi.fn() });
 
       // Labels should not be visible
-      expect(screen.queryByText("Main Logo")).not.toBeInTheDocument();
+      expect(screen.queryByText("SRIBEES")).not.toBeInTheDocument();
       expect(screen.queryByText("Dashboard")).not.toBeInTheDocument();
       expect(screen.queryByText("Products")).not.toBeInTheDocument();
 
