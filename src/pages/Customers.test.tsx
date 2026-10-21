@@ -61,7 +61,6 @@ describe('Customers Page', () => {
         renderCustomers();
 
         expect(await screen.findByRole('heading', { level: 1, name: 'My Customers' })).toBeInTheDocument();
-        expect(await screen.findByText('KAMAL7')).toBeInTheDocument();
         expect(screen.getByText('TOTAL CUSTOMERS')).toBeInTheDocument();
         expect(screen.getByText('TOTAL ORDERS')).toBeInTheDocument();
         expect(await screen.findByText('Nimal Perera')).toBeInTheDocument();

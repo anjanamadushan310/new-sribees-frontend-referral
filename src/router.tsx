@@ -10,6 +10,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { TOKEN_KEY } from './api/client';
 import Login from './pages/Login';
+import ForgotPassword from './pages/ForgotPassword';
 import Dashboard from './pages/Dashboard';
 import Products from './pages/Products';
 import Ledger from './pages/Ledger';
@@ -27,6 +28,8 @@ const AppRouter: React.FC = () => (
     <BrowserRouter>
         <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+
             <Route
                 path="/"
                 element={

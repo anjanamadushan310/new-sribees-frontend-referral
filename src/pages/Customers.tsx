@@ -8,9 +8,6 @@ import {
   Search,
   ChevronDown,
   X,
-  Copy,
-  Check,
-  Sparkles,
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
@@ -32,7 +29,6 @@ const Customers: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useSidebarCollapse();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<CustomerSortBy>("earned");
-  const [copied, setCopied] = useState(false);
   const [recruitForm] = useForm<RecruitPartnerPayload>();
 
   const { data: me } = useQuery({
@@ -65,14 +61,6 @@ const Customers: React.FC = () => {
   const signOut = () => {
     partnerApi.logout();
     navigate("/login", { replace: true });
-  };
-
-  const copyCode = async () => {
-    if (!me?.referralCode) return;
-    await navigator.clipboard.writeText(me.referralCode);
-    setCopied(true);
-    message.success("Referral code copied to clipboard!");
-    setTimeout(() => setCopied(false), 2500);
   };
 
   const submitRecruit = async () => {

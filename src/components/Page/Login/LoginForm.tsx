@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { Link } from "react-router-dom";
 import { Eye, EyeOff, LockKeyhole, Mail } from "lucide-react";
 import BaseButton from "../../Base/BaseButton";
 import BaseInput from "../../Base/BaseInput";
@@ -67,16 +68,17 @@ const LoginForm = ({ loading, error, onSubmit }: LoginFormProps) => {
         error={passwordError}
       />
       <div className="flex flex-col gap-[18px] max-[720px]:gap-3">
-        <button
-          type="button"
-          className="self-end border-0 bg-transparent p-0 text-xs text-[#a3a9b3] hover:text-[#D81B60]"
+        <Link
+          to="/forgot-password"
+          className="self-end border-0 bg-transparent p-0 text-xs text-[#a3a9b3] hover:text-[#D81B60] transition-colors"
         >
           Forgot your password?
-        </button>
+        </Link>
         <BaseButton
           className="h-12 w-full rounded-3xl border-0 bg-[#D81B60] font-bold uppercase tracking-[0.04em] text-white! shadow-[0_8px_18px_rgba(216,27,96,0.24)] transition hover:shadow-[0_10px_22px_rgba(216,27,96,0.34)] hover:brightness-110 disabled:cursor-wait disabled:opacity-70"
           type="submit"
           loading={loading}
+          loadingText="Signing in..."
         >
           Sign in
         </BaseButton>
@@ -84,5 +86,6 @@ const LoginForm = ({ loading, error, onSubmit }: LoginFormProps) => {
     </form>
   );
 };
+
 
 export default LoginForm;

@@ -1,15 +1,14 @@
 import React from "react";
-import { Calendar } from "lucide-react";
 
 import type { HeaderProps } from "../../interface/common";
 
 export type { HeaderProps };
 
 const Header: React.FC<HeaderProps> = ({
-  onSignOut,
   title = "Dashboard Overview",
   className = "",
 }) => {
+
   return (
     <header
       className={`flex h-[88px] items-center justify-between bg-slate-50 px-7 ${className}`}

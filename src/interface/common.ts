@@ -51,7 +51,9 @@ export interface ReferralBannerCardProps {
 export interface BaseButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   loading?: boolean;
+  loadingText?: string;
 }
+
 
 export interface BaseInputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;

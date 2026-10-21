@@ -35,7 +35,49 @@ export const partnerApi = {
         return res.data.data.partner.fullName;
     },
 
+    forgotPassword: async (
+        email: string
+    ): Promise<{ success: boolean; message: string; data?: { expiresIn?: number } }> => {
+        const res = await apiClient.post<{
+            success: boolean;
+            message: string;
+            data?: { expiresIn?: number };
+        }>('/partner/auth/forgot-password', { email });
+        return res.data;
+    },
+
+    verifyOtp: async (
+        email: string,
+        otp: string
+    ): Promise<{ success: boolean; message: string; data?: { reset_token?: string } }> => {
+        const res = await apiClient.post<{
+            success: boolean;
+            message: string;
+            data?: { reset_token?: string };
+        }>('/partner/auth/verify-otp', { email, otp });
+        return res.data;
+    },
+
+    resetPassword: async (payload: {
+        email: string;
+        otp: string;
+        newPassword: string;
+        confirmPassword?: string;
+    }): Promise<{ success: boolean; message: string }> => {
+        const res = await apiClient.post<{ success: boolean; message: string }>(
+            '/partner/auth/reset-password',
+            {
+                email: payload.email,
+                otp: payload.otp,
+                new_password: payload.newPassword,
+                confirm_password: payload.confirmPassword ?? payload.newPassword,
+            }
+        );
+        return res.data;
+    },
+
     logout: () => localStorage.removeItem(TOKEN_KEY),
+
 
     me: async (): Promise<PartnerProfile> => {
         const res = await apiClient.get<{ data: PartnerProfile }>('/partner/me');
