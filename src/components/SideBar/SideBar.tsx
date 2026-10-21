@@ -48,23 +48,23 @@ const SideBar: React.FC<SideBarProps> = ({
       }`}
     >
       <div
-        className={`flex h-[76px] items-center text-xl font-bold text-white transition-all duration-300 ${
-          collapsed ? "justify-center px-0" : "justify-between px-[26px]"
+        className={`flex h-[62px] items-center text-white transition-all duration-300 ${
+          collapsed ? "justify-center px-0" : "justify-between px-5"
         }`}
       >
         {!collapsed && (
-          <Space className="gap-[9px]">
-            <span className="grid h-9 w-9 place-items-center rounded-[9px] border border-white/30 bg-white/15 text-xl">
+          <Space className="gap-2.5">
+            <span className="grid h-8 w-8 place-items-center rounded-lg border border-white/30 bg-white/15 text-lg text-white">
               <DashboardOutlined />
             </span>
-            <Text className="!text-white">Main Logo</Text>
+            <Text className="!text-white !font-bold !text-lg tracking-tight">Main Logo</Text>
           </Space>
         )}
         <Button
           type="text"
           icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
           onClick={onToggleCollapse}
-          className="!text-xl !text-white"
+          className="!text-lg !text-white hover:!bg-white/10 !w-8 !h-8 !p-0 !grid !place-items-center !rounded-lg"
           aria-label="Toggle sidebar"
         />
       </div>
@@ -76,10 +76,10 @@ const SideBar: React.FC<SideBarProps> = ({
         onClick={({ key }) =>
           onSelectTab(key === "dashboard" ? "customers" : key)
         }
-        className={`!border-e-0 !bg-transparent !py-[9px] transition-all duration-300 [&_.ant-menu-item]:!mb-[5px] [&_.ant-menu-item]:!h-[51px] [&_.ant-menu-item]:!rounded-[13px] [&_.ant-menu-item]:!border [&_.ant-menu-item]:!border-transparent [&_.ant-menu-item]:!text-[17px] [&_.ant-menu-item]:!text-white/95 [&_.ant-menu-item-selected]:!border-white/20 [&_.ant-menu-item-selected]:!bg-white/20 [&_.ant-menu-item-selected]:after:!hidden [&_.ant-menu-item-icon]:!text-[21px] ${
+        className={`!border-e-0 !bg-transparent !py-1.5 transition-all duration-300 [&_.ant-menu-item]:!mb-1 [&_.ant-menu-item]:!h-[42px] [&_.ant-menu-item]:!rounded-xl [&_.ant-menu-item]:!border [&_.ant-menu-item]:!border-transparent [&_.ant-menu-item]:!text-[15px] [&_.ant-menu-item]:!font-bold [&_.ant-menu-title-content]:!font-bold [&_.ant-menu-item]:!text-white [&_.ant-menu-item:hover]:!bg-white/15 [&_.ant-menu-item:hover]:!text-white [&_.ant-menu-item-selected]:!border-white/20 [&_.ant-menu-item-selected]:!bg-white/25 [&_.ant-menu-item-selected]:!text-white [&_.ant-menu-item-selected]:!shadow-sm [&_.ant-menu-item-selected]:after:!hidden [&_.ant-menu-item-icon]:!text-[18px] [&_.ant-menu-item]:!transition-colors [&_.ant-menu-item]:!duration-150 ${
           collapsed
             ? "!px-2 [&_.ant-menu-item]:!px-0 [&_.ant-menu-item]:!flex [&_.ant-menu-item]:!items-center [&_.ant-menu-item]:!justify-center"
-            : "!px-[17px] [&_.ant-menu-item]:!px-4"
+            : "!px-3.5 [&_.ant-menu-item]:!px-3.5"
         }`}
         items={[
           {
@@ -102,17 +102,17 @@ const SideBar: React.FC<SideBarProps> = ({
         ]}
       />
       <div
-        className={`mt-auto border-t border-white/15 pb-[13px] pt-4 transition-all duration-300 ${
-          collapsed ? "px-2" : "px-[17px]"
+        className={`mt-auto border-t border-white/15 pt-3 pb-3 transition-all duration-300 ${
+          collapsed ? "px-2" : "px-3.5"
         }`}
       >
         {!hasUpline && (
           <Button
             block
-            icon={<UserAddOutlined />}
+            icon={<UserAddOutlined className="text-[15px]" />}
             onClick={onOpenRecruit}
-            className={`!mb-2 !h-[45px] !w-full !rounded-xl !border-0 !text-[15px] !font-bold !text-fuchsia-700 ${
-              collapsed ? "!p-0 !flex !items-center !justify-center" : ""
+            className={`!mb-2 !h-[40px] !w-full !rounded-xl !border-0 !text-sm !font-semibold !text-fuchsia-700 hover:!bg-white/95 shadow-sm transition-all ${
+              collapsed ? "!p-0 !flex !items-center !justify-center" : "!flex !items-center !justify-center gap-1.5"
             }`}
             title={collapsed ? "Recruit a partner" : undefined}
           >
@@ -122,13 +122,11 @@ const SideBar: React.FC<SideBarProps> = ({
         <Button
           block
           type="text"
-          icon={<LogoutOutlined />}
+          icon={<LogoutOutlined className="text-base" />}
           onClick={onSignOut}
-          className={`!h-[45px] !w-full !rounded-xl !border-white/20 !bg-white/10 !text-[15px] !text-white ${
-            collapsed ? "!p-0 !flex !items-center !justify-center" : "!text-left"
-          }`}
+          className="!h-[40px] !w-full !rounded-xl !border !border-white/20 !bg-white/10 !text-white hover:!bg-white/20 !flex !items-center !justify-center transition-all"
           aria-label="Sidebar sign out"
-          title={collapsed ? "Sign out" : undefined}
+          title="Sign out"
         ></Button>
       </div>
     </Sider>
