@@ -27,4 +27,4 @@
    }
    } danata ena response eka.
 
-2.
+2. Forgot Password ekata hdanna ooni.

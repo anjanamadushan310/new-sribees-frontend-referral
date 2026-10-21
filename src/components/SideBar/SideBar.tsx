@@ -12,22 +12,30 @@ import {
   LogOut,
 } from "lucide-react";
 import { useIsMobile } from "../../hooks/useIsMobile";
+import { useSidebarCollapse } from "../../hooks/useSidebarCollapse";
 
 import type { SideBarProps } from "../../interface/common";
 
 export type { SideBarProps };
 
 const SideBar: React.FC<SideBarProps> = ({
-  collapsed,
-  onToggleCollapse,
+  collapsed: propCollapsed,
+  onToggleCollapse: propOnToggleCollapse,
   activeTab,
   onSelectTab,
   hasUpline = false,
   onOpenRecruit,
   onSignOut,
 }) => {
-  const isMobile = useIsMobile(768);
-  const isCollapsed = isMobile || collapsed;
+  const isMobile = useIsMobile(640);
+  const [internalCollapsed, setInternalCollapsed] = useSidebarCollapse();
+
+  const effectiveCollapsed =
+    propCollapsed !== undefined ? propCollapsed : internalCollapsed;
+  const handleToggleCollapse =
+    propOnToggleCollapse || (() => setInternalCollapsed((v) => !v));
+
+  const isCollapsed = isMobile || effectiveCollapsed;
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -119,7 +127,7 @@ const SideBar: React.FC<SideBarProps> = ({
         {!isMobile ? (
           <button
             type="button"
-            onClick={onToggleCollapse}
+            onClick={handleToggleCollapse}
             className="text-lg text-white hover:bg-white/10 w-8 h-8 p-0 grid place-items-center rounded-lg transition-colors cursor-pointer border-0 bg-transparent"
             aria-label="Toggle sidebar"
           >
@@ -198,10 +206,15 @@ const SideBar: React.FC<SideBarProps> = ({
         <button
           type="button"
           onClick={onSignOut}
-          className="h-[40px] w-full rounded-xl border border-white/20 bg-white/10 text-white hover:bg-white/20 flex items-center justify-center transition-all cursor-pointer"
+          className={`h-[40px] w-full rounded-xl border border-white/20 bg-white/10 text-white hover:bg-white/20 flex items-center justify-center transition-all cursor-pointer ${
+            isCollapsed
+              ? "p-0 flex items-center justify-center"
+              : "flex items-center justify-center gap-1.5 px-3"
+          }`}
           aria-label="Sidebar sign out"
           title="Sign out"
         >
+          {!isCollapsed && <span>Log Out</span>}
           <LogOut className="h-4 w-4" />
         </button>
       </div>

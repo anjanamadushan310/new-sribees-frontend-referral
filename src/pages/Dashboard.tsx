@@ -22,13 +22,14 @@ import {
   useForm,
 } from "../components/Page/Dashboard";
 import { useToast } from "../components/Common/Toast";
+import { useSidebarCollapse } from "../hooks/useSidebarCollapse";
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const { message } = useToast();
   const queryClient = useQueryClient();
   const [recruitOpen, setRecruitOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useSidebarCollapse();
   const [recruitForm] = useForm<RecruitPartnerPayload>();
 
   const { data: me, isLoading } = useQuery({

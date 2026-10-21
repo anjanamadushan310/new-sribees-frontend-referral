@@ -24,13 +24,14 @@ import { SectionCard, StatCard } from "../components/Base";
 import { TopProductsTable } from "../components/Table";
 import { RecruitModal, useForm } from "../components/Page/Dashboard";
 import { useToast } from "../components/Common/Toast";
+import { useSidebarCollapse } from "../hooks/useSidebarCollapse";
 
 const Products: React.FC = () => {
   const navigate = useNavigate();
   const { message } = useToast();
   const queryClient = useQueryClient();
   const [recruitOpen, setRecruitOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useSidebarCollapse();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<ProductSortBy>("earned");
   const [viewMode, setViewMode] = useState<ProductViewMode>("auto");
@@ -151,7 +152,6 @@ const Products: React.FC = () => {
                 <StatCard
                   title="TOTAL PRODUCT EARNINGS"
                   value={totalCommission}
-                  tagText="Commission Earned"
                   icon={<DollarSign className="h-6 w-6" />}
                   gradientClass="bg-gradient-to-br from-pink-500 to-rose-600"
                 />
@@ -161,7 +161,6 @@ const Products: React.FC = () => {
                   title="TOTAL UNITS SOLD"
                   value={totalUnits}
                   prefix=""
-                  tagText="Net Units"
                   icon={<Package className="h-6 w-6" />}
                   gradientClass="bg-gradient-to-br from-blue-500 to-indigo-600"
                 />
@@ -171,7 +170,6 @@ const Products: React.FC = () => {
                   title="TOTAL ORDERS GENERATED"
                   value={totalOrders}
                   prefix=""
-                  tagText="Unique Orders"
                   icon={<ShoppingCart className="h-6 w-6" />}
                   gradientClass="bg-gradient-to-br from-emerald-600 to-teal-500"
                 />

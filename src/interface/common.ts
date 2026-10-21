@@ -10,8 +10,8 @@ export interface HeaderProps {
 }
 
 export interface SideBarProps {
-  collapsed: boolean;
-  onToggleCollapse: () => void;
+  collapsed?: boolean;
+  onToggleCollapse?: () => void;
   activeTab: string;
   onSelectTab: (key: string) => void;
   hasUpline?: boolean;
@@ -24,7 +24,7 @@ export interface StatCardProps {
   value: number;
   prefix?: string;
   precision?: number;
-  tagText: string;
+  tagText?: string;
   icon: ReactNode;
   leftIcon?: ReactNode;
   gradientClass?: string;

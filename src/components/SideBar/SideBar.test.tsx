@@ -4,8 +4,6 @@ import { MemoryRouter } from "react-router-dom";
 import SideBar from "./SideBar";
 
 const defaultProps = {
-  collapsed: false,
-  onToggleCollapse: vi.fn(),
   activeTab: "dashboard",
   onSelectTab: vi.fn(),
   hasUpline: false,
@@ -26,11 +24,11 @@ describe("SideBar", () => {
     vi.clearAllMocks();
   });
 
-  describe("Desktop screen", () => {
+  describe("Desktop screen (>= lg)", () => {
     beforeEach(() => {
-      // Desktop: matchMedia does not match max-width 767px
-      window.matchMedia = vi.fn().mockImplementation((query) => ({
-        matches: false,
+      // Desktop: matches min-width: 1024px, does not match max-width
+      window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+        matches: query.includes("min-width: 1024px"),
         media: query,
         onchange: null,
         addListener: vi.fn(),
@@ -41,8 +39,22 @@ describe("SideBar", () => {
       }));
     });
 
+    it("defaults to expanded state with labels and toggle button when uncontrolled", () => {
+      const { container } = renderSideBar();
+
+      expect(screen.getByText("Main Logo")).toBeInTheDocument();
+      expect(screen.getByText("Dashboard")).toBeInTheDocument();
+      expect(screen.getByText("Products")).toBeInTheDocument();
+
+      const toggleButton = screen.getByRole("button", { name: "Toggle sidebar" });
+      expect(toggleButton).toBeInTheDocument();
+
+      const aside = container.querySelector("aside");
+      expect(aside?.className).toContain("w-[264px]");
+    });
+
     it("renders expanded state with labels and toggle button when collapsed=false", () => {
-      const { container } = renderSideBar({ collapsed: false });
+      const { container } = renderSideBar({ collapsed: false, onToggleCollapse: vi.fn() });
 
       expect(screen.getByText("Main Logo")).toBeInTheDocument();
       expect(screen.getByText("Dashboard")).toBeInTheDocument();
@@ -69,7 +81,7 @@ describe("SideBar", () => {
     });
 
     it("renders collapsed state when collapsed=true", () => {
-      const { container } = renderSideBar({ collapsed: true });
+      const { container } = renderSideBar({ collapsed: true, onToggleCollapse: vi.fn() });
 
       expect(screen.queryByText("Main Logo")).not.toBeInTheDocument();
       expect(screen.queryByText("Dashboard")).not.toBeInTheDocument();
@@ -82,10 +94,55 @@ describe("SideBar", () => {
     });
   });
 
-  describe("Mobile screen", () => {
+  describe("Tablet / Mid-range screen (sm <= screen < lg)", () => {
     beforeEach(() => {
-      // Mobile: matchMedia matches max-width 767px
-      window.matchMedia = vi.fn().mockImplementation((query) => ({
+      // sm <= screen < lg: matches max-width: 1023px, does not match max-width: 639px (not mobile)
+      window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+        matches: query.includes("1023px"),
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      }));
+    });
+
+    it("defaults to collapsed state but shows toggle button", () => {
+      const { container } = renderSideBar();
+
+      // Labels should not be visible by default
+      expect(screen.queryByText("Main Logo")).not.toBeInTheDocument();
+      expect(screen.queryByText("Dashboard")).not.toBeInTheDocument();
+
+      // But toggle button SHOULD be present
+      const toggleButton = screen.getByRole("button", { name: "Toggle sidebar" });
+      expect(toggleButton).toBeInTheDocument();
+
+      const aside = container.querySelector("aside");
+      expect(aside?.className).toContain("w-[76px]");
+    });
+
+    it("toggles to expanded when user clicks the toggle button", () => {
+      const { container } = renderSideBar();
+
+      const toggleButton = screen.getByRole("button", { name: "Toggle sidebar" });
+      fireEvent.click(toggleButton);
+
+      // Now it should be expanded
+      expect(screen.getByText("Main Logo")).toBeInTheDocument();
+      expect(screen.getByText("Dashboard")).toBeInTheDocument();
+
+      const aside = container.querySelector("aside");
+      expect(aside?.className).toContain("w-[264px]");
+    });
+  });
+
+  describe("Mobile screen (< sm)", () => {
+    beforeEach(() => {
+      // Mobile: matchMedia matches max-width 639px
+      window.matchMedia = vi.fn().mockImplementation((query: string) => ({
         matches: query.includes("max-width"),
         media: query,
         onchange: null,
@@ -98,7 +155,7 @@ describe("SideBar", () => {
     });
 
     it("remains collapsed even if collapsed=false is passed", () => {
-      const { container } = renderSideBar({ collapsed: false });
+      const { container } = renderSideBar({ collapsed: false, onToggleCollapse: vi.fn() });
 
       // Labels should not be visible
       expect(screen.queryByText("Main Logo")).not.toBeInTheDocument();

@@ -25,13 +25,14 @@ import { SectionCard, StatCard } from "../components/Base";
 import { RecruitTable } from "../components/Table";
 import { RecruitModal, useForm } from "../components/Page/Dashboard";
 import { useToast } from "../components/Common/Toast";
+import { useSidebarCollapse } from "../hooks/useSidebarCollapse";
 
 const Team: React.FC = () => {
   const navigate = useNavigate();
   const { message } = useToast();
   const queryClient = useQueryClient();
   const [recruitOpen, setRecruitOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useSidebarCollapse();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<TeamStatusFilter>("all");
   const [sortBy, setSortBy] = useState<TeamSortBy>("earned");

@@ -25,13 +25,14 @@ import { SectionCard, StatCard } from "../components/Base";
 import { CommissionTable } from "../components/Table";
 import { RecruitModal, useForm } from "../components/Page/Dashboard";
 import { useToast } from "../components/Common/Toast";
+import { useSidebarCollapse } from "../hooks/useSidebarCollapse";
 
 const Ledger: React.FC = () => {
   const navigate = useNavigate();
   const { message } = useToast();
   const queryClient = useQueryClient();
   const [recruitOpen, setRecruitOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useSidebarCollapse();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<LedgerStatusFilter>("all");
   const [levelFilter, setLevelFilter] = useState<LedgerLevelFilter>("all");
@@ -186,7 +187,6 @@ const Ledger: React.FC = () => {
                 <StatCard
                   title="READY TO CLAIM"
                   value={claimable}
-                  tagText="Claimable"
                   icon={<DollarSign className="h-6 w-6" />}
                   gradientClass="bg-gradient-to-br from-emerald-500 to-teal-600"
                 />
@@ -195,7 +195,6 @@ const Ledger: React.FC = () => {
                 <StatCard
                   title="SETTLED & PAID"
                   value={paid}
-                  tagText="Disbursed"
                   icon={<CheckCircle2 className="h-6 w-6" />}
                   gradientClass="bg-gradient-to-br from-blue-500 to-indigo-600"
                 />
@@ -204,7 +203,6 @@ const Ledger: React.FC = () => {
                 <StatCard
                   title="PENDING SETTLEMENT"
                   value={pending}
-                  tagText="In Clearance"
                   icon={<Clock className="h-6 w-6" />}
                   gradientClass="bg-gradient-to-br from-amber-500 to-orange-600"
                 />
@@ -213,7 +211,6 @@ const Ledger: React.FC = () => {
                 <StatCard
                   title="TOTAL EARNED (NET)"
                   value={totalRecorded}
-                  tagText="Total Recorded"
                   icon={<TrendingUp className="h-6 w-6" />}
                   gradientClass="bg-gradient-to-br from-pink-500 to-rose-600"
                 />

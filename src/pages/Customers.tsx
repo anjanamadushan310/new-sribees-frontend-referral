@@ -22,13 +22,14 @@ import { SectionCard, StatCard } from "../components/Base";
 import { CustomerTable } from "../components/Table";
 import { RecruitModal, useForm } from "../components/Page/Dashboard";
 import { useToast } from "../components/Common/Toast";
+import { useSidebarCollapse } from "../hooks/useSidebarCollapse";
 
 const Customers: React.FC = () => {
   const navigate = useNavigate();
   const { message } = useToast();
   const queryClient = useQueryClient();
   const [recruitOpen, setRecruitOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useSidebarCollapse();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<CustomerSortBy>("earned");
   const [copied, setCopied] = useState(false);
@@ -155,53 +156,6 @@ const Customers: React.FC = () => {
         <Header onSignOut={signOut} title="My Customers" />
 
         <main className="m-0 w-auto max-w-none bg-slate-50 px-4 sm:px-7 pb-[30px] pt-1">
-          {/* Referral Code Quick Banner */}
-          <div className="mb-6 overflow-hidden rounded-2xl bg-gradient-to-r from-pink-600 via-rose-600 to-fuchsia-700 p-5 text-white shadow-md relative">
-            <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="max-w-xl">
-                <div className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold backdrop-blur-sm mb-2">
-                  <Sparkles className="h-3.5 w-3.5 text-amber-300" />
-                  <span>Invite & Earn Program</span>
-                </div>
-                <h2 className="text-xl font-bold tracking-tight text-white m-0">
-                  Share Your Referral Code
-                </h2>
-                <p className="mt-1 text-xs sm:text-sm text-pink-100/90 m-0">
-                  {me?.commissionText ||
-                    "Customers who register using your referral code earn you commissions on their eligible purchases."}
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2.5 bg-white/10 backdrop-blur-md p-1.5 pl-4 rounded-xl border border-white/20 shrink-0">
-                <div className="flex flex-col">
-                  <span className="text-[10px] uppercase font-bold text-pink-200 tracking-wider">
-                    Your Code
-                  </span>
-                  <span className="font-mono text-lg font-extrabold tracking-wider text-white">
-                    {me?.referralCode || "—"}
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={copyCode}
-                  className="flex items-center gap-1.5 rounded-lg bg-white px-3.5 py-2 text-xs font-bold text-pink-700 shadow-sm hover:bg-pink-50 transition-all cursor-pointer border-0"
-                >
-                  {copied ? (
-                    <>
-                      <Check className="h-4 w-4 text-emerald-600" />
-                      <span>Copied!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="h-4 w-4" />
-                      <span>Copy Code</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-
           {/* Customer Performance KPI Cards */}
           <SectionCard
             title="Customer Portfolio Overview"

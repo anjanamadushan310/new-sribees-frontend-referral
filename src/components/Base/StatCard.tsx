@@ -234,13 +234,15 @@ const StatCard: React.FC<StatCardProps> = ({
             </span>
           </div>
 
-          <div className="mt-2">
-            <span
-              className={`inline-block rounded-full px-3 py-0.5 text-[11px] font-medium ${theme.tagBg} ${theme.tagText}`}
-            >
-              {tagText}
-            </span>
-          </div>
+          {tagText && (
+            <div className="mt-2">
+              <span
+                className={`inline-block rounded-full px-3 py-0.5 text-[11px] font-medium ${theme.tagBg} ${theme.tagText}`}
+              >
+                {tagText}
+              </span>
+            </div>
+          )}
         </div>
       </div>
 

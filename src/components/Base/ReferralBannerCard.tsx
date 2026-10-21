@@ -29,7 +29,7 @@ const ReferralBannerCard: React.FC<ReferralBannerCardProps> = ({
           <span>✦</span> Referral Program
         </div>
         <h2 className="my-2 text-xl font-bold text-slate-900 tracking-tight">
-          Your Personal Referral Link
+          Your Personal Referral Code
         </h2>
         <p className="m-0 max-w-[580px] text-sm text-slate-600 leading-relaxed">
           {commissionText ??
@@ -52,7 +52,7 @@ const ReferralBannerCard: React.FC<ReferralBannerCardProps> = ({
           onClick={onCopy}
         >
           <Copy className="h-3.5 w-3.5" />
-          <span>Copy Link</span>
+          <span>Copy Code</span>
         </button>
       </div>
     </div>
