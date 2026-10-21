@@ -1,25 +1,15 @@
 import React, { useState, useMemo } from "react";
 import {
-  Layout,
-  Typography,
-  App,
-  Form,
-  Row,
-  Col,
-  Input,
-  Select,
-  Segmented,
-  Empty,
-} from "antd";
-import {
-  SearchOutlined,
-  AppstoreOutlined,
-  TableOutlined,
-  DollarOutlined,
-  InboxOutlined,
-  ShoppingCartOutlined,
-  ShoppingOutlined,
-} from "@ant-design/icons";
+  Search,
+  LayoutGrid,
+  Table,
+  DollarSign,
+  Package,
+  ShoppingCart,
+  ShoppingBag,
+  ChevronDown,
+  X,
+} from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { partnerApi } from "../api/partner.api";
@@ -28,14 +18,12 @@ import { SideBar } from "../components/SideBar";
 import { Header } from "../components/Header";
 import { SectionCard, StatCard } from "../components/Base";
 import { TopProductsTable } from "../components/Table";
-import { RecruitModal } from "../components/Page/Dashboard";
-
-const { Content } = Layout;
-const { Text } = Typography;
+import { RecruitModal, useForm } from "../components/Page/Dashboard";
+import { useToast } from "../components/Common/Toast";
 
 const Products: React.FC = () => {
   const navigate = useNavigate();
-  const { message } = App.useApp();
+  const { message } = useToast();
   const queryClient = useQueryClient();
   const [recruitOpen, setRecruitOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -44,7 +32,7 @@ const Products: React.FC = () => {
     "earned"
   );
   const [viewMode, setViewMode] = useState<"auto" | "table" | "grid">("auto");
-  const [recruitForm] = Form.useForm<RecruitPartnerPayload>();
+  const [recruitForm] = useForm<RecruitPartnerPayload>();
 
   const { data: me } = useQuery({
     queryKey: ["partner-me"],
@@ -130,7 +118,7 @@ const Products: React.FC = () => {
   }, [topProducts, searchQuery, sortBy]);
 
   return (
-    <Layout className="!h-screen !max-h-screen !overflow-hidden !box-border !bg-gradient-to-br !from-[#D81B60] !via-[#C2185B] !to-[#880E4F] !p-3">
+    <div className="h-screen max-h-screen overflow-hidden box-border bg-gradient-to-br from-[#D81B60] via-[#C2185B] to-[#880E4F] p-3 flex">
       <SideBar
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed((value) => !value)}
@@ -151,122 +139,143 @@ const Products: React.FC = () => {
       <div className="custom-scrollbar min-w-0 flex-1 h-[calc(100vh-24px)] max-h-[calc(100vh-24px)] overflow-y-auto rounded-[17px] bg-slate-50 shadow-[0_20px_40px_rgba(15,23,42,.25)]">
         <Header onSignOut={signOut} title="Products" />
 
-        <Content className="!m-0 !w-auto !max-w-none !bg-slate-50 !px-4 sm:!px-7 !pb-[30px] !pt-1">
+        <main className="m-0 w-auto max-w-none bg-slate-50 px-4 sm:px-7 pb-[30px] pt-1">
           {/* Overview Stat Cards */}
           <SectionCard
             title="Products Performance Overview"
-            icon={<ShoppingOutlined />}
+            icon={<ShoppingBag className="h-5 w-5" />}
           >
-            <Row gutter={[16, 16]}>
-              <Col xs={24} md={8}>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
                 <StatCard
                   title="TOTAL PRODUCT EARNINGS"
                   value={totalCommission}
                   tagText="Commission Earned"
-                  icon={<DollarOutlined />}
-                  gradientClass="!bg-gradient-to-br !from-pink-500 !to-rose-600"
+                  icon={<DollarSign className="h-6 w-6" />}
+                  gradientClass="bg-gradient-to-br from-pink-500 to-rose-600"
                 />
-              </Col>
-              <Col xs={24} md={8}>
+              </div>
+              <div>
                 <StatCard
                   title="TOTAL UNITS SOLD"
                   value={totalUnits}
                   prefix=""
                   tagText="Net Units"
-                  icon={<InboxOutlined />}
-                  gradientClass="!bg-gradient-to-br !from-blue-500 !to-indigo-600"
+                  icon={<Package className="h-6 w-6" />}
+                  gradientClass="bg-gradient-to-br from-blue-500 to-indigo-600"
                 />
-              </Col>
-              <Col xs={24} md={8}>
+              </div>
+              <div>
                 <StatCard
                   title="TOTAL ORDERS GENERATED"
                   value={totalOrders}
                   prefix=""
                   tagText="Unique Orders"
-                  icon={<ShoppingCartOutlined />}
-                  gradientClass="!bg-gradient-to-br !from-emerald-600 !to-teal-500"
+                  icon={<ShoppingCart className="h-6 w-6" />}
+                  gradientClass="bg-gradient-to-br from-emerald-600 to-teal-500"
                 />
-              </Col>
-            </Row>
+              </div>
+            </div>
           </SectionCard>
 
           {/* Top Products Table & Grid Card */}
           <SectionCard
             title="Top Products"
-            icon={<ShoppingOutlined />}
+            icon={<ShoppingBag className="h-5 w-5" />}
             extraHeader={
               <div className="flex flex-wrap items-center gap-2.5">
-                <Segmented
-                  value={viewMode}
-                  onChange={(val) => setViewMode(val as "auto" | "table" | "grid")}
-                  options={[
-                    {
-                      label: "Auto",
-                      value: "auto",
-                    },
-                    {
-                      label: (
-                        <span className="flex items-center gap-1">
-                          <TableOutlined />
-                          <span className="hidden sm:inline">Table</span>
-                        </span>
-                      ),
-                      value: "table",
-                    },
-                    {
-                      label: (
-                        <span className="flex items-center gap-1">
-                          <AppstoreOutlined />
-                          <span className="hidden sm:inline">Grid</span>
-                        </span>
-                      ),
-                      value: "grid",
-                    },
-                  ]}
-                />
+                <div className="inline-flex rounded-xl bg-slate-100 p-1 border border-slate-200/80">
+                  <button
+                    type="button"
+                    onClick={() => setViewMode("auto")}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer border-0 ${
+                      viewMode === "auto"
+                        ? "bg-white text-pink-700 shadow-sm"
+                        : "bg-transparent text-slate-600 hover:text-slate-800"
+                    }`}
+                  >
+                    Auto
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode("table")}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer border-0 flex items-center gap-1.5 ${
+                      viewMode === "table"
+                        ? "bg-white text-pink-700 shadow-sm"
+                        : "bg-transparent text-slate-600 hover:text-slate-800"
+                    }`}
+                  >
+                    <Table className="h-3.5 w-3.5" />
+                    <span className="hidden sm:inline">Table</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode("grid")}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer border-0 flex items-center gap-1.5 ${
+                      viewMode === "grid"
+                        ? "bg-white text-pink-700 shadow-sm"
+                        : "bg-transparent text-slate-600 hover:text-slate-800"
+                    }`}
+                  >
+                    <LayoutGrid className="h-3.5 w-3.5" />
+                    <span className="hidden sm:inline">Grid</span>
+                  </button>
+                </div>
               </div>
             }
           >
             {/* Filter and Search Bar */}
             <div className="mb-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-              <Input
-                placeholder="Search products by name or ID..."
-                prefix={<SearchOutlined className="text-slate-400" />}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                allowClear
-                className="max-w-md !rounded-xl"
-              />
+              <div className="relative max-w-md w-full">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                <input
+                  type="text"
+                  placeholder="Search products by name or ID..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full h-10 pl-10 pr-9 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-pink-600 focus:ring-2 focus:ring-pink-100 transition-all"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 border-0 bg-transparent p-0 cursor-pointer"
+                    aria-label="Clear search"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
 
               <div className="flex items-center gap-2">
                 <span className="text-xs font-semibold text-slate-500 whitespace-nowrap">
                   Sort by:
                 </span>
-                <Select
-                  value={sortBy}
-                  onChange={setSortBy}
-                  className="w-44"
-                  options={[
-                    { value: "earned", label: "Highest Earned" },
-                    { value: "units", label: "Most Units Sold" },
-                    { value: "orders", label: "Most Orders" },
-                    { value: "name", label: "Product Name (A-Z)" },
-                  ]}
-                />
+                <div className="relative w-44">
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as any)}
+                    className="w-full h-10 appearance-none rounded-xl border border-slate-200 bg-white px-3.5 pr-8 text-xs font-medium text-slate-700 focus:outline-none focus:border-pink-600 focus:ring-2 focus:ring-pink-100 transition-all cursor-pointer"
+                  >
+                    <option value="earned">Highest Earned</option>
+                    <option value="units">Most Units Sold</option>
+                    <option value="orders">Most Orders</option>
+                    <option value="name">Product Name (A-Z)</option>
+                  </select>
+                  <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                </div>
               </div>
             </div>
 
             {/* Top Products Table (Desktop) / Grid (Mobile) */}
             {filteredProducts.length === 0 && !isLoading ? (
               <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white/60 p-10 text-center">
-                <Empty
-                  image={Empty.PRESENTED_IMAGE_SIMPLE}
-                  description={
-                    searchQuery
-                      ? "No products matching your search."
-                      : "No product has earned you commission yet."
-                  }
-                />
+                <Package className="h-10 w-10 text-slate-300 mb-2" />
+                <p className="text-sm text-slate-500 m-0">
+                  {searchQuery
+                    ? "No products matching your search."
+                    : "No product has earned you commission yet."}
+                </p>
               </div>
             ) : (
               <TopProductsTable
@@ -277,11 +286,11 @@ const Products: React.FC = () => {
             )}
           </SectionCard>
 
-          <Text type="secondary" className="!mt-4 !block !text-xs">
+          <p className="mt-4 block text-xs text-slate-500 m-0">
             Product commissions are earned based on selected items purchased by
             referred customers.
-          </Text>
-        </Content>
+          </p>
+        </main>
       </div>
 
       <RecruitModal
@@ -294,7 +303,7 @@ const Products: React.FC = () => {
         confirmLoading={recruitMutation.isPending}
         form={recruitForm}
       />
-    </Layout>
+    </div>
   );
 };
 

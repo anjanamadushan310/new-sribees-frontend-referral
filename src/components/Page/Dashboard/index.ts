@@ -8,3 +8,5 @@ export { default as DashboardTabs } from "./DashboardTabs";
 export type { DashboardTabsProps } from "./DashboardTabs";
 export { default as RecruitModal } from "./RecruitModal";
 export type { RecruitModalProps } from "./RecruitModal";
+export { useForm, Form } from "./useForm";
+export type { FormInstance } from "./useForm";

@@ -1,11 +1,11 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { App as AntApp } from 'antd';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PartnerProfile } from '../api/partner.api';
 import { partnerApi } from '../api/partner.api';
 import Products from './Products';
+import { ToastProvider } from '../components/Common/Toast';
 
 vi.mock('../api/partner.api', () => ({
     partnerApi: {
@@ -34,7 +34,7 @@ function renderProducts() {
     const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     return render(
         <QueryClientProvider client={client}>
-            <AntApp>
+            <ToastProvider>
                 <MemoryRouter initialEntries={['/products']}>
                     <Routes>
                         <Route path="/products" element={<Products />} />
@@ -42,7 +42,7 @@ function renderProducts() {
                         <Route path="/login" element={<p>login page</p>} />
                     </Routes>
                 </MemoryRouter>
-            </AntApp>
+            </ToastProvider>
         </QueryClientProvider>,
     );
 }

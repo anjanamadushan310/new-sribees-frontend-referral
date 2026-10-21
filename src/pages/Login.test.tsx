@@ -1,10 +1,10 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { App as AntApp } from 'antd';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { partnerApi } from '../api/partner.api';
 import Login from './Login';
+import { ToastProvider } from '../components/Common/Toast';
 
 vi.mock('../api/partner.api', () => ({ partnerApi: { login: vi.fn() } }));
 const login = vi.mocked(partnerApi.login);
@@ -12,14 +12,14 @@ const login = vi.mocked(partnerApi.login);
 function renderLogin() {
     return render(
         <QueryClientProvider client={new QueryClient()}>
-            <AntApp>
+            <ToastProvider>
                 <MemoryRouter initialEntries={['/login']}>
                     <Routes>
                         <Route path="/login" element={<Login />} />
                         <Route path="/" element={<p>dashboard</p>} />
                     </Routes>
                 </MemoryRouter>
-            </AntApp>
+            </ToastProvider>
         </QueryClientProvider>,
     );
 }

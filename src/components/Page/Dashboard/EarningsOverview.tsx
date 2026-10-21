@@ -1,11 +1,5 @@
 import React from "react";
-import { Row, Col } from "antd";
-import {
-  WalletOutlined,
-  DollarOutlined,
-  ClockCircleOutlined,
-  CheckCircleOutlined,
-} from "@ant-design/icons";
+import { Wallet, DollarSign, Clock, CheckCircle2 } from "lucide-react";
 import { SectionCard, StatCard } from "../../Base";
 import type { PartnerProfile } from "../../../api/partner.api";
 
@@ -22,37 +16,37 @@ const EarningsOverview: React.FC<EarningsOverviewProps> = ({ totals }) => {
   return (
     <SectionCard
       title="Earnings & Payout Overview"
-      icon={<WalletOutlined />}
+      icon={<Wallet className="h-5 w-5" />}
     >
-      <Row gutter={[16, 16]}>
-        <Col xs={24} md={8}>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
           <StatCard
             title="TOTAL EARNINGS"
             value={totalEarnings}
             tagText="All-time commission"
-            icon={<DollarOutlined />}
-            gradientClass="!bg-gradient-to-br !from-blue-500 !to-indigo-600"
+            icon={<DollarSign className="h-6 w-6" />}
+            gradientClass="bg-gradient-to-br from-blue-500 to-indigo-600"
           />
-        </Col>
-        <Col xs={24} md={8}>
+        </div>
+        <div>
           <StatCard
             title="PENDING COMMISSIONS"
             value={totals?.pending ?? 0}
             tagText="Pending Payout"
-            icon={<ClockCircleOutlined />}
-            gradientClass="!bg-gradient-to-br !from-amber-500 !to-orange-500"
+            icon={<Clock className="h-6 w-6" />}
+            gradientClass="bg-gradient-to-br from-amber-500 to-orange-500"
           />
-        </Col>
-        <Col xs={24} md={8}>
+        </div>
+        <div>
           <StatCard
             title="TOTAL PAID"
             value={totals?.paid ?? 0}
             tagText="Cleared & Processed"
-            icon={<CheckCircleOutlined />}
-            gradientClass="!bg-gradient-to-br !from-emerald-600 !to-teal-500"
+            icon={<CheckCircle2 className="h-6 w-6" />}
+            gradientClass="bg-gradient-to-br from-emerald-600 to-teal-500"
           />
-        </Col>
-      </Row>
+        </div>
+      </div>
     </SectionCard>
   );
 };

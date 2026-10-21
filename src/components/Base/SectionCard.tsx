@@ -1,7 +1,4 @@
 import React from "react";
-import { Card, Typography } from "antd";
-
-const { Title } = Typography;
 
 export interface SectionCardProps {
   title?: string;
@@ -19,8 +16,8 @@ const SectionCard: React.FC<SectionCardProps> = ({
   extraHeader,
 }) => {
   return (
-    <Card
-      className={`!mb-7 !rounded-[17px] !border !border-slate-100 !p-5 !shadow-[0_2px_5px_rgba(15,23,42,.04)] [&>.ant-card-body]:!p-0 ${className}`}
+    <section
+      className={`mb-7 rounded-[17px] border border-slate-100 bg-white p-5 shadow-[0_2px_5px_rgba(15,23,42,.04)] ${className}`}
     >
       {(title || icon || extraHeader) && (
         <div className="mb-[18px] flex items-center justify-between">
@@ -31,16 +28,16 @@ const SectionCard: React.FC<SectionCardProps> = ({
               </span>
             )}
             {title && (
-              <Title level={3} className="!m-0 !text-lg !text-[#273650]">
+              <h3 className="m-0 text-lg font-bold text-[#273650] tracking-tight">
                 {title}
-              </Title>
+              </h3>
             )}
           </div>
           {extraHeader}
         </div>
       )}
       {children}
-    </Card>
+    </section>
   );
 };
 

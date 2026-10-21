@@ -6,8 +6,7 @@
  * Never what a customer paid: the API does not return the order or line value,
  * so this screen could not show it even by mistake.
  */
-import React, { useState } from "react";
-import { Layout, Typography, App, Form } from "antd";
+import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { partnerApi } from "../api/partner.api";
@@ -20,23 +19,22 @@ import {
   CommissionBreakdown,
   DashboardTabs,
   RecruitModal,
+  useForm,
 } from "../components/Page/Dashboard";
-
-const { Content } = Layout;
-const { Text } = Typography;
+import { useToast } from "../components/Common/Toast";
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const urlTab = searchParams.get("tab");
-  const { message } = App.useApp();
+  const { message } = useToast();
   const queryClient = useQueryClient();
   const [recruitOpen, setRecruitOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState(urlTab || "customers");
-  const [recruitForm] = Form.useForm<RecruitPartnerPayload>();
+  const [recruitForm] = useForm<RecruitPartnerPayload>();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (urlTab) {
       setActiveTab(urlTab);
     }
@@ -67,7 +65,7 @@ const Dashboard: React.FC = () => {
     mutationFn: (payload: RecruitPartnerPayload) => partnerApi.recruit(payload),
     onSuccess: () => {
       message.success(
-        "Partner recruited. Share their login details with them.",
+        "Partner recruited. Share their login details with them."
       );
       setRecruitOpen(false);
       recruitForm.resetFields();
@@ -76,7 +74,7 @@ const Dashboard: React.FC = () => {
     onError: (err: any) =>
       message.error(
         err.response?.data?.detail?.error?.message ??
-          "Could not recruit this partner.",
+          "Could not recruit this partner."
       ),
   });
 
@@ -109,7 +107,7 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <Layout className="!h-screen !max-h-screen !overflow-hidden !box-border !bg-gradient-to-br !from-[#D81B60] !via-[#C2185B] !to-[#880E4F] !p-3">
+    <div className="h-screen max-h-screen overflow-hidden box-border bg-gradient-to-br from-[#D81B60] via-[#C2185B] to-[#880E4F] p-3 flex">
       <SideBar
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed((value) => !value)}
@@ -125,7 +123,7 @@ const Dashboard: React.FC = () => {
       <div className="custom-scrollbar min-w-0 flex-1 h-[calc(100vh-24px)] max-h-[calc(100vh-24px)] overflow-y-auto rounded-[17px] bg-slate-50 shadow-[0_20px_40px_rgba(15,23,42,.25)]">
         <Header onSignOut={signOut} />
 
-        <Content className="!m-0 !w-auto !max-w-none !bg-slate-50 !px-7 !pb-[30px] !pt-1">
+        <main className="m-0 w-auto max-w-none bg-slate-50 px-7 pb-[30px] pt-1">
           <ReferralSection
             profile={me}
             loading={isLoading}
@@ -146,11 +144,11 @@ const Dashboard: React.FC = () => {
             hasUpline={me?.hasUpline}
           />
 
-          <Text type="secondary" className="!mt-4 !block !text-xs">
+          <p className="mt-4 block text-xs text-slate-500 m-0">
             Commission is settled by the finance team; this ledger is the
             statement it is reconciled against.
-          </Text>
-        </Content>
+          </p>
+        </main>
       </div>
 
       <RecruitModal
@@ -163,7 +161,7 @@ const Dashboard: React.FC = () => {
         confirmLoading={recruitMutation.isPending}
         form={recruitForm}
       />
-    </Layout>
+    </div>
   );
 };
 

@@ -1,16 +1,8 @@
 import React from "react";
-import { Table, Typography, Spin, Empty } from "antd";
-import {
-  ShoppingOutlined,
-  InboxOutlined,
-  ShoppingCartOutlined,
-  TrophyOutlined,
-} from "@ant-design/icons";
+import { ShoppingBag, Package, ShoppingCart, Trophy } from "lucide-react";
 import type { PartnerTopProduct } from "../../api/partner.api";
 import { money } from "./tableUtils";
 import { useIsMobile } from "../../hooks/useIsMobile";
-
-const { Text } = Typography;
 
 export interface TopProductsTableProps {
   products: PartnerTopProduct[];
@@ -18,66 +10,6 @@ export interface TopProductsTableProps {
   viewMode?: "auto" | "table" | "grid";
   className?: string;
 }
-
-const topProductColumns = [
-  {
-    title: "#",
-    key: "rank",
-    width: 60,
-    render: (_: unknown, __: PartnerTopProduct, index: number) => (
-      <span
-        className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${
-          index === 0
-            ? "bg-amber-100 text-amber-800"
-            : index === 1
-            ? "bg-slate-200 text-slate-700"
-            : index === 2
-            ? "bg-orange-100 text-orange-800"
-            : "bg-slate-100 text-slate-500"
-        }`}
-      >
-        {index + 1}
-      </span>
-    ),
-  },
-  {
-    title: "Product",
-    dataIndex: "product_name",
-    key: "product_name",
-    render: (name: string, record: PartnerTopProduct) => (
-      <div className="flex items-center gap-2.5">
-        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-pink-50 text-pink-600">
-          <ShoppingOutlined />
-        </span>
-        <div className="min-w-0">
-          <div className="font-semibold text-slate-800">{name}</div>
-          <div className="text-[11px] font-mono text-slate-400">
-            ID: {record.product_id}
-          </div>
-        </div>
-      </div>
-    ),
-  },
-  {
-    title: "Orders",
-    dataIndex: "orders",
-    key: "orders",
-    align: "right" as const,
-  },
-  {
-    title: "Units",
-    dataIndex: "units",
-    key: "units",
-    align: "right" as const,
-  },
-  {
-    title: "You earned",
-    dataIndex: "total_earned",
-    key: "total_earned",
-    align: "right" as const,
-    render: (v: number) => <Text strong>{money(v)}</Text>,
-  },
-];
 
 const TopProductsTable: React.FC<TopProductsTableProps> = ({
   products,
@@ -88,26 +20,26 @@ const TopProductsTable: React.FC<TopProductsTableProps> = ({
   const isMobile = useIsMobile(768);
   const showGrid = viewMode === "grid" || (viewMode === "auto" && isMobile);
 
-  if (loading && showGrid) {
+  if (loading) {
     return (
       <div className="flex h-48 items-center justify-center">
-        <Spin size="large" />
+        <div className="h-8 w-8 animate-spin rounded-full border-3 border-slate-200 border-t-pink-600" />
+      </div>
+    );
+  }
+
+  if (products.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white/60 p-10 text-center">
+        <Package className="h-10 w-10 text-slate-300 mb-2" />
+        <p className="text-sm text-slate-500 m-0">
+          No product has earned you commission yet.
+        </p>
       </div>
     );
   }
 
   if (showGrid) {
-    if (products.length === 0) {
-      return (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white/60 p-10 text-center">
-          <Empty
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-            description="No product has earned you commission yet."
-          />
-        </div>
-      );
-    }
-
     return (
       <div
         className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3.5 ${className}`}
@@ -134,16 +66,16 @@ const TopProductsTable: React.FC<TopProductsTableProps> = ({
                           : "bg-slate-100 text-slate-600 border border-slate-200"
                       }`}
                     >
-                      {isTopThree && <TrophyOutlined className="mr-1 text-[10px]" />}
+                      {isTopThree && <Trophy className="mr-1 h-3 w-3 inline" />}
                       #{index + 1}
                     </span>
                     <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-pink-50 text-pink-600">
-                      <ShoppingOutlined className="text-sm" />
+                      <ShoppingBag className="h-4 w-4" />
                     </span>
                   </div>
 
                   <span className="inline-flex items-center gap-1 rounded-full bg-slate-100/90 px-2.5 py-0.5 text-[11px] font-medium text-slate-600">
-                    <InboxOutlined className="text-[11px]" />
+                    <Package className="h-3 w-3" />
                     {product.units} {product.units === 1 ? "unit" : "units"}
                   </span>
                 </div>
@@ -170,7 +102,7 @@ const TopProductsTable: React.FC<TopProductsTableProps> = ({
 
                 <div className="flex items-center justify-between text-xs text-slate-500 px-1">
                   <span className="flex items-center gap-1">
-                    <ShoppingCartOutlined className="text-slate-400" />
+                    <ShoppingCart className="h-3.5 w-3.5 text-slate-400" />
                     Orders
                   </span>
                   <span className="font-semibold text-slate-700">
@@ -187,17 +119,65 @@ const TopProductsTable: React.FC<TopProductsTableProps> = ({
 
   return (
     <div className={`overflow-x-auto ${className}`}>
-      <Table<PartnerTopProduct>
-        rowKey="product_id"
-        size="small"
-        loading={loading}
-        pagination={false}
-        dataSource={products}
-        columns={topProductColumns}
-        locale={{
-          emptyText: "No product has earned you commission yet.",
-        }}
-      />
+      <table className="w-full text-left text-sm border-collapse">
+        <thead>
+          <tr className="border-b border-slate-100 bg-slate-50/70 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            <th className="py-3 px-4 w-14">#</th>
+            <th className="py-3 px-4">Product</th>
+            <th className="py-3 px-4 text-right">Orders</th>
+            <th className="py-3 px-4 text-right">Units</th>
+            <th className="py-3 px-4 text-right">You earned</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-slate-100">
+          {products.map((product, index) => (
+            <tr
+              key={product.product_id}
+              className="hover:bg-slate-50/60 transition-colors"
+            >
+              <td className="py-3.5 px-4">
+                <span
+                  className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${
+                    index === 0
+                      ? "bg-amber-100 text-amber-800"
+                      : index === 1
+                      ? "bg-slate-200 text-slate-700"
+                      : index === 2
+                      ? "bg-orange-100 text-orange-800"
+                      : "bg-slate-100 text-slate-500"
+                  }`}
+                >
+                  {index + 1}
+                </span>
+              </td>
+              <td className="py-3.5 px-4">
+                <div className="flex items-center gap-2.5">
+                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-pink-50 text-pink-600">
+                    <ShoppingBag className="h-4 w-4" />
+                  </span>
+                  <div className="min-w-0">
+                    <div className="font-semibold text-slate-800">
+                      {product.product_name}
+                    </div>
+                    <div className="text-[11px] font-mono text-slate-400">
+                      ID: {product.product_id}
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td className="py-3.5 px-4 text-right text-slate-700">
+                {product.orders}
+              </td>
+              <td className="py-3.5 px-4 text-right text-slate-700">
+                {product.units}
+              </td>
+              <td className="py-3.5 px-4 text-right font-bold text-slate-800">
+                {money(product.total_earned)}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
