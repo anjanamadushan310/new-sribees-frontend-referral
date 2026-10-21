@@ -101,7 +101,7 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <Layout className="!min-h-[calc(100vh-24px)] !box-border !bg-gradient-to-br !from-[#D81B60] !via-[#C2185B] !to-[#880E4F] !p-3">
+    <Layout className="!h-screen !max-h-screen !overflow-hidden !box-border !bg-gradient-to-br !from-[#D81B60] !via-[#C2185B] !to-[#880E4F] !p-3">
       <SideBar
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed((value) => !value)}
@@ -114,7 +114,7 @@ const Dashboard: React.FC = () => {
         }}
         onSignOut={signOut}
       />
-      <div className="min-w-0 flex-1 overflow-hidden rounded-[17px] bg-slate-50 shadow-[0_20px_40px_rgba(15,23,42,.25)]">
+      <div className="custom-scrollbar min-w-0 flex-1 h-[calc(100vh-24px)] max-h-[calc(100vh-24px)] overflow-y-auto rounded-[17px] bg-slate-50 shadow-[0_20px_40px_rgba(15,23,42,.25)]">
         <Header onSignOut={signOut} />
 
         <Content className="!m-0 !w-auto !max-w-none !bg-slate-50 !px-7 !pb-[30px] !pt-1">

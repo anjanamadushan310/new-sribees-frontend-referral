@@ -29,15 +29,17 @@ const Header: React.FC<HeaderProps> = ({
         </Title>
         <InfoCircleOutlined className="!text-slate-400" />
       </Space>
-      <Button
-        className="!h-[39px] !rounded-xl !border-slate-200 !text-slate-600 !shadow-[0_2px_5px_rgba(15,23,42,.06)]"
-        icon={<CalendarOutlined />}
-      >
-        This Month
-      </Button>
-      <Button className="sr-only" onClick={onSignOut}>
-        Sign out
-      </Button>
+      <div className="flex items-center">
+        <Button
+          className="!h-[39px] !rounded-xl !border-slate-200 !text-slate-600 !shadow-[0_2px_5px_rgba(15,23,42,.06)]"
+          icon={<CalendarOutlined />}
+        >
+          This Month
+        </Button>
+        <Button className="sr-only" onClick={onSignOut}>
+          Sign out
+        </Button>
+      </div>
     </AntHeader>
   );
 };

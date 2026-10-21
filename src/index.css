@@ -17,3 +17,27 @@ body {
     font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     color: #17233b;
 }
+
+/* Custom sleek scrollbar for scrollable panels */
+.custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(203, 213, 225, 0.8) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 7px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(203, 213, 225, 0.8);
+    border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(148, 163, 184, 1);
+}
+
