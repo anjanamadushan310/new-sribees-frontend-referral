@@ -14,20 +14,24 @@ const ReferralBannerCard: React.FC<ReferralBannerCardProps> = ({
 }) => {
   if (loading) {
     return (
-      <div className="mb-7 min-h-[149px] animate-pulse rounded-[17px] bg-gradient-to-r from-fuchsia-600/70 via-pink-600/70 to-rose-500/70 p-[22px] shadow-[0_10px_17px_rgba(190,24,93,.2)]" />
+      <div className="mb-7 min-h-[140px] animate-pulse rounded-2xl bg-slate-100 p-6 border border-slate-200" />
     );
   }
 
   return (
-    <div className="mb-7 min-h-[149px] rounded-[17px] border-0 bg-gradient-to-r from-fuchsia-600 via-pink-600 to-rose-500 p-[22px] shadow-[0_10px_17px_rgba(190,24,93,.2)] flex items-center justify-between gap-5 max-[800px]:flex-col max-[800px]:items-start">
-      <div className="text-white">
-        <span className="m-0 inline-flex items-center gap-1 rounded-full border-0 bg-white/25 px-3 py-[3px] text-xs font-bold text-white">
-          <span>✣</span> Share &amp; Earn More
-        </span>
-        <h2 className="my-2 text-[21px] font-bold text-white tracking-tight">
+    <div className="relative mb-7 overflow-hidden rounded-2xl border border-rose-100/90 bg-gradient-to-br from-[#FFF5F8] via-white to-pink-50/40 p-6 shadow-[0_2px_12px_rgba(216,27,96,0.04)] flex items-center justify-between gap-6 max-[800px]:flex-col max-[800px]:items-start">
+      {/* Decorative subtle ambient soft glow */}
+      <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-pink-100/40 blur-3xl" />
+      <div className="pointer-events-none absolute -left-16 -bottom-16 h-48 w-48 rounded-full bg-rose-100/30 blur-3xl" />
+
+      <div className="relative z-[1]">
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-pink-200/80 bg-pink-100/70 px-3 py-0.5 text-xs font-semibold text-[#A51F60]">
+          <span>✦</span> Referral Program
+        </div>
+        <h2 className="my-2 text-xl font-bold text-slate-900 tracking-tight">
           Your Personal Referral Link
         </h2>
-        <p className="m-0 block max-w-[555px] text-[13px] text-white/90 leading-relaxed">
+        <p className="m-0 max-w-[580px] text-sm text-slate-600 leading-relaxed">
           {commissionText ??
             (commissionPercent !== undefined
               ? `Earn up to ${commissionPercent}% on selected products your customers buy.`
@@ -35,19 +39,19 @@ const ReferralBannerCard: React.FC<ReferralBannerCardProps> = ({
         </p>
       </div>
 
-      <div className="flex items-center gap-[11px] rounded-[13px] border border-white/25 bg-white/15 p-[9px] pl-3 max-[800px]:w-full max-[800px]:flex-col max-[800px]:items-start">
-        <span className="rounded-lg bg-white/20 px-[13px] py-2 text-xs text-white/85">
+      <div className="relative z-[1] flex items-center gap-2 rounded-xl border border-slate-200/80 bg-white p-1.5 pl-3.5 shadow-sm max-[800px]:w-full max-[800px]:justify-between">
+        <div className="text-xs text-slate-500 font-medium whitespace-nowrap">
           Code:{" "}
-          <strong className="ml-1 tracking-wider text-yellow-200">
+          <strong className="ml-1 font-mono text-sm font-bold tracking-wider text-[#A51F60]">
             {referralCode ?? "—"}
           </strong>
-        </span>
+        </div>
         <button
           type="button"
-          className="inline-flex h-[38px] items-center gap-1.5 rounded-[9px] border-0 bg-white px-4 text-sm font-bold text-fuchsia-700 shadow-sm transition hover:bg-white/90 active:scale-95 cursor-pointer"
+          className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-gradient-to-r from-[#A51F60] to-[#880E4F] px-4 text-xs font-semibold text-white shadow-sm transition hover:opacity-95 active:scale-95 cursor-pointer whitespace-nowrap"
           onClick={onCopy}
         >
-          <Copy className="h-4 w-4" />
+          <Copy className="h-3.5 w-3.5" />
           <span>Copy Link</span>
         </button>
       </div>

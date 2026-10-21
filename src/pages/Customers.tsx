@@ -47,7 +47,9 @@ const Customers: React.FC = () => {
   const recruitMutation = useMutation({
     mutationFn: (payload: RecruitPartnerPayload) => partnerApi.recruit(payload),
     onSuccess: () => {
-      message.success("Partner recruited. Share their login details with them.");
+      message.success(
+        "Partner recruited. Share their login details with them.",
+      );
       setRecruitOpen(false);
       recruitForm.resetFields();
       queryClient.invalidateQueries({ queryKey: ["partner-recruits"] });
@@ -55,7 +57,7 @@ const Customers: React.FC = () => {
     onError: (err: any) =>
       message.error(
         err.response?.data?.detail?.error?.message ??
-          "Could not recruit this partner."
+          "Could not recruit this partner.",
       ),
   });
 
@@ -91,11 +93,11 @@ const Customers: React.FC = () => {
   const totalCustomers = customers.length;
   const totalEarned = useMemo(
     () => customers.reduce((sum, c) => sum + (c.total_earned || 0), 0),
-    [customers]
+    [customers],
   );
   const totalOrders = useMemo(
     () => customers.reduce((sum, c) => sum + (c.orders || 0), 0),
-    [customers]
+    [customers],
   );
   const avgEarned = totalCustomers > 0 ? totalEarned / totalCustomers : 0;
 
@@ -108,7 +110,7 @@ const Customers: React.FC = () => {
       list = list.filter(
         (c) =>
           c.name.toLowerCase().includes(q) ||
-          c.member_id.toLowerCase().includes(q)
+          c.member_id.toLowerCase().includes(q),
       );
     }
 
@@ -120,7 +122,10 @@ const Customers: React.FC = () => {
         return (b.orders || 0) - (a.orders || 0);
       }
       if (sortBy === "recent") {
-        return new Date(b.joined_at || 0).getTime() - new Date(a.joined_at || 0).getTime();
+        return (
+          new Date(b.joined_at || 0).getTime() -
+          new Date(a.joined_at || 0).getTime()
+        );
       }
       if (sortBy === "name") {
         return a.name.localeCompare(b.name);
@@ -132,7 +137,7 @@ const Customers: React.FC = () => {
   }, [customers, searchQuery, sortBy]);
 
   return (
-    <div className="h-screen max-h-screen overflow-hidden box-border bg-gradient-to-br from-[#D81B60] via-[#C2185B] to-[#880E4F] p-3 flex">
+    <div className="h-screen max-h-screen overflow-hidden box-border bg-gradient-to-br from-[#A51F60] to-[#880E4F] p-3 flex">
       <SideBar
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed((v) => !v)}

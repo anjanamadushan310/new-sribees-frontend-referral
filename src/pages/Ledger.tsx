@@ -13,7 +13,12 @@ import {
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { partnerApi } from "../api/partner.api";
-import type { RecruitPartnerPayload, LedgerSortBy, LedgerStatusFilter, LedgerLevelFilter } from "../interface";
+import type {
+  RecruitPartnerPayload,
+  LedgerSortBy,
+  LedgerStatusFilter,
+  LedgerLevelFilter,
+} from "../interface";
 import { SideBar } from "../components/SideBar";
 import { Header } from "../components/Header";
 import { SectionCard, StatCard } from "../components/Base";
@@ -46,7 +51,9 @@ const Ledger: React.FC = () => {
   const recruitMutation = useMutation({
     mutationFn: (payload: RecruitPartnerPayload) => partnerApi.recruit(payload),
     onSuccess: () => {
-      message.success("Partner recruited. Share their login details with them.");
+      message.success(
+        "Partner recruited. Share their login details with them.",
+      );
       setRecruitOpen(false);
       recruitForm.resetFields();
       queryClient.invalidateQueries({ queryKey: ["partner-recruits"] });
@@ -54,7 +61,7 @@ const Ledger: React.FC = () => {
     onError: (err: any) =>
       message.error(
         err.response?.data?.detail?.error?.message ??
-          "Could not recruit this partner."
+          "Could not recruit this partner.",
       ),
   });
 
@@ -83,8 +90,12 @@ const Ledger: React.FC = () => {
   const paid = me?.totals?.paid ?? 0;
   const pending = me?.totals?.pending ?? 0;
   const totalRecorded = useMemo(
-    () => commissions.reduce((sum, c) => sum + (c.status !== "reversed" ? c.amount : 0), 0),
-    [commissions]
+    () =>
+      commissions.reduce(
+        (sum, c) => sum + (c.status !== "reversed" ? c.amount : 0),
+        0,
+      ),
+    [commissions],
   );
 
   // Filter and sort commissions
@@ -96,7 +107,7 @@ const Ledger: React.FC = () => {
       list = list.filter((c) => {
         const orderMatch = c.order_number?.toLowerCase().includes(q);
         const lineMatch = c.lines?.some((l) =>
-          l.product_name.toLowerCase().includes(q)
+          l.product_name.toLowerCase().includes(q),
         );
         return orderMatch || lineMatch;
       });
@@ -113,10 +124,14 @@ const Ledger: React.FC = () => {
 
     list.sort((a, b) => {
       if (sortBy === "newest") {
-        return new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime();
+        return (
+          new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime()
+        );
       }
       if (sortBy === "oldest") {
-        return new Date(a.date || 0).getTime() - new Date(b.date || 0).getTime();
+        return (
+          new Date(a.date || 0).getTime() - new Date(b.date || 0).getTime()
+        );
       }
       if (sortBy === "highest") {
         return b.amount - a.amount;
@@ -131,7 +146,9 @@ const Ledger: React.FC = () => {
   }, [commissions, searchQuery, statusFilter, levelFilter, sortBy]);
 
   const hasActiveFilters =
-    searchQuery.trim() !== "" || statusFilter !== "all" || levelFilter !== "all";
+    searchQuery.trim() !== "" ||
+    statusFilter !== "all" ||
+    levelFilter !== "all";
 
   const resetFilters = () => {
     setSearchQuery("");
@@ -141,7 +158,7 @@ const Ledger: React.FC = () => {
   };
 
   return (
-    <div className="h-screen max-h-screen overflow-hidden box-border bg-gradient-to-br from-[#D81B60] via-[#C2185B] to-[#880E4F] p-3 flex">
+    <div className="h-screen max-h-screen overflow-hidden box-border bg-gradient-to-br from-[#A51F60] to-[#880E4F] p-3 flex">
       <SideBar
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed((v) => !v)}

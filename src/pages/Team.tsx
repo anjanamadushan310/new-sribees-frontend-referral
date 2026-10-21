@@ -14,7 +14,11 @@ import {
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { partnerApi } from "../api/partner.api";
-import type { RecruitPartnerPayload, TeamStatusFilter, TeamSortBy } from "../interface";
+import type {
+  RecruitPartnerPayload,
+  TeamStatusFilter,
+  TeamSortBy,
+} from "../interface";
 import { SideBar } from "../components/SideBar";
 import { Header } from "../components/Header";
 import { SectionCard, StatCard } from "../components/Base";
@@ -46,7 +50,9 @@ const Team: React.FC = () => {
   const recruitMutation = useMutation({
     mutationFn: (payload: RecruitPartnerPayload) => partnerApi.recruit(payload),
     onSuccess: () => {
-      message.success("Partner recruited. Share their login details with them.");
+      message.success(
+        "Partner recruited. Share their login details with them.",
+      );
       setRecruitOpen(false);
       recruitForm.resetFields();
       queryClient.invalidateQueries({ queryKey: ["partner-recruits"] });
@@ -54,7 +60,7 @@ const Team: React.FC = () => {
     onError: (err: any) =>
       message.error(
         err.response?.data?.detail?.error?.message ??
-          "Could not recruit this partner."
+          "Could not recruit this partner.",
       ),
   });
 
@@ -82,11 +88,13 @@ const Team: React.FC = () => {
   const totalTeamMembers = recruits.length;
   const activePartners = useMemo(
     () => recruits.filter((r) => r.is_active).length,
-    [recruits]
+    [recruits],
   );
   const level2Earned = useMemo(
-    () => me?.byLevel?.level2 ?? recruits.reduce((sum, r) => sum + (r.total_earned || 0), 0),
-    [me, recruits]
+    () =>
+      me?.byLevel?.level2 ??
+      recruits.reduce((sum, r) => sum + (r.total_earned || 0), 0),
+    [me, recruits],
   );
   const avgPerRecruit =
     totalTeamMembers > 0 ? level2Earned / totalTeamMembers : 0;
@@ -100,7 +108,7 @@ const Team: React.FC = () => {
       list = list.filter(
         (r) =>
           r.name.toLowerCase().includes(q) ||
-          r.partner_id.toLowerCase().includes(q)
+          r.partner_id.toLowerCase().includes(q),
       );
     }
 
@@ -115,7 +123,10 @@ const Team: React.FC = () => {
         return (b.total_earned || 0) - (a.total_earned || 0);
       }
       if (sortBy === "recent") {
-        return new Date(b.joined_at || 0).getTime() - new Date(a.joined_at || 0).getTime();
+        return (
+          new Date(b.joined_at || 0).getTime() -
+          new Date(a.joined_at || 0).getTime()
+        );
       }
       if (sortBy === "name") {
         return a.name.localeCompare(b.name);
@@ -135,7 +146,7 @@ const Team: React.FC = () => {
   };
 
   return (
-    <div className="h-screen max-h-screen overflow-hidden box-border bg-gradient-to-br from-[#D81B60] via-[#C2185B] to-[#880E4F] p-3 flex">
+    <div className="h-screen max-h-screen overflow-hidden box-border bg-gradient-to-br from-[#A51F60] to-[#880E4F] p-3 flex">
       <SideBar
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
@@ -165,10 +176,11 @@ const Team: React.FC = () => {
                     Single-Tier Referral Account
                   </h3>
                   <p className="mt-1 text-sm text-amber-800/90 leading-relaxed m-0">
-                    Your account is registered under an existing partner tier. In
-                    order to protect partner network stability, sub-partner
-                    recruitment is restricted to primary partners only. You continue
-                    to earn full Level 1 commissions on all your direct customers.
+                    Your account is registered under an existing partner tier.
+                    In order to protect partner network stability, sub-partner
+                    recruitment is restricted to primary partners only. You
+                    continue to earn full Level 1 commissions on all your direct
+                    customers.
                   </p>
                 </div>
               </div>

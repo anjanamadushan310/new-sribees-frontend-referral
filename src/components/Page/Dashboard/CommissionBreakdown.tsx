@@ -17,8 +17,9 @@ const CommissionBreakdown: React.FC<CommissionBreakdownProps> = ({ byLevel }) =>
             title="LEVEL 01 EARNINGS"
             value={byLevel?.level1 ?? 0}
             tagText="Direct Referrals"
-            icon={<Crown className="h-6 w-6" />}
-            gradientClass="bg-gradient-to-br from-fuchsia-600 to-pink-500"
+            leftIcon={<Crown className="h-5 w-5" />}
+            icon={<Crown className="h-5 w-5" />}
+            colorScheme="rose"
           />
         </div>
         <div>
@@ -26,8 +27,9 @@ const CommissionBreakdown: React.FC<CommissionBreakdownProps> = ({ byLevel }) =>
             title="LEVEL 02 EARNINGS"
             value={byLevel?.level2 ?? 0}
             tagText="Secondary Network"
-            icon={<GitFork className="h-6 w-6" />}
-            gradientClass="bg-gradient-to-br from-purple-600 to-indigo-500"
+            leftIcon={<GitFork className="h-5 w-5" />}
+            icon={<GitFork className="h-5 w-5" />}
+            colorScheme="purple"
           />
         </div>
       </div>

@@ -37,6 +37,14 @@ export interface CommissionBreakdownProps {
   byLevel?: PartnerProfile["byLevel"];
 }
 
+export interface NetworkMetricsProps {
+  customers?: PartnerCustomer[];
+  recruits?: PartnerRecruit[];
+  totalReferrals?: number;
+  totalCustomers?: number;
+  totalTeamMembers?: number;
+}
+
 export type DashboardTabKey =
   | "overview"
   | "commission"

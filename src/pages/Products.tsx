@@ -13,7 +13,11 @@ import {
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { partnerApi } from "../api/partner.api";
-import type { RecruitPartnerPayload, ProductSortBy, ProductViewMode } from "../interface";
+import type {
+  RecruitPartnerPayload,
+  ProductSortBy,
+  ProductViewMode,
+} from "../interface";
 import { SideBar } from "../components/SideBar";
 import { Header } from "../components/Header";
 import { SectionCard, StatCard } from "../components/Base";
@@ -45,7 +49,9 @@ const Products: React.FC = () => {
   const recruitMutation = useMutation({
     mutationFn: (payload: RecruitPartnerPayload) => partnerApi.recruit(payload),
     onSuccess: () => {
-      message.success("Partner recruited. Share their login details with them.");
+      message.success(
+        "Partner recruited. Share their login details with them.",
+      );
       setRecruitOpen(false);
       recruitForm.resetFields();
       queryClient.invalidateQueries({ queryKey: ["partner-recruits"] });
@@ -53,7 +59,7 @@ const Products: React.FC = () => {
     onError: (err: any) =>
       message.error(
         err.response?.data?.detail?.error?.message ??
-          "Could not recruit this partner."
+          "Could not recruit this partner.",
       ),
   });
 
@@ -80,15 +86,15 @@ const Products: React.FC = () => {
   // KPI Calculations
   const totalCommission = useMemo(
     () => topProducts.reduce((sum, p) => sum + (p.total_earned || 0), 0),
-    [topProducts]
+    [topProducts],
   );
   const totalUnits = useMemo(
     () => topProducts.reduce((sum, p) => sum + (p.units || 0), 0),
-    [topProducts]
+    [topProducts],
   );
   const totalOrders = useMemo(
     () => topProducts.reduce((sum, p) => sum + (p.orders || 0), 0),
-    [topProducts]
+    [topProducts],
   );
 
   // Filter and sort products
@@ -100,7 +106,7 @@ const Products: React.FC = () => {
       list = list.filter(
         (p) =>
           p.product_name.toLowerCase().includes(q) ||
-          p.product_id.toLowerCase().includes(q)
+          p.product_id.toLowerCase().includes(q),
       );
     }
 
@@ -108,7 +114,8 @@ const Products: React.FC = () => {
       if (sortBy === "earned") return b.total_earned - a.total_earned;
       if (sortBy === "units") return b.units - a.units;
       if (sortBy === "orders") return b.orders - a.orders;
-      if (sortBy === "name") return a.product_name.localeCompare(b.product_name);
+      if (sortBy === "name")
+        return a.product_name.localeCompare(b.product_name);
       return 0;
     });
 
@@ -116,7 +123,7 @@ const Products: React.FC = () => {
   }, [topProducts, searchQuery, sortBy]);
 
   return (
-    <div className="h-screen max-h-screen overflow-hidden box-border bg-gradient-to-br from-[#D81B60] via-[#C2185B] to-[#880E4F] p-3 flex">
+    <div className="h-screen max-h-screen overflow-hidden box-border bg-gradient-to-br from-[#A51F60] to-[#880E4F] p-3 flex">
       <SideBar
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed((value) => !value)}

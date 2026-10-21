@@ -16,6 +16,7 @@ import { Header } from "../components/Header";
 import {
   ReferralSection,
   EarningsOverview,
+  NetworkMetrics,
   CommissionBreakdown,
   RecruitModal,
   useForm,
@@ -33,6 +34,16 @@ const Dashboard: React.FC = () => {
   const { data: me, isLoading } = useQuery({
     queryKey: ["partner-me"],
     queryFn: partnerApi.me,
+  });
+
+  const { data: customers = [] } = useQuery({
+    queryKey: ["partner-customers"],
+    queryFn: partnerApi.customers,
+  });
+
+  const { data: recruits = [] } = useQuery({
+    queryKey: ["partner-recruits"],
+    queryFn: partnerApi.recruits,
   });
 
   const recruitMutation = useMutation({
@@ -81,7 +92,7 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="h-screen max-h-screen overflow-hidden box-border bg-gradient-to-br from-[#D81B60] via-[#C2185B] to-[#880E4F] p-3 flex">
+    <div className="h-screen max-h-screen overflow-hidden box-border bg-gradient-to-br from-[#A51F60] to-[#880E4F] p-3 flex">
       <SideBar
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed((value) => !value)}
@@ -101,6 +112,8 @@ const Dashboard: React.FC = () => {
           <ReferralSection profile={me} loading={isLoading} onCopy={copyCode} />
 
           <EarningsOverview totals={me?.totals} />
+ 
+          <NetworkMetrics customers={customers} recruits={recruits} />
 
           <CommissionBreakdown byLevel={me?.byLevel} />
         </main>

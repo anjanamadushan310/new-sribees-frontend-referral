@@ -26,7 +26,9 @@ export interface StatCardProps {
   precision?: number;
   tagText: string;
   icon: ReactNode;
-  gradientClass: string;
+  leftIcon?: ReactNode;
+  gradientClass?: string;
+  colorScheme?: "blue" | "amber" | "orange" | "emerald" | "green" | "pink" | "rose" | "purple" | "indigo" | "teal";
   className?: string;
 }
 
