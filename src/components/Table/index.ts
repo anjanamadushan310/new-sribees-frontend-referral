@@ -9,3 +9,5 @@ export type { TopProductsTableProps } from "./TopProductsTable";
 export { default as CommissionLines } from "./CommissionLines";
 export type { CommissionLinesProps } from "./CommissionLines";
 export { money, shortDate, statusTag } from "./tableUtils";
+export { Pagination } from "../Common/Pagination";
+export type { PaginationProps } from "../Common/Pagination";
