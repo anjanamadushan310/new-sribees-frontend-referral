@@ -42,9 +42,9 @@ describe("SideBar", () => {
     it("defaults to expanded state with labels and toggle button when uncontrolled", () => {
       const { container } = renderSideBar();
 
-      expect(screen.getByText("SRIBEES")).toBeInTheDocument();
+      expect(screen.getByText(/SRIB[EƎ]ES/)).toBeInTheDocument();
       expect(screen.getByText("Dashboard")).toBeInTheDocument();
-      expect(screen.getByText("Products")).toBeInTheDocument();
+      expect(screen.getByText("Top Products")).toBeInTheDocument();
 
       const toggleButton = screen.getByRole("button", { name: "Toggle sidebar" });
       expect(toggleButton).toBeInTheDocument();
@@ -56,9 +56,9 @@ describe("SideBar", () => {
     it("renders expanded state with labels and toggle button when collapsed=false", () => {
       const { container } = renderSideBar({ collapsed: false, onToggleCollapse: vi.fn() });
 
-      expect(screen.getByText("SRIBEES")).toBeInTheDocument();
+      expect(screen.getByText(/SRIB[EƎ]ES/)).toBeInTheDocument();
       expect(screen.getByText("Dashboard")).toBeInTheDocument();
-      expect(screen.getByText("Products")).toBeInTheDocument();
+      expect(screen.getByText("Top Products")).toBeInTheDocument();
       expect(screen.getByText("Ledger")).toBeInTheDocument();
       expect(screen.getByText("My Customers")).toBeInTheDocument();
       expect(screen.getByText("My Team")).toBeInTheDocument();
@@ -83,7 +83,7 @@ describe("SideBar", () => {
     it("renders collapsed state when collapsed=true", () => {
       const { container } = renderSideBar({ collapsed: true, onToggleCollapse: vi.fn() });
 
-      expect(screen.queryByText("SRIBEES")).not.toBeInTheDocument();
+      expect(screen.queryByText(/SRIB[EƎ]ES/)).not.toBeInTheDocument();
       expect(screen.queryByText("Dashboard")).not.toBeInTheDocument();
 
       const toggleButton = screen.getByRole("button", { name: "Toggle sidebar" });
@@ -91,6 +91,28 @@ describe("SideBar", () => {
 
       const aside = container.querySelector("aside");
       expect(aside?.className).toContain("w-[76px]");
+    });
+
+    it("opens confirmation modal on clicking Log Out and calls onSignOut only on confirmation", () => {
+      const onSignOut = vi.fn();
+      renderSideBar({ onSignOut });
+
+      const logoutBtn = screen.getByRole("button", { name: "Sidebar sign out" });
+      fireEvent.click(logoutBtn);
+
+      expect(screen.getByText("Confirm Log Out")).toBeInTheDocument();
+      expect(onSignOut).not.toHaveBeenCalled();
+
+      // Click cancel first
+      fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+      expect(screen.queryByText("Confirm Log Out")).not.toBeInTheDocument();
+      expect(onSignOut).not.toHaveBeenCalled();
+
+      // Click logout again and confirm
+      fireEvent.click(logoutBtn);
+      expect(screen.getByText("Confirm Log Out")).toBeInTheDocument();
+      fireEvent.click(screen.getByRole("button", { name: /yes, log out/i }));
+      expect(onSignOut).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -113,7 +135,7 @@ describe("SideBar", () => {
       const { container } = renderSideBar();
 
       // Labels should not be visible by default
-      expect(screen.queryByText("SRIBEES")).not.toBeInTheDocument();
+      expect(screen.queryByText(/SRIB[EƎ]ES/)).not.toBeInTheDocument();
       expect(screen.queryByText("Dashboard")).not.toBeInTheDocument();
 
       // But toggle button SHOULD be present
@@ -131,7 +153,7 @@ describe("SideBar", () => {
       fireEvent.click(toggleButton);
 
       // Now it should be expanded
-      expect(screen.getByText("SRIBEES")).toBeInTheDocument();
+      expect(screen.getByText(/SRIB[EƎ]ES/)).toBeInTheDocument();
       expect(screen.getByText("Dashboard")).toBeInTheDocument();
 
       const aside = container.querySelector("aside");
@@ -154,7 +176,7 @@ describe("SideBar", () => {
       }));
     });
 
-    it("renders mobile bottom navigation bar with Dashboard, Product, Ledger, and More", () => {
+    it("renders mobile bottom navigation bar with Dashboard, Top Products, Ledger, and More", () => {
       const { container } = renderSideBar();
 
       // Desktop sidebar aside should not be rendered
@@ -165,7 +187,7 @@ describe("SideBar", () => {
       expect(nav).toBeInTheDocument();
 
       expect(screen.getByRole("button", { name: "Dashboard" })).toBeInTheDocument();
-      expect(screen.getByRole("button", { name: "Product" })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Top Products" })).toBeInTheDocument();
       expect(screen.getByRole("button", { name: "Ledger" })).toBeInTheDocument();
       expect(screen.getByRole("button", { name: "More" })).toBeInTheDocument();
     });
@@ -199,7 +221,7 @@ describe("SideBar", () => {
       expect(screen.queryByText("More Options")).not.toBeInTheDocument();
     });
 
-    it("clicking Log Out calls onSignOut and closes the sheet", () => {
+    it("clicking Log Out closes the sheet, opens confirmation modal, and calls onSignOut on confirm", () => {
       const onSignOut = vi.fn();
       renderSideBar({ onSignOut });
 
@@ -208,8 +230,12 @@ describe("SideBar", () => {
       const logoutButton = screen.getByText("Log Out").closest("button")!;
       fireEvent.click(logoutButton);
 
-      expect(onSignOut).toHaveBeenCalledTimes(1);
       expect(screen.queryByText("More Options")).not.toBeInTheDocument();
+      expect(screen.getByText("Confirm Log Out")).toBeInTheDocument();
+      expect(onSignOut).not.toHaveBeenCalled();
+
+      fireEvent.click(screen.getByRole("button", { name: /yes, log out/i }));
+      expect(onSignOut).toHaveBeenCalledTimes(1);
     });
 
     it("clicking My Customers calls onSelectTab and closes the sheet", () => {

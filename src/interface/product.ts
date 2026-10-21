@@ -8,6 +8,7 @@ export interface TopProductsTableProps {
   loading?: boolean;
   viewMode?: "auto" | "table" | "grid";
   className?: string;
+  pageSize?: number;
 }
 
 export type ProductSortBy = "earned" | "units" | "orders" | "name";

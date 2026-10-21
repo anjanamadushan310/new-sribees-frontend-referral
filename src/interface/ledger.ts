@@ -6,10 +6,12 @@ import type { PartnerCommission } from "./partner";
 export interface CommissionTableProps {
   commissions: PartnerCommission[];
   loading?: boolean;
+  pageSize?: number;
 }
 
 export interface CommissionLinesProps {
   row: PartnerCommission;
+  pageSize?: number;
 }
 
 export type LedgerSortBy = "newest" | "oldest" | "highest" | "lowest";

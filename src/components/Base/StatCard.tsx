@@ -188,7 +188,7 @@ const StatCard: React.FC<StatCardProps> = ({
   title,
   value,
   prefix = "Rs. ",
-  precision = 2,
+  precision,
   tagText,
   icon,
   leftIcon: _leftIcon,
@@ -196,14 +196,19 @@ const StatCard: React.FC<StatCardProps> = ({
   colorScheme,
   className = "",
 }) => {
+  const resolvedPrecision =
+    precision !== undefined ? precision : prefix === "" ? 0 : 2;
+
   const formattedValue =
     typeof value === "number" && !isNaN(value)
-      ? precision !== undefined && precision > 0
+      ? resolvedPrecision > 0
         ? value.toLocaleString("en-LK", {
-            minimumFractionDigits: precision,
-            maximumFractionDigits: precision,
+            minimumFractionDigits: resolvedPrecision,
+            maximumFractionDigits: resolvedPrecision,
           })
-        : value.toLocaleString("en-LK")
+        : value.toLocaleString("en-LK", {
+            maximumFractionDigits: 0,
+          })
       : value;
 
   const theme = resolveTheme(colorScheme, gradientClass, title);
