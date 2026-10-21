@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ChevronRight, ChevronDown } from "lucide-react";
 import { money, shortDate, statusTag } from "./tableUtils";
+import { useIsMobile } from "../../hooks/useIsMobile";
 import CommissionLines from "./CommissionLines";
 
 import type { CommissionTableProps } from "../../interface/ledger";
@@ -11,6 +12,7 @@ const CommissionTable: React.FC<CommissionTableProps> = ({
   commissions,
   loading = false,
 }) => {
+  const isMobile = useIsMobile(768);
   const [expandedRowKeys, setExpandedRowKeys] = useState<Set<string>>(
     new Set()
   );
@@ -39,6 +41,95 @@ const CommissionTable: React.FC<CommissionTableProps> = ({
     return (
       <div className="py-12 text-center text-sm text-slate-400">
         No commission recorded yet.
+      </div>
+    );
+  }
+
+  if (isMobile) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {commissions.map((row) => {
+          const isExpanded = expandedRowKeys.has(row.commission_id);
+          const lineCount = row.lines?.length ?? 0;
+          const productsLabel =
+            lineCount > 0
+              ? `${lineCount} product${lineCount === 1 ? "" : "s"}`
+              : "Whole order";
+
+          return (
+            <div
+              key={row.commission_id}
+              className="rounded-2xl border border-slate-100 bg-white p-4 shadow-[0_2px_8px_rgba(15,23,42,.04)] flex flex-col justify-between gap-3 hover:shadow-md transition-shadow"
+            >
+              {/* Header: Date, Level & Status */}
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold ${
+                      row.level === 1
+                        ? "bg-blue-50 text-blue-700 border border-blue-200/70"
+                        : "bg-purple-50 text-purple-700 border border-purple-200/70"
+                    }`}
+                  >
+                    L{row.level}
+                  </span>
+                  <span className="text-xs text-slate-500 font-medium">
+                    {shortDate(row.date)}
+                  </span>
+                </div>
+                <div>{statusTag(row.status)}</div>
+              </div>
+
+              {/* Middle: Order Number & Products info */}
+              <div className="flex items-center justify-between gap-2 text-xs">
+                <span className="font-mono text-slate-700 font-medium">
+                  Order: {row.order_number ?? "—"}
+                </span>
+                <span className="text-slate-500">{productsLabel}</span>
+              </div>
+
+              {/* Amount & Expand Toggle */}
+              <div className="flex items-center justify-between border-t border-slate-100 pt-3 mt-1">
+                <div className="flex items-center gap-1.5">
+                  {lineCount > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => toggleRow(row.commission_id)}
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-pink-700 hover:text-pink-800 transition-colors cursor-pointer border-0 bg-transparent p-0"
+                      aria-label={
+                        isExpanded ? "Collapse details" : "Expand details"
+                      }
+                      aria-expanded={isExpanded}
+                    >
+                      <span>{isExpanded ? "Hide items" : "View items"}</span>
+                      {isExpanded ? (
+                        <ChevronDown className="h-3.5 w-3.5" />
+                      ) : (
+                        <ChevronRight className="h-3.5 w-3.5" />
+                      )}
+                    </button>
+                  )}
+                </div>
+                <div
+                  className={`text-base font-bold ${
+                    row.status === "reversed"
+                      ? "line-through text-slate-400"
+                      : "text-slate-900"
+                  }`}
+                >
+                  {money(row.amount)}
+                </div>
+              </div>
+
+              {/* Expandable Line Items */}
+              {isExpanded && (
+                <div className="border-t border-slate-100 pt-3 mt-1">
+                  <CommissionLines row={row} />
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     );
   }

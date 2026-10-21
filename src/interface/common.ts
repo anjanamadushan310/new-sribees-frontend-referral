@@ -1,7 +1,11 @@
 /**
  * Common shared component interfaces and types.
  */
-import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from "react";
+import type {
+  ButtonHTMLAttributes,
+  InputHTMLAttributes,
+  ReactNode,
+} from "react";
 
 export interface HeaderProps {
   onSignOut: () => void;
@@ -28,7 +32,17 @@ export interface StatCardProps {
   icon: ReactNode;
   leftIcon?: ReactNode;
   gradientClass?: string;
-  colorScheme?: "blue" | "amber" | "orange" | "emerald" | "green" | "pink" | "rose" | "purple" | "indigo" | "teal";
+  colorScheme?:
+    | "blue"
+    | "amber"
+    | "orange"
+    | "emerald"
+    | "green"
+    | "pink"
+    | "rose"
+    | "purple"
+    | "indigo"
+    | "teal";
   className?: string;
 }
 
@@ -53,7 +67,6 @@ export interface BaseButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>
   loading?: boolean;
   loadingText?: string;
 }
-
 
 export interface BaseInputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;

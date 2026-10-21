@@ -126,7 +126,7 @@ const Customers: React.FC = () => {
   }, [customers, searchQuery, sortBy]);
 
   return (
-    <div className="h-screen max-h-screen overflow-hidden box-border bg-gradient-to-br from-[#A51F60] to-[#880E4F] p-3 flex">
+    <div className="h-screen max-h-screen overflow-hidden box-border bg-gradient-to-br from-[#A51F60] to-[#880E4F] p-1.5 sm:p-3 flex">
       <SideBar
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
@@ -140,10 +140,10 @@ const Customers: React.FC = () => {
         onSignOut={signOut}
       />
 
-      <div className="custom-scrollbar min-w-0 flex-1 h-[calc(100vh-24px)] max-h-[calc(100vh-24px)] overflow-y-auto rounded-[17px] bg-slate-50 shadow-[0_20px_40px_rgba(15,23,42,.25)]">
+      <div className="custom-scrollbar min-w-0 flex-1 h-[calc(100vh-12px)] sm:h-[calc(100vh-24px)] max-h-[calc(100vh-12px)] sm:max-h-[calc(100vh-24px)] overflow-y-auto rounded-[14px] sm:rounded-[17px] bg-slate-50 shadow-[0_20px_40px_rgba(15,23,42,.25)]">
         <Header onSignOut={signOut} title="My Customers" />
 
-        <main className="m-0 w-auto max-w-none bg-slate-50 px-4 sm:px-7 pb-[30px] pt-1">
+        <main className="m-0 w-auto max-w-none bg-slate-50 px-3 sm:px-7 pb-6 sm:pb-[30px] pt-1">
           {/* Customer Performance KPI Cards */}
           <SectionCard
             title="Customer Portfolio Overview"
@@ -192,7 +192,7 @@ const Customers: React.FC = () => {
             title="Customer Directory"
             icon={<User className="h-5 w-5" />}
             extraHeader={
-              <span className="text-xs font-semibold text-slate-500">
+              <span className="hidden sm:inline text-xs font-semibold text-slate-500">
                 {filteredCustomers.length} of {customers.length} customers
               </span>
             }

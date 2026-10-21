@@ -13,7 +13,7 @@ const SectionCard: React.FC<SectionCardProps> = ({
 }) => {
   return (
     <section
-      className={`mb-7 rounded-[17px] border border-slate-100 bg-white p-5 shadow-[0_2px_5px_rgba(15,23,42,.04)] ${className}`}
+      className={`mb-5 sm:mb-7 rounded-[17px] border border-slate-100 bg-white p-3.5 sm:p-5 shadow-[0_2px_5px_rgba(15,23,42,.04)] ${className}`}
     >
       {(title || icon || extraHeader) && (
         <div className="mb-[18px] flex items-center justify-between">

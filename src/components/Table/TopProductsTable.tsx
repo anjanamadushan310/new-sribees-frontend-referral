@@ -14,7 +14,7 @@ const TopProductsTable: React.FC<TopProductsTableProps> = ({
   className = "",
 }) => {
   const isMobile = useIsMobile(768);
-  const showGrid = viewMode === "grid" || (viewMode === "auto" && isMobile);
+  const showGrid = isMobile || viewMode === "grid" || (viewMode === "auto" && isMobile);
 
   if (loading) {
     return (

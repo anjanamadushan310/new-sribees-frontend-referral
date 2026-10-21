@@ -211,7 +211,7 @@ const StatCard: React.FC<StatCardProps> = ({
 
   return (
     <div
-      className={`relative flex items-center justify-between min-h-[128px] overflow-hidden rounded-[20px] border ${theme.borderColor} ${theme.cardBg} p-5 sm:p-6 shadow-[0_2px_12px_rgba(15,23,42,0.03)] hover:shadow-[0_6px_20px_rgba(15,23,42,0.06)] transition-all duration-200 ${className}`}
+      className={`relative flex items-center justify-between min-h-[110px] sm:min-h-[128px] overflow-hidden rounded-[20px] border ${theme.borderColor} ${theme.cardBg} p-3.5 sm:p-6 shadow-[0_2px_12px_rgba(15,23,42,0.03)] hover:shadow-[0_6px_20px_rgba(15,23,42,0.06)] transition-all duration-200 ${className}`}
     >
       {/* Left side: Icon + Content */}
       <div className="flex items-start gap-4 min-w-0">

@@ -19,7 +19,7 @@ const ReferralBannerCard: React.FC<ReferralBannerCardProps> = ({
   }
 
   return (
-    <div className="relative mb-7 overflow-hidden rounded-2xl border border-rose-100/90 bg-gradient-to-br from-[#FFF5F8] via-white to-pink-50/40 p-6 shadow-[0_2px_12px_rgba(216,27,96,0.04)] flex items-center justify-between gap-6 max-[800px]:flex-col max-[800px]:items-start">
+    <div className="relative mb-5 sm:mb-7 overflow-hidden rounded-2xl border border-rose-100/90 bg-gradient-to-br from-[#FFF5F8] via-white to-pink-50/40 p-3.5 sm:p-6 shadow-[0_2px_12px_rgba(216,27,96,0.04)] flex items-center justify-between gap-4 sm:gap-6 max-[800px]:flex-col max-[800px]:items-start">
       {/* Decorative subtle ambient soft glow */}
       <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-pink-100/40 blur-3xl" />
       <div className="pointer-events-none absolute -left-16 -bottom-16 h-48 w-48 rounded-full bg-rose-100/30 blur-3xl" />
@@ -39,7 +39,7 @@ const ReferralBannerCard: React.FC<ReferralBannerCardProps> = ({
         </p>
       </div>
 
-      <div className="relative z-[1] flex items-center gap-2 rounded-xl border border-slate-200/80 bg-white p-1.5 pl-3.5 shadow-sm max-[800px]:w-full max-[800px]:justify-between">
+      <div className="relative z-[1] flex items-center gap-2 rounded-xl border border-slate-200/80 bg-white p-1 sm:p-1.5 pl-2.5 sm:pl-3.5 shadow-sm max-[800px]:w-full max-[800px]:justify-between">
         <div className="text-xs text-slate-500 font-medium whitespace-nowrap">
           Code:{" "}
           <strong className="ml-1 font-mono text-sm font-bold tracking-wider text-[#A51F60]">
@@ -48,11 +48,13 @@ const ReferralBannerCard: React.FC<ReferralBannerCardProps> = ({
         </div>
         <button
           type="button"
-          className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-gradient-to-r from-[#A51F60] to-[#880E4F] px-4 text-xs font-semibold text-white shadow-sm transition hover:opacity-95 active:scale-95 cursor-pointer whitespace-nowrap"
+          className="inline-flex h-9 w-9 sm:w-auto items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-[#A51F60] to-[#880E4F] p-0 sm:px-4 text-xs font-semibold text-white shadow-sm transition hover:opacity-95 active:scale-95 cursor-pointer whitespace-nowrap shrink-0"
           onClick={onCopy}
+          aria-label="Copy code"
+          title="Copy code"
         >
-          <Copy className="h-3.5 w-3.5" />
-          <span>Copy Code</span>
+          <Copy className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
+          <span className="hidden sm:inline">Copy Code</span>
         </button>
       </div>
     </div>
