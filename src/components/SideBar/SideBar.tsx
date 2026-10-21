@@ -125,49 +125,73 @@ const SideBar: React.FC<SideBarProps> = ({
       {/* Desktop / Tablet Sidebar */}
       {!isMobile && (
         <aside
-          className={`sticky top-3 h-[calc(100vh-24px)] max-h-[calc(100vh-24px)] self-start overflow-hidden bg-transparent transition-all duration-300 ease-in-out hidden sm:flex flex-col ${
+          className={`relative z-20 sticky top-3 h-[calc(100vh-24px)] max-h-[calc(100vh-24px)] self-start bg-transparent transition-all duration-300 ease-in-out hidden sm:flex flex-col ${
             isCollapsed
               ? "w-[76px] min-w-[76px] max-w-[76px] flex-[0_0_76px]"
               : "w-[264px] min-w-[264px] max-w-[264px] flex-[0_0_264px]"
           }`}
         >
-          {/* Top Logo Bar */}
+          {/* Floating Edge Toggle Button (Popped out squircle tab) */}
+          <button
+            type="button"
+            onClick={handleToggleCollapse}
+            className="absolute -right-3.5 top-[22px] z-30 flex h-7 w-7 items-center justify-center rounded-xl bg-white text-[#880E4F] shadow-[0_2px_8px_rgba(0,0,0,0.15)] border border-pink-100/90 hover:bg-pink-50 hover:text-[#A51F60] hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer"
+            aria-label="Toggle sidebar"
+            title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {isCollapsed ? (
+              <PanelLeftOpen className="h-4 w-4" />
+            ) : (
+              <PanelLeftClose className="h-4 w-4" />
+            )}
+          </button>
+
+          {/* Top Brand / Logo Header */}
           <div
-            className={`flex h-[62px] items-center text-white transition-all duration-300 ${
-              isCollapsed ? "justify-center px-0" : "justify-between px-5"
+            className={`flex items-center transition-all duration-300 border-b border-white/15 pb-4 pt-4 mb-2 ${
+              isCollapsed ? "justify-center px-0" : "px-4"
             }`}
           >
-            {!isCollapsed && (
-              <div className="flex items-center gap-2.5">
-                <div className="grid h-8 w-8 place-items-center rounded-lg bg-white p-1 shadow-sm shrink-0">
+            {isCollapsed ? (
+              <div
+                className="grid h-10 w-10 place-items-center rounded-xl bg-white p-1.5 shadow-md shadow-black/15 ring-1 ring-white/30 shrink-0 transition-transform duration-200 hover:scale-105"
+                title="SRIBEES Partner"
+              >
+                <img
+                  src="/logo.png"
+                  alt="SRIBEES Logo"
+                  className="h-full w-full object-contain"
+                />
+              </div>
+            ) : (
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="grid h-10 w-10 place-items-center rounded-xl bg-white p-1.5 shadow-md shadow-black/15 ring-1 ring-white/30 shrink-0 transition-transform duration-200 hover:scale-105">
                   <img
                     src="/logo.png"
                     alt="SRIBEES Logo"
                     className="h-full w-full object-contain"
                   />
                 </div>
-                <span className="text-white font-bold text-lg tracking-tight">
-                  SRIBEES
-                </span>
+                <div className="flex flex-col min-w-0 select-none">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-white font-extrabold text-[17px] tracking-tight leading-tight italic">
+                      SRIBƎES
+                    </span>
+                    <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-white/20 text-[10px] font-bold uppercase tracking-wider text-pink-100 border border-white/20 leading-none">
+                      Partner
+                    </span>
+                  </div>
+                  <span className="text-[11px] font-medium text-pink-200/75 tracking-wide leading-tight mt-0.5">
+                    Affiliate Portal
+                  </span>
+                </div>
               </div>
             )}
-            <button
-              type="button"
-              onClick={handleToggleCollapse}
-              className="text-lg text-white hover:bg-white/10 w-8 h-8 p-0 grid place-items-center rounded-lg transition-colors cursor-pointer border-0 bg-transparent"
-              aria-label="Toggle sidebar"
-            >
-              {isCollapsed ? (
-                <PanelLeftOpen className="h-5 w-5" />
-              ) : (
-                <PanelLeftClose className="h-5 w-5" />
-              )}
-            </button>
           </div>
 
           {/* Navigation Menu */}
           <nav
-            className={`py-1.5 transition-all duration-300 ${
+            className={`py-1.5 transition-all duration-300 overflow-hidden ${
               isCollapsed ? "px-2" : "px-3.5"
             }`}
           >
@@ -203,7 +227,7 @@ const SideBar: React.FC<SideBarProps> = ({
 
           {/* Bottom Actions */}
           <div
-            className={`mt-auto border-t border-white/15 pt-3 pb-3 transition-all duration-300 ${
+            className={`mt-auto border-t border-white/15 pt-3 pb-3 transition-all duration-300 overflow-hidden ${
               isCollapsed ? "px-2" : "px-3.5"
             }`}
           >
@@ -271,7 +295,9 @@ const SideBar: React.FC<SideBarProps> = ({
                 >
                   <LayoutDashboard className="h-5 w-5 shrink-0" />
                 </div>
-                <span className="text-[11px] leading-tight mt-0.5">Dashboard</span>
+                <span className="text-[11px] leading-tight mt-0.5">
+                  Dashboard
+                </span>
               </button>
 
               {/* Top Products */}
@@ -297,7 +323,9 @@ const SideBar: React.FC<SideBarProps> = ({
                 >
                   <Package className="h-5 w-5 shrink-0" />
                 </div>
-                <span className="text-[11px] leading-tight mt-0.5">Top Products</span>
+                <span className="text-[11px] leading-tight mt-0.5">
+                  Top Products
+                </span>
               </button>
 
               {/* Ledger */}
@@ -346,9 +374,10 @@ const SideBar: React.FC<SideBarProps> = ({
                   }`}
                 >
                   <MoreHorizontal className="h-5 w-5 shrink-0" />
-                  {(activeTab === "customers" || activeTab === "recruits") && !isMoreOpen && (
-                    <span className="absolute top-0.5 right-0.5 h-2 w-2 rounded-full bg-[#A51F60] ring-2 ring-white" />
-                  )}
+                  {(activeTab === "customers" || activeTab === "recruits") &&
+                    !isMoreOpen && (
+                      <span className="absolute top-0.5 right-0.5 h-2 w-2 rounded-full bg-[#A51F60] ring-2 ring-white" />
+                    )}
                 </div>
                 <span className="text-[11px] leading-tight mt-0.5">More</span>
               </button>
@@ -381,8 +410,12 @@ const SideBar: React.FC<SideBarProps> = ({
                 {/* Header */}
                 <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
                   <div>
-                    <h3 className="text-base font-bold text-[#17233b] m-0">More Options</h3>
-                    <p className="text-xs text-slate-500 m-0 mt-0.5">Quick access to partner tools</p>
+                    <h3 className="text-base font-bold text-[#17233b] m-0">
+                      More Options
+                    </h3>
+                    <p className="text-xs text-slate-500 m-0 mt-0.5">
+                      Quick access to partner tools
+                    </p>
                   </div>
                   <button
                     type="button"
@@ -414,8 +447,12 @@ const SideBar: React.FC<SideBarProps> = ({
                         <User className="h-5 w-5" />
                       </div>
                       <div className="text-left">
-                        <div className="text-sm font-bold leading-tight">My Customers</div>
-                        <div className="text-xs text-slate-500 leading-tight mt-0.5">View your customer base & orders</div>
+                        <div className="text-sm font-bold leading-tight">
+                          My Customers
+                        </div>
+                        <div className="text-xs text-slate-500 leading-tight mt-0.5">
+                          View your customer base & orders
+                        </div>
                       </div>
                     </div>
                     <ChevronRight className="h-4 w-4 text-slate-400 shrink-0" />
@@ -440,8 +477,12 @@ const SideBar: React.FC<SideBarProps> = ({
                           <Users className="h-5 w-5" />
                         </div>
                         <div className="text-left">
-                          <div className="text-sm font-bold leading-tight">My Team</div>
-                          <div className="text-xs text-slate-500 leading-tight mt-0.5">Manage partner recruits & levels</div>
+                          <div className="text-sm font-bold leading-tight">
+                            My Team
+                          </div>
+                          <div className="text-xs text-slate-500 leading-tight mt-0.5">
+                            Manage partner recruits & levels
+                          </div>
                         </div>
                       </div>
                       <ChevronRight className="h-4 w-4 text-slate-400 shrink-0" />
@@ -463,8 +504,12 @@ const SideBar: React.FC<SideBarProps> = ({
                           <UserPlus className="h-5 w-5" />
                         </div>
                         <div className="text-left">
-                          <div className="text-sm font-bold text-[#880E4F] leading-tight">Recruit a Partner</div>
-                          <div className="text-xs text-slate-500 leading-tight mt-0.5">Add new partners under your code</div>
+                          <div className="text-sm font-bold text-[#880E4F] leading-tight">
+                            Recruit a Partner
+                          </div>
+                          <div className="text-xs text-slate-500 leading-tight mt-0.5">
+                            Add new partners under your code
+                          </div>
                         </div>
                       </div>
                       <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[#A51F60] text-white shrink-0 shadow-xs">
@@ -490,8 +535,12 @@ const SideBar: React.FC<SideBarProps> = ({
                         <LogOut className="h-5 w-5" />
                       </div>
                       <div className="text-left">
-                        <div className="text-sm font-bold leading-tight">Log Out</div>
-                        <div className="text-xs text-rose-500/80 leading-tight mt-0.5">Sign out of your account</div>
+                        <div className="text-sm font-bold leading-tight">
+                          Log Out
+                        </div>
+                        <div className="text-xs text-rose-500/80 leading-tight mt-0.5">
+                          Sign out of your account
+                        </div>
                       </div>
                     </div>
                     <ChevronRight className="h-4 w-4 text-rose-400 shrink-0" />
