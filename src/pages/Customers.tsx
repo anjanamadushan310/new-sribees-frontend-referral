@@ -15,7 +15,7 @@ import {
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { partnerApi } from "../api/partner.api";
-import type { RecruitPartnerPayload } from "../api/partner.api";
+import type { RecruitPartnerPayload, CustomerSortBy } from "../interface";
 import { SideBar } from "../components/SideBar";
 import { Header } from "../components/Header";
 import { SectionCard, StatCard } from "../components/Base";
@@ -30,7 +30,7 @@ const Customers: React.FC = () => {
   const [recruitOpen, setRecruitOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState<"earned" | "orders" | "recent" | "name">("earned");
+  const [sortBy, setSortBy] = useState<CustomerSortBy>("earned");
   const [copied, setCopied] = useState(false);
   const [recruitForm] = useForm<RecruitPartnerPayload>();
 

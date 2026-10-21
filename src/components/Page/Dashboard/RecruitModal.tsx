@@ -1,15 +1,9 @@
 import React, { useEffect } from "react";
 import { X } from "lucide-react";
-import type { RecruitPartnerPayload } from "../../../api/partner.api";
-import type { FormInstance } from "./useForm";
 
-export interface RecruitModalProps {
-  open: boolean;
-  onOk: () => void;
-  onCancel: () => void;
-  confirmLoading?: boolean;
-  form: FormInstance<RecruitPartnerPayload>;
-}
+import type { RecruitModalProps } from "../../../interface/dashboard";
+
+export type { RecruitModalProps };
 
 const RecruitModal: React.FC<RecruitModalProps> = ({
   open,

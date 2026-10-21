@@ -1,13 +1,9 @@
 import React from "react";
 import { Copy } from "lucide-react";
 
-export interface ReferralBannerCardProps {
-  referralCode?: string;
-  commissionText?: string;
-  commissionPercent?: number;
-  loading?: boolean;
-  onCopy: () => void;
-}
+import type { ReferralBannerCardProps } from "../../interface/common";
+
+export type { ReferralBannerCardProps };
 
 const ReferralBannerCard: React.FC<ReferralBannerCardProps> = ({
   referralCode,

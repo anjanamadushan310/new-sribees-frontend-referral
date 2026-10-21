@@ -3,11 +3,9 @@ import { Eye, EyeOff, LockKeyhole, Mail } from "lucide-react";
 import BaseButton from "../../Base/BaseButton";
 import BaseInput from "../../Base/BaseInput";
 
-interface LoginFormProps {
-  loading: boolean;
-  error: string | null;
-  onSubmit: (values: { email: string; password: string }) => void;
-}
+import type { LoginFormProps } from "../../../interface/auth";
+
+export type { LoginFormProps };
 
 const LoginForm = ({ loading, error, onSubmit }: LoginFormProps) => {
   const [email, setEmail] = useState("");

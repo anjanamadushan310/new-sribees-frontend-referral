@@ -1,11 +1,9 @@
 import React from "react";
 import { Calendar } from "lucide-react";
 
-export interface HeaderProps {
-  onSignOut: () => void;
-  title?: string;
-  className?: string;
-}
+import type { HeaderProps } from "../../interface/common";
+
+export type { HeaderProps };
 
 const Header: React.FC<HeaderProps> = ({
   onSignOut,

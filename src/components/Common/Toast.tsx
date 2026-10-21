@@ -1,19 +1,9 @@
 import React, { createContext, useContext, useState, useCallback } from "react";
 import { CheckCircle2, AlertCircle, Info, X } from "lucide-react";
 
-export interface ToastItem {
-  id: string;
-  type: "success" | "error" | "info";
-  content: React.ReactNode;
-}
+import type { ToastItem, ToastContextValue } from "../../interface/common";
 
-interface ToastContextValue {
-  message: {
-    success: (content: React.ReactNode, duration?: number) => void;
-    error: (content: React.ReactNode, duration?: number) => void;
-    info: (content: React.ReactNode, duration?: number) => void;
-  };
-}
+export type { ToastItem, ToastContextValue };
 
 const ToastContext = createContext<ToastContextValue | null>(null);
 

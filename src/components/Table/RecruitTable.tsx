@@ -1,11 +1,9 @@
 import React from "react";
-import type { PartnerRecruit } from "../../api/partner.api";
 import { money, shortDate } from "./tableUtils";
 
-export interface RecruitTableProps {
-  recruits: PartnerRecruit[];
-  loading?: boolean;
-}
+import type { RecruitTableProps } from "../../interface/team";
+
+export type { RecruitTableProps };
 
 const RecruitTable: React.FC<RecruitTableProps> = ({
   recruits,

@@ -1,15 +1,11 @@
 import React from "react";
 import { ShoppingBag, Package, ShoppingCart, Trophy } from "lucide-react";
-import type { PartnerTopProduct } from "../../api/partner.api";
 import { money } from "./tableUtils";
 import { useIsMobile } from "../../hooks/useIsMobile";
 
-export interface TopProductsTableProps {
-  products: PartnerTopProduct[];
-  loading?: boolean;
-  viewMode?: "auto" | "table" | "grid";
-  className?: string;
-}
+import type { TopProductsTableProps } from "../../interface/product";
+
+export type { TopProductsTableProps };
 
 const TopProductsTable: React.FC<TopProductsTableProps> = ({
   products,

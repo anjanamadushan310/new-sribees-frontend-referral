@@ -13,15 +13,9 @@ import {
 } from "lucide-react";
 import { useIsMobile } from "../../hooks/useIsMobile";
 
-export interface SideBarProps {
-  collapsed: boolean;
-  onToggleCollapse: () => void;
-  activeTab: string;
-  onSelectTab: (key: string) => void;
-  hasUpline?: boolean;
-  onOpenRecruit?: () => void;
-  onSignOut: () => void;
-}
+import type { SideBarProps } from "../../interface/common";
+
+export type { SideBarProps };
 
 const SideBar: React.FC<SideBarProps> = ({
   collapsed,

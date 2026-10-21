@@ -1,11 +1,9 @@
 import React from "react";
-import type { PartnerCustomer } from "../../api/partner.api";
 import { money, shortDate } from "./tableUtils";
 
-export interface CustomerTableProps {
-  customers: PartnerCustomer[];
-  loading?: boolean;
-}
+import type { CustomerTableProps } from "../../interface/customer";
+
+export type { CustomerTableProps };
 
 const CustomerTable: React.FC<CustomerTableProps> = ({
   customers,

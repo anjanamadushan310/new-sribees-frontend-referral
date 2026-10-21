@@ -1,10 +1,4 @@
 import React from "react";
-import type {
-  PartnerCustomer,
-  PartnerRecruit,
-  PartnerCommission,
-  PartnerTopProduct,
-} from "../../../api/partner.api";
 import {
   CustomerTable,
   RecruitTable,
@@ -12,15 +6,9 @@ import {
   TopProductsTable,
 } from "../../Table";
 
-export interface DashboardTabsProps {
-  activeTab: string;
-  onTabChange: (key: string) => void;
-  customers: PartnerCustomer[];
-  recruits: PartnerRecruit[];
-  commissions: PartnerCommission[];
-  topProducts: PartnerTopProduct[];
-  hasUpline?: boolean;
-}
+import type { DashboardTabsProps } from "../../../interface/dashboard";
+
+export type { DashboardTabsProps };
 
 const DashboardTabs: React.FC<DashboardTabsProps> = ({
   activeTab,

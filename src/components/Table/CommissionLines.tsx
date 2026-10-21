@@ -1,10 +1,10 @@
 import React from "react";
-import type { PartnerCommission, PartnerCommissionLine } from "../../api/partner.api";
+import type { PartnerCommissionLine } from "../../interface/partner";
 import { money } from "./tableUtils";
 
-export interface CommissionLinesProps {
-  row: PartnerCommission;
-}
+import type { CommissionLinesProps } from "../../interface/ledger";
+
+export type { CommissionLinesProps };
 
 const CommissionLines: React.FC<CommissionLinesProps> = ({ row }) => {
   const lines = row.lines ?? [];

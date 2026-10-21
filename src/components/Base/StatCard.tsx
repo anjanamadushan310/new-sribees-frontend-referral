@@ -1,15 +1,8 @@
 import React from "react";
 
-export interface StatCardProps {
-  title: string;
-  value: number;
-  prefix?: string;
-  precision?: number;
-  tagText: string;
-  icon: React.ReactNode;
-  gradientClass: string;
-  className?: string;
-}
+import type { StatCardProps } from "../../interface/common";
+
+export type { StatCardProps };
 
 const StatCard: React.FC<StatCardProps> = ({
   title,

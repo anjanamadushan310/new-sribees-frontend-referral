@@ -13,7 +13,7 @@ import {
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { partnerApi } from "../api/partner.api";
-import type { RecruitPartnerPayload } from "../api/partner.api";
+import type { RecruitPartnerPayload, ProductSortBy, ProductViewMode } from "../interface";
 import { SideBar } from "../components/SideBar";
 import { Header } from "../components/Header";
 import { SectionCard, StatCard } from "../components/Base";
@@ -28,10 +28,8 @@ const Products: React.FC = () => {
   const [recruitOpen, setRecruitOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState<"earned" | "units" | "orders" | "name">(
-    "earned"
-  );
-  const [viewMode, setViewMode] = useState<"auto" | "table" | "grid">("auto");
+  const [sortBy, setSortBy] = useState<ProductSortBy>("earned");
+  const [viewMode, setViewMode] = useState<ProductViewMode>("auto");
   const [recruitForm] = useForm<RecruitPartnerPayload>();
 
   const { data: me } = useQuery({

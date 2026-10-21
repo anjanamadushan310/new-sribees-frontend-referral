@@ -13,7 +13,7 @@ import {
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { partnerApi } from "../api/partner.api";
-import type { RecruitPartnerPayload } from "../api/partner.api";
+import type { RecruitPartnerPayload, LedgerSortBy, LedgerStatusFilter, LedgerLevelFilter } from "../interface";
 import { SideBar } from "../components/SideBar";
 import { Header } from "../components/Header";
 import { SectionCard, StatCard } from "../components/Base";
@@ -28,9 +28,9 @@ const Ledger: React.FC = () => {
   const [recruitOpen, setRecruitOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [levelFilter, setLevelFilter] = useState<string>("all");
-  const [sortBy, setSortBy] = useState<"newest" | "oldest" | "highest" | "lowest">("newest");
+  const [statusFilter, setStatusFilter] = useState<LedgerStatusFilter>("all");
+  const [levelFilter, setLevelFilter] = useState<LedgerLevelFilter>("all");
+  const [sortBy, setSortBy] = useState<LedgerSortBy>("newest");
   const [recruitForm] = useForm<RecruitPartnerPayload>();
 
   const { data: me } = useQuery({

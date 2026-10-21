@@ -6,18 +6,17 @@
  * Never what a customer paid: the API does not return the order or line value,
  * so this screen could not show it even by mistake.
  */
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { partnerApi } from "../api/partner.api";
-import type { RecruitPartnerPayload } from "../api/partner.api";
+import type { RecruitPartnerPayload } from "../interface/partner";
 import { SideBar } from "../components/SideBar";
 import { Header } from "../components/Header";
 import {
   ReferralSection,
   EarningsOverview,
   CommissionBreakdown,
-  DashboardTabs,
   RecruitModal,
   useForm,
 } from "../components/Page/Dashboard";
@@ -25,40 +24,15 @@ import { useToast } from "../components/Common/Toast";
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const urlTab = searchParams.get("tab");
   const { message } = useToast();
   const queryClient = useQueryClient();
   const [recruitOpen, setRecruitOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [activeTab, setActiveTab] = useState(urlTab || "customers");
   const [recruitForm] = useForm<RecruitPartnerPayload>();
-
-  useEffect(() => {
-    if (urlTab) {
-      setActiveTab(urlTab);
-    }
-  }, [urlTab]);
 
   const { data: me, isLoading } = useQuery({
     queryKey: ["partner-me"],
     queryFn: partnerApi.me,
-  });
-  const { data: customers = [] } = useQuery({
-    queryKey: ["partner-customers"],
-    queryFn: partnerApi.customers,
-  });
-  const { data: recruits = [] } = useQuery({
-    queryKey: ["partner-recruits"],
-    queryFn: partnerApi.recruits,
-  });
-  const { data: commissions = [] } = useQuery({
-    queryKey: ["partner-commissions"],
-    queryFn: partnerApi.commissions,
-  });
-  const { data: topProducts = [] } = useQuery({
-    queryKey: ["partner-top-products"],
-    queryFn: partnerApi.topProducts,
   });
 
   const recruitMutation = useMutation({

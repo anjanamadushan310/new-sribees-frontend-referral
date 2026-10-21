@@ -1,11 +1,6 @@
-import type { InputHTMLAttributes, ReactNode } from 'react';
+import type { BaseInputProps } from "../../interface/common";
 
-interface BaseInputProps extends InputHTMLAttributes<HTMLInputElement> {
-    label: string;
-    icon: ReactNode;
-    trailing?: ReactNode;
-    error?: string;
-}
+export type { BaseInputProps };
 
 const BaseInput = ({ label, icon, trailing, error, id, ...props }: BaseInputProps) => {
     const inputId = id ?? props.name ?? label.toLowerCase().replace(/\s+/g, '-');

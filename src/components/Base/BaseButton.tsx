@@ -1,9 +1,6 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { BaseButtonProps } from "../../interface/common";
 
-interface BaseButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-    children: ReactNode;
-    loading?: boolean;
-}
+export type { BaseButtonProps };
 
 const BaseButton = ({ children, loading = false, disabled, ...props }: BaseButtonProps) => (
     <button type="button" disabled={disabled || loading} {...props}>

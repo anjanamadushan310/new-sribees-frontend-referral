@@ -1,11 +1,9 @@
 import { UserRound } from "lucide-react";
 import LoginForm from "./LoginForm";
 
-interface LoginProps {
-  loading: boolean;
-  error: string | null;
-  onSubmit: (values: { email: string; password: string }) => void;
-}
+import type { LoginProps } from "../../../interface/auth";
+
+export type { LoginProps };
 
 const Login = ({ loading, error, onSubmit }: LoginProps) => (
   <main className="grid min-h-screen w-full bg-white font-sans">

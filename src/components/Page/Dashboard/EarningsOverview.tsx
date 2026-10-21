@@ -1,11 +1,9 @@
 import React from "react";
 import { Wallet, DollarSign, Clock, CheckCircle2 } from "lucide-react";
 import { SectionCard, StatCard } from "../../Base";
-import type { PartnerProfile } from "../../../api/partner.api";
+import type { EarningsOverviewProps } from "../../../interface/dashboard";
 
-export interface EarningsOverviewProps {
-  totals?: PartnerProfile["totals"];
-}
+export type { EarningsOverviewProps };
 
 const EarningsOverview: React.FC<EarningsOverviewProps> = ({ totals }) => {
   const totalEarnings =

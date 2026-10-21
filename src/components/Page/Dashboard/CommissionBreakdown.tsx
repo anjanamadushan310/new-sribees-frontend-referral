@@ -1,11 +1,9 @@
 import React from "react";
 import { GitFork, Crown } from "lucide-react";
 import { SectionCard, StatCard } from "../../Base";
-import type { PartnerProfile } from "../../../api/partner.api";
+import type { CommissionBreakdownProps } from "../../../interface/dashboard";
 
-export interface CommissionBreakdownProps {
-  byLevel?: PartnerProfile["byLevel"];
-}
+export type { CommissionBreakdownProps };
 
 const CommissionBreakdown: React.FC<CommissionBreakdownProps> = ({ byLevel }) => {
   return (

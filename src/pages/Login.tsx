@@ -9,13 +9,14 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { partnerApi } from '../api/partner.api';
 import LoginComponent from '../components/Page/Login/Login';
+import type { LoginFormValues } from '../interface/auth';
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const onFinish = async (values: { email: string; password: string }) => {
+    const onFinish = async (values: LoginFormValues) => {
         setLoading(true);
         setError(null);
         try {

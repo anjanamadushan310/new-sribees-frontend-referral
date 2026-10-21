@@ -1,12 +1,8 @@
 import React from "react";
 import { ReferralBannerCard } from "../../Base";
-import type { PartnerProfile } from "../../../api/partner.api";
+import type { ReferralSectionProps } from "../../../interface/dashboard";
 
-export interface ReferralSectionProps {
-  profile?: PartnerProfile;
-  loading?: boolean;
-  onCopy: () => void;
-}
+export type { ReferralSectionProps };
 
 const ReferralSection: React.FC<ReferralSectionProps> = ({
   profile,

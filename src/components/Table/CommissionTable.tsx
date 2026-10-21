@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 import { ChevronRight, ChevronDown } from "lucide-react";
-import type { PartnerCommission } from "../../api/partner.api";
 import { money, shortDate, statusTag } from "./tableUtils";
 import CommissionLines from "./CommissionLines";
 
-export interface CommissionTableProps {
-  commissions: PartnerCommission[];
-  loading?: boolean;
-}
+import type { CommissionTableProps } from "../../interface/ledger";
+
+export type { CommissionTableProps };
 
 const CommissionTable: React.FC<CommissionTableProps> = ({
   commissions,

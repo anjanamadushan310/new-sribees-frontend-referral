@@ -1,12 +1,8 @@
 import React from "react";
 
-export interface SectionCardProps {
-  title?: string;
-  icon?: React.ReactNode;
-  children: React.ReactNode;
-  className?: string;
-  extraHeader?: React.ReactNode;
-}
+import type { SectionCardProps } from "../../interface/common";
+
+export type { SectionCardProps };
 
 const SectionCard: React.FC<SectionCardProps> = ({
   title,
