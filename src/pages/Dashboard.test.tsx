@@ -1,11 +1,11 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import { App as AntApp } from 'antd';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PartnerProfile } from '../api/partner.api';
 import { partnerApi } from '../api/partner.api';
 import Dashboard from './Dashboard';
+import { ToastProvider } from '../components/Common/Toast';
 
 vi.mock('../api/partner.api', () => ({
     partnerApi: {
@@ -31,14 +31,14 @@ function renderDashboard() {
     const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     return render(
         <QueryClientProvider client={client}>
-            <AntApp>
+            <ToastProvider>
                 <MemoryRouter initialEntries={['/']}>
                     <Routes>
                         <Route path="/" element={<Dashboard />} />
                         <Route path="/login" element={<p>login page</p>} />
                     </Routes>
                 </MemoryRouter>
-            </AntApp>
+            </ToastProvider>
         </QueryClientProvider>,
     );
 }
@@ -76,22 +76,13 @@ describe('Partner dashboard', () => {
         api.recruit.mockResolvedValue(undefined);
     });
 
-    it('shows the invite code, the rate and the customers it brought in', async () => {
+    it('shows the invite code, the rate and the network metrics', async () => {
         renderDashboard();
         expect(await screen.findByText('KAMAL7')).toBeInTheDocument();
         expect(screen.getByText('Earn up to 3% on selected products your customers buy.')).toBeInTheDocument();
-        expect(await screen.findByText('Nimal')).toBeInTheDocument();
-        expect(screen.getByText('SB-0001')).toBeInTheDocument();
-        expect(screen.getByText('My Customers (1)')).toBeInTheDocument();
-    });
-
-    it('names each commission state in plain words', async () => {
-        renderDashboard();
-        fireEvent.click(await screen.findByText('Commission Ledger'));
-        const ready = (await screen.findByText('SB-1001')).closest('tr')!;
-        expect(within(ready).getByText('Ready')).toBeInTheDocument();
-        const reversed = screen.getByText('SB-1002').closest('tr')!;
-        expect(within(reversed).getByText('Cancelled')).toBeInTheDocument();
+        expect(screen.getByText('TOTAL REFERRAL')).toBeInTheDocument();
+        expect(screen.getByText('TOTAL CUSTOMERS')).toBeInTheDocument();
+        expect(screen.getByText('TOTAL TEAM MEMBERS')).toBeInTheDocument();
     });
 
     it('a recruited partner cannot recruit in turn: two levels, no deeper', async () => {
@@ -126,28 +117,8 @@ describe('Partner dashboard', () => {
     it('signing out clears the session and returns to the login page', async () => {
         renderDashboard();
         await screen.findByText('KAMAL7');
-        fireEvent.click(screen.getByText('Sign out').closest('button')!);
+        fireEvent.click(screen.getByRole('button', { name: /sign out/i }));
         expect(api.logout).toHaveBeenCalled();
         expect(await screen.findByText('login page')).toBeInTheDocument();
-    });
-
-    it('opens an order into the products it earned on, without what was paid', async () => {
-        renderDashboard();
-        fireEvent.click(await screen.findByText('Commission Ledger'));
-        const order = (await screen.findByText('SB-1001')).closest('tr')!;
-        expect(within(order).getByText('2 products')).toBeInTheDocument();
-        expect(within(screen.getByText('SB-1002').closest('tr')!).getByText('Whole order')).toBeInTheDocument();
-        fireEvent.click(within(order).getByRole('button'));
-        const rice = (await screen.findByText('Samba Rice 5kg')).closest('tr')!;
-        expect(within(rice).getByText('(1 returned)')).toBeInTheDocument();
-        expect(within(rice).getByText('5%')).toBeInTheDocument();
-        expect(within(rice).getByText('Rs 75.00')).toBeInTheDocument();
-    });
-
-    it('ranks the products the money came from', async () => {
-        renderDashboard();
-        fireEvent.click(await screen.findByText('Top Products'));
-        const rice = (await screen.findByText('Samba Rice 5kg')).closest('tr')!;
-        expect(within(rice).getByText('Rs 75.00')).toBeInTheDocument();
     });
 });

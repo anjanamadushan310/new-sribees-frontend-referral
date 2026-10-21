@@ -31,7 +31,7 @@ apiClient.interceptors.response.use(
     (error) => {
         // A dead or wrong-realm token is unrecoverable here — there is no
         // refresh flow for partners — so clear it and let the router send
-        // them back to login rather than looping on 401s.
+        // them back to login rather than looping on the same credential.
         if (error.response?.status === 401) {
             localStorage.removeItem(TOKEN_KEY);
             if (!window.location.pathname.startsWith('/login')) {

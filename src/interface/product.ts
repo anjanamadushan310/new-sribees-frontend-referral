@@ -1,0 +1,14 @@
+/**
+ * Products interfaces and types.
+ */
+import type { PartnerTopProduct } from "./partner";
+
+export interface TopProductsTableProps {
+  products: PartnerTopProduct[];
+  loading?: boolean;
+  viewMode?: "auto" | "table" | "grid";
+  className?: string;
+}
+
+export type ProductSortBy = "earned" | "units" | "orders" | "name";
+export type ProductViewMode = "auto" | "table" | "grid";

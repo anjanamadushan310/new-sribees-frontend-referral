@@ -5,77 +5,25 @@
  * them accept a partner id, so there is nothing here to tamper with.
  */
 import apiClient, { TOKEN_KEY } from './client';
+import type {
+    PartnerProfile,
+    PartnerCustomer,
+    PartnerRecruit,
+    PartnerCommissionLine,
+    PartnerCommission,
+    PartnerTopProduct,
+    RecruitPartnerPayload,
+} from '../interface/partner';
 
-export interface PartnerProfile {
-    partnerId: string;
-    fullName: string;
-    email: string;
-    referralCode: string;
-    /** The best rate on offer today: commission is set per product. */
-    commissionPercent: number;
-    /** The server's sentence for it, e.g. "Earn up to 5% on selected products…". */
-    commissionText?: string;
-    currency: string;
-    hasUpline: boolean;
-    totals: { pending: number; claimable: number; paid: number };
-    byLevel: { level1: number; level2: number };
-}
-
-export interface PartnerCustomer {
-    user_id: string;
-    name: string;
-    member_id: string;
-    joined_at: string | null;
-    orders: number;
-    total_earned: number;
-}
-
-export interface PartnerRecruit {
-    partner_id: string;
-    name: string;
-    joined_at: string | null;
-    is_active: boolean;
-    total_earned: number;
-}
-
-/** What one product in an order earned. Never what the customer paid. */
-export interface PartnerCommissionLine {
-    product_id: string;
-    product_name: string;
-    quantity: number;
-    returned_quantity: number;
-    rate_percentage: number;
-    amount: number;
-}
-
-export interface PartnerCommission {
-    commission_id: string;
-    order_number: string | null;
-    date: string | null;
-    amount: number;
-    /** Blended over the order; the lines carry each product's own rate. */
-    rate_percentage: number;
-    level: number;
-    status: 'pending' | 'claimable' | 'paid' | 'reversed';
-    /** Empty for orders from before per-product commission (one flat rate). */
-    lines?: PartnerCommissionLine[];
-}
-
-export interface PartnerTopProduct {
-    product_id: string;
-    product_name: string;
-    total_earned: number;
-    /** Units net of returns. */
-    units: number;
-    orders: number;
-}
-
-export interface RecruitPartnerPayload {
-    full_name: string;
-    email: string;
-    phone?: string;
-    password: string;
-}
+export type {
+    PartnerProfile,
+    PartnerCustomer,
+    PartnerRecruit,
+    PartnerCommissionLine,
+    PartnerCommission,
+    PartnerTopProduct,
+    RecruitPartnerPayload,
+};
 
 export const partnerApi = {
     login: async (email: string, password: string): Promise<PartnerProfile['fullName']> => {
@@ -87,7 +35,49 @@ export const partnerApi = {
         return res.data.data.partner.fullName;
     },
 
+    forgotPassword: async (
+        email: string
+    ): Promise<{ success: boolean; message: string; data?: { expiresIn?: number } }> => {
+        const res = await apiClient.post<{
+            success: boolean;
+            message: string;
+            data?: { expiresIn?: number };
+        }>('/partner/auth/forgot-password', { email });
+        return res.data;
+    },
+
+    verifyOtp: async (
+        email: string,
+        otp: string
+    ): Promise<{ success: boolean; message: string; data?: { reset_token?: string } }> => {
+        const res = await apiClient.post<{
+            success: boolean;
+            message: string;
+            data?: { reset_token?: string };
+        }>('/partner/auth/verify-otp', { email, otp });
+        return res.data;
+    },
+
+    resetPassword: async (payload: {
+        email: string;
+        otp: string;
+        newPassword: string;
+        confirmPassword?: string;
+    }): Promise<{ success: boolean; message: string }> => {
+        const res = await apiClient.post<{ success: boolean; message: string }>(
+            '/partner/auth/reset-password',
+            {
+                email: payload.email,
+                otp: payload.otp,
+                new_password: payload.newPassword,
+                confirm_password: payload.confirmPassword ?? payload.newPassword,
+            }
+        );
+        return res.data;
+    },
+
     logout: () => localStorage.removeItem(TOKEN_KEY),
+
 
     me: async (): Promise<PartnerProfile> => {
         const res = await apiClient.get<{ data: PartnerProfile }>('/partner/me');
