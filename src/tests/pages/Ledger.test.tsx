@@ -2,12 +2,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { PartnerProfile } from '../api/partner.api';
-import { partnerApi } from '../api/partner.api';
-import Ledger from './Ledger';
-import { ToastProvider } from '../components/Common/Toast';
+import type { PartnerProfile } from '../../api/partner.api';
+import { partnerApi } from '../../api/partner.api';
+import Ledger from '../../pages/Ledger';
+import { ToastProvider } from '../../components/Common/Toast';
 
-vi.mock('../api/partner.api', () => ({
+vi.mock('../../api/partner.api', () => ({
     partnerApi: {
         me: vi.fn(),
         commissions: vi.fn(),

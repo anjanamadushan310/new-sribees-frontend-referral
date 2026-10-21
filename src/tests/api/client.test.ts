@@ -5,7 +5,7 @@
  */
 import { AxiosError, AxiosHeaders, type AxiosAdapter, type InternalAxiosRequestConfig } from 'axios';
 import { beforeEach, describe, expect, it } from 'vitest';
-import apiClient, { TOKEN_KEY } from './client';
+import apiClient, { TOKEN_KEY } from '../../api/client';
 
 let seen: InternalAxiosRequestConfig[] = [];
 
