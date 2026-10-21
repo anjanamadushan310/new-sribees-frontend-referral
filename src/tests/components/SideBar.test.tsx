@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { MemoryRouter } from "react-router-dom";
-import SideBar from "./SideBar";
+import SideBar from "../../components/SideBar/SideBar";
 
 const defaultProps = {
   activeTab: "dashboard",

@@ -1,6 +1,6 @@
 import { renderHook, act } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { useSidebarCollapse, getDefaultSidebarCollapsed } from "./useSidebarCollapse";
+import { useSidebarCollapse, getDefaultSidebarCollapsed } from "../../hooks/useSidebarCollapse";
 
 describe("useSidebarCollapse", () => {
   beforeEach(() => {

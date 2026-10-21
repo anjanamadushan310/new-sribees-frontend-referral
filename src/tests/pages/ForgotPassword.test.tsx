@@ -1,10 +1,10 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { partnerApi } from '../api/partner.api';
-import ForgotPassword from './ForgotPassword';
+import { partnerApi } from '../../api/partner.api';
+import ForgotPassword from '../../pages/ForgotPassword';
 
-vi.mock('../api/partner.api', () => ({
+vi.mock('../../api/partner.api', () => ({
     partnerApi: {
         forgotPassword: vi.fn(),
         verifyOtp: vi.fn(),
