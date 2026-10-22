@@ -25,7 +25,7 @@ const Login = ({ loading, error, onSubmit }: LoginProps) => (
           <div className="flex flex-col min-w-0">
             <div className="flex items-center gap-1.5">
               <span className="text-white font-extrabold text-[17px] tracking-tight leading-tight italic">
-                SRIBƎES
+                SRIBEƎS
               </span>
               <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-white/20 text-[10px] font-bold uppercase tracking-wider text-pink-100 border border-white/20 leading-none">
                 Partner
