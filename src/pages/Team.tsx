@@ -385,6 +385,7 @@ const Team: React.FC = () => {
       </div>
 
       <RecruitModal
+        requiresApproval={me?.requiresUpgradeApproval}
         open={recruitOpen}
         onOk={submitRecruit}
         onCancel={() => {

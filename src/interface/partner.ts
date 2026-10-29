@@ -16,6 +16,7 @@ export interface PartnerProfile {
   role?: 'master_partner' | 'partner';
   linkedUserId?: string | null;
   canRecruit?: boolean;
+  requiresUpgradeApproval?: boolean;
   totals: { pending: number; claimable: number; paid: number };
   byLevel: { level1: number; level2: number };
 }

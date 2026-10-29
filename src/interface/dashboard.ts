@@ -65,6 +65,7 @@ export interface DashboardTabsProps {
 }
 
 export interface RecruitModalProps {
+  requiresApproval?: boolean;
   open: boolean;
   onOk: () => void;
   onCancel: () => void;
