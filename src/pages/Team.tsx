@@ -168,7 +168,7 @@ const Team: React.FC = () => {
         onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
         activeTab="recruits"
         onSelectTab={() => {}}
-        hasUpline={me?.hasUpline}
+        hasUpline={me?.role ? me.role !== "master_partner" : me?.hasUpline}
         onOpenRecruit={() => {
           recruitForm.resetFields();
           setRecruitOpen(true);
@@ -180,7 +180,7 @@ const Team: React.FC = () => {
         <Header onSignOut={signOut} title="My Team" />
 
         <main className="m-0 w-auto max-w-none bg-slate-50 px-3 sm:px-7 pb-24 sm:pb-[30px] pt-1">
-          {me?.hasUpline ? (
+          {(me?.role ? me.role !== "master_partner" : me?.hasUpline) ? (
             /* Restricted Tier Notice */
             <div className="mb-6 rounded-2xl border border-amber-200/80 bg-amber-50/60 p-6 text-slate-800">
               <div className="flex items-start gap-4">

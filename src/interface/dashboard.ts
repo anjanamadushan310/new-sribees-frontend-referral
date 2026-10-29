@@ -30,6 +30,7 @@ export interface ReferralSectionProps {
 }
 
 export interface EarningsOverviewProps {
+  walletMode?: boolean;
   totals?: PartnerProfile["totals"];
 }
 
