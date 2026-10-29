@@ -145,7 +145,7 @@ const Products: React.FC = () => {
         onToggleCollapse={() => setSidebarCollapsed((value) => !value)}
         activeTab="products"
         onSelectTab={() => {}}
-        hasUpline={me?.hasUpline}
+        hasUpline={me?.role ? me.role !== "master_partner" : me?.hasUpline}
         onOpenRecruit={() => {
           recruitForm.resetFields();
           setRecruitOpen(true);

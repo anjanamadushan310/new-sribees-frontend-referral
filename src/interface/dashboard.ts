@@ -30,6 +30,7 @@ export interface ReferralSectionProps {
 }
 
 export interface EarningsOverviewProps {
+  walletMode?: boolean;
   totals?: PartnerProfile["totals"];
 }
 
@@ -64,6 +65,7 @@ export interface DashboardTabsProps {
 }
 
 export interface RecruitModalProps {
+  requiresApproval?: boolean;
   open: boolean;
   onOk: () => void;
   onCancel: () => void;

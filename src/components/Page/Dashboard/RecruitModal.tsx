@@ -7,6 +7,7 @@ export type { RecruitModalProps };
 
 const RecruitModal: React.FC<RecruitModalProps> = ({
   open,
+  requiresApproval = false,
   onOk,
   onCancel,
   confirmLoading = false,
@@ -51,6 +52,13 @@ const RecruitModal: React.FC<RecruitModalProps> = ({
   }, [form]);
 
   if (!open) return null;
+  if (requiresApproval) return <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4" role="dialog" aria-modal="true" aria-label="Invite a customer to become a Partner">
+    <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
+      <h2 className="text-xl font-bold text-slate-900">Invite a customer to become a Partner</h2>
+      <p className="mt-3 text-slate-600">Ask the customer to sign in to the Sribees app and open Profile → Partner Wallet → Apply. A Super Admin approves the upgrade and assigns their Master Partner. Their existing invite code and referred customers stay with them.</p>
+      <button type="button" onClick={onCancel} className="mt-5 rounded-xl bg-[#D81B60] text-white px-5 py-3">Done</button>
+    </div>
+  </div>;
 
   return (
     <div

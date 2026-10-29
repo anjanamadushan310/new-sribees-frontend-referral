@@ -5,7 +5,7 @@ import type { EarningsOverviewProps } from "../../../interface/dashboard";
 
 export type { EarningsOverviewProps };
 
-const EarningsOverview: React.FC<EarningsOverviewProps> = ({ totals }) => {
+const EarningsOverview: React.FC<EarningsOverviewProps> = ({ totals, walletMode = false }) => {
   const totalEarnings =
     (totals?.pending ?? 0) +
     (totals?.claimable ?? 0) +
@@ -39,9 +39,9 @@ const EarningsOverview: React.FC<EarningsOverviewProps> = ({ totals }) => {
         </div>
         <div>
           <StatCard
-            title="TOTAL PAID"
+            title={walletMode ? "CREDITED TO PARTNER WALLET" : "TOTAL PAID"}
             value={totals?.paid ?? 0}
-            tagText="Cleared & Processed"
+            tagText={walletMode ? "Includes transfers and withdrawal reservations" : "Cleared & Processed"}
             leftIcon={<CheckCircle2 className="h-5 w-5" />}
             icon={<CheckCircle2 className="h-5 w-5" />}
             colorScheme="emerald"
