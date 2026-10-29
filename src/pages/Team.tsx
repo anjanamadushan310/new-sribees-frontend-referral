@@ -189,14 +189,12 @@ const Team: React.FC = () => {
                 </span>
                 <div>
                   <h3 className="m-0 text-base font-bold text-amber-900">
-                    Single-Tier Referral Account
+                    Partner Account
                   </h3>
                   <p className="mt-1 text-sm text-amber-800/90 leading-relaxed m-0">
-                    Your account is registered under an existing partner tier.
-                    In order to protect partner network stability, sub-partner
-                    recruitment is restricted to primary partners only. You
-                    continue to earn full Level 1 commissions on all your direct
-                    customers.
+                    Your account belongs to a Master Partner. Only Master Partners
+                    can recruit Partners. You continue to earn Level 1
+                    commissions on your direct customer referrals.
                   </p>
                 </div>
               </div>
