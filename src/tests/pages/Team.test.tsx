@@ -85,7 +85,7 @@ describe('Team Page', () => {
         api.me.mockResolvedValue(profile({ hasUpline: true }));
         renderTeam();
 
-        expect(await screen.findByText('Single-Tier Referral Account')).toBeInTheDocument();
+        expect(await screen.findByText('Partner Account')).toBeInTheDocument();
         expect(screen.queryByText('Recruit Partner')).not.toBeInTheDocument();
     });
 });

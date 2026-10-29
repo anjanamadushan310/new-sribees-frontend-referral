@@ -178,7 +178,7 @@ const SideBar: React.FC<SideBarProps> = ({
                       SRIBEƎS
                     </span>
                     <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-white/20 text-[10px] font-bold uppercase tracking-wider text-pink-100 border border-white/20 leading-none">
-                      Partner
+                      {hasUpline ? "Partner" : "Master Partner"}
                     </span>
                   </div>
                   <span className="text-[11px] font-medium text-pink-200/75 tracking-wide leading-tight mt-0.5">
