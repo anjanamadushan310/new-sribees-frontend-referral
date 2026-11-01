@@ -52,7 +52,7 @@ does not send those.
 
 ```bash
 npm install
-npm run dev        # http://localhost:5174, proxying /api to api.sribees.com
+npm run dev        # http://localhost:5174, proxying /api to api.sribeesonline.com
 ```
 
 Point somewhere else with `VITE_PROXY_TARGET=http://localhost:8000 npm run dev`.

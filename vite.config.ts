@@ -8,7 +8,7 @@ import tailwindcss from '@tailwindcss/vite'
 // the `is_partner` token claim; this keeps the browser from blurring it.
 const apiProxy = {
   '/api': {
-    target: process.env.VITE_PROXY_TARGET ?? 'https://api.sribees.com',
+    target: process.env.VITE_PROXY_TARGET ?? 'https://api.sribeesonline.com',
     changeOrigin: true,
   },
 }

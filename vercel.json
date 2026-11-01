@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "build": {
     "env": {
-      "VITE_API_URL": "https://api.sribees.com/api/v1"
+      "VITE_API_URL": "https://api.sribeesonline.com/api/v1"
     }
   },
   "rewrites": [
