@@ -209,7 +209,7 @@ const Ledger: React.FC = () => {
         onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
         activeTab="commissions"
         onSelectTab={() => {}}
-        hasUpline={me?.hasUpline}
+        hasUpline={me?.role ? me.role !== "master_partner" : me?.hasUpline}
         onOpenRecruit={() => {
           recruitForm.resetFields();
           setRecruitOpen(true);

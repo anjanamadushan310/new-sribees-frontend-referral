@@ -114,7 +114,7 @@ const Dashboard: React.FC = () => {
         onToggleCollapse={() => setSidebarCollapsed((value) => !value)}
         activeTab="dashboard"
         onSelectTab={() => {}}
-        hasUpline={me?.hasUpline}
+        hasUpline={me?.role ? me.role !== "master_partner" : me?.hasUpline}
         onOpenRecruit={() => {
           recruitForm.resetFields();
           setRecruitOpen(true);
@@ -125,9 +125,10 @@ const Dashboard: React.FC = () => {
         <Header onSignOut={signOut} />
 
         <main className="m-0 w-auto max-w-none bg-slate-50 px-3 sm:px-7 pb-24 sm:pb-[30px] pt-1">
+          {me?.linkedUserId && <button type="button" className="mb-4 rounded-xl bg-white border border-pink-200 px-5 py-3 font-semibold text-[#D81B60]" onClick={() => navigate('/wallet')}>Partner Wallet · Withdraw or transfer</button>}
           <ReferralSection profile={me} loading={isLoading} onCopy={copyCode} />
 
-          <EarningsOverview totals={me?.totals} />
+          <EarningsOverview totals={me?.totals} walletMode={!!me?.linkedUserId} />
 
           <NetworkMetrics customers={customers} recruits={recruits} />
 
@@ -136,6 +137,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       <RecruitModal
+        requiresApproval={me?.requiresUpgradeApproval}
         open={recruitOpen}
         onOk={submitRecruit}
         onCancel={() => {

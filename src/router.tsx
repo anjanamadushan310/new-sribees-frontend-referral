@@ -16,6 +16,7 @@ import Products from './pages/Products';
 import Ledger from './pages/Ledger';
 import Customers from './pages/Customers';
 import Team from './pages/Team';
+import PartnerWallet from './pages/PartnerWallet';
 
 const RequireAuth: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     // Presence of a token only decides what to render; the API is the actual
@@ -27,6 +28,7 @@ const RequireAuth: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 const AppRouter: React.FC = () => (
     <BrowserRouter>
         <Routes>
+            <Route path="/wallet" element={<RequireAuth><PartnerWallet /></RequireAuth>} />
             <Route path="/login" element={<Login />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
 
