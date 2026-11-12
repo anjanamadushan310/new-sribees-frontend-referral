@@ -11,6 +11,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { TOKEN_KEY } from './api/client';
 import Login from './pages/Login';
 import ForgotPassword from './pages/ForgotPassword';
+import SetPassword from './pages/SetPassword';
 import Dashboard from './pages/Dashboard';
 import Products from './pages/Products';
 import Ledger from './pages/Ledger';
@@ -27,6 +28,7 @@ const RequireAuth: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 const AppRouter: React.FC = () => (
     <BrowserRouter>
         <Routes>
+            <Route path="/set-password" element={<SetPassword />} />
             <Route path="/login" element={<Login />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
 
