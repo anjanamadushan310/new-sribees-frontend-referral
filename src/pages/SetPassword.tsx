@@ -45,10 +45,10 @@ export default function SetPassword() {
             <p className="font-bold text-[#D81B60] mb-2">SRIBEES ONLINE</p>
             <h1 className="text-2xl font-semibold mb-3">Set up your Partner password</h1>
             {complete ? <>
-                <p role="status" className="mb-6">Your password is ready. Sign in with the email address that received your invitation.</p>
+                <p role="status" className="mb-6">Your password is ready. Sign in using your Partner account email address and your new password.</p>
                 <Link className="text-[#D81B60] font-semibold" to="/login">Sign in to Partner Portal</Link>
             </> : !token ? <>
-                <p className="mb-6">Open the full link in your invitation email. If it has expired, request a new invitation or use Forgot Password.</p>
+                <p className="mb-6">Open the full link in your invitation message. If it has expired, request a new invitation or use Forgot Password.</p>
                 <Link className="text-[#D81B60] font-semibold" to="/forgot-password">Forgot Password</Link>
             </> : <>
                 <p className="text-sm text-gray-600 mb-6">Choose a password with 8–128 characters. Keep it private.</p>
