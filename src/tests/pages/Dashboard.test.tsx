@@ -23,7 +23,7 @@ const api = vi.mocked(partnerApi);
 const profile = (over: Partial<PartnerProfile> = {}): PartnerProfile => ({
     partnerId: 'p-1', fullName: 'Kamal Silva', email: 'kamal@example.test', referralCode: 'KAMAL7',
     commissionPercent: 3, commissionText: 'Earn up to 3% on selected products your customers buy.',
-    currency: 'LKR', hasUpline: false,
+    currency: 'LKR', hasUpline: false, role: "master_partner", canRecruit: true,
     totals: { pending: 1200, claimable: 800, paid: 5000 }, byLevel: { level1: 6000, level2: 1000 }, ...over,
 });
 
@@ -86,11 +86,22 @@ describe('Partner dashboard', () => {
     });
 
     it('a recruited partner cannot recruit in turn: two levels, no deeper', async () => {
-        api.me.mockResolvedValue(profile({ hasUpline: true }));
+        api.me.mockResolvedValue(profile({ hasUpline: true, role: "partner", canRecruit: false }));
         renderDashboard();
         await screen.findByText('KAMAL7');
         expect(screen.queryByText('Recruit a partner')).not.toBeInTheDocument();
         expect(screen.queryByText(/My Team/)).not.toBeInTheDocument();
+    });
+
+    it('an unassigned ordinary Partner stays a Partner and cannot recruit', async () => {
+        api.me.mockResolvedValue(profile({ hasUpline: false, role: 'partner', canRecruit: false, linkedUserId: 'customer-1' }));
+        renderDashboard();
+        await screen.findByText('KAMAL7');
+        expect(screen.queryByText('Master Partner')).not.toBeInTheDocument();
+        expect(screen.queryByText('Recruit a partner')).not.toBeInTheDocument();
+        expect(screen.queryByText(/My Team/)).not.toBeInTheDocument();
+        expect(screen.getByRole('link', { name: /Partner Wallet/ })).toHaveAttribute('href', '/wallet');
+        expect(api.recruits).not.toHaveBeenCalled();
     });
 
     it('recruits a partner only with a valid form', async () => {

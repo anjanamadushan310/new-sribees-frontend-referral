@@ -24,7 +24,7 @@ const profile = (over: Partial<PartnerProfile> = {}): PartnerProfile => ({
     referralCode: 'KAMAL7',
     commissionPercent: 3,
     currency: 'LKR',
-    hasUpline: false,
+    hasUpline: false, role: "master_partner", canRecruit: true,
     totals: { pending: 1200, claimable: 800, paid: 5000 },
     byLevel: { level1: 6000, level2: 1000 },
     ...over,
@@ -61,7 +61,7 @@ describe('Team Page', () => {
         renderTeam();
 
         expect(await screen.findByRole('heading', { level: 1, name: 'My Team' })).toBeInTheDocument();
-        expect(screen.getByText('TOTAL TEAM MEMBERS')).toBeInTheDocument();
+        expect(await screen.findByText('TOTAL TEAM MEMBERS')).toBeInTheDocument();
         expect(screen.getByText('ACTIVE PARTNERS')).toBeInTheDocument();
         expect(screen.getByText('LEVEL 2 EARNINGS')).toBeInTheDocument();
         expect(await screen.findByText('Nadeesha Fernando')).toBeInTheDocument();
@@ -82,7 +82,7 @@ describe('Team Page', () => {
     });
 
     it('displays single-tier account warning when partner has an upline', async () => {
-        api.me.mockResolvedValue(profile({ hasUpline: true }));
+        api.me.mockResolvedValue(profile({ hasUpline: true, role: "partner", canRecruit: false }));
         renderTeam();
 
         expect(await screen.findByText('Partner Account')).toBeInTheDocument();

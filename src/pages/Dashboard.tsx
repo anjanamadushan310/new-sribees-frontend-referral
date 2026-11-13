@@ -8,7 +8,7 @@
  */
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { partnerApi } from "../api/partner.api";
 import type { RecruitPartnerPayload } from "../interface/partner";
 import { SideBar } from "../components/SideBar";
@@ -45,6 +45,7 @@ const Dashboard: React.FC = () => {
   const { data: recruits = [] } = useQuery({
     queryKey: ["partner-recruits"],
     queryFn: partnerApi.recruits,
+    enabled: me?.role === "master_partner" && me?.canRecruit === true,
   });
 
   const recruitMutation = useMutation({
@@ -76,6 +77,7 @@ const Dashboard: React.FC = () => {
   };
 
   const submitRecruit = async () => {
+    if (me?.role !== "master_partner" || me?.canRecruit !== true) return;
     let values: RecruitPartnerPayload;
     try {
       values = await recruitForm.validateFields();
@@ -114,7 +116,7 @@ const Dashboard: React.FC = () => {
         onToggleCollapse={() => setSidebarCollapsed((value) => !value)}
         activeTab="dashboard"
         onSelectTab={() => {}}
-        hasUpline={me?.hasUpline}
+        isMasterPartner={me?.role === "master_partner" && me?.canRecruit === true}
         onOpenRecruit={() => {
           recruitForm.resetFields();
           setRecruitOpen(true);
@@ -127,6 +129,7 @@ const Dashboard: React.FC = () => {
         <main className="m-0 w-auto max-w-none bg-slate-50 px-3 sm:px-7 pb-24 sm:pb-[30px] pt-1">
           <ReferralSection profile={me} loading={isLoading} onCopy={copyCode} />
 
+          {me?.linkedUserId && <Link to="/wallet" className="block my-5 rounded-2xl border border-pink-200 bg-white p-5 text-[#D81B60] font-semibold">Partner Wallet →<span className="block mt-1 text-sm font-normal text-slate-600">View affiliate earnings, request a bank withdrawal or transfer to Sribees Wallet.</span></Link>}
           <EarningsOverview totals={me?.totals} />
 
           <NetworkMetrics customers={customers} recruits={recruits} />
@@ -136,7 +139,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       <RecruitModal
-        open={recruitOpen}
+        open={recruitOpen && me?.role === "master_partner" && me?.canRecruit === true}
         onOk={submitRecruit}
         onCancel={() => {
           setRecruitOpen(false);

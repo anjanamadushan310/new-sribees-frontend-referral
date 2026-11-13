@@ -24,7 +24,7 @@ const profile = (over: Partial<PartnerProfile> = {}): PartnerProfile => ({
     referralCode: 'KAMAL7',
     commissionPercent: 3,
     currency: 'LKR',
-    hasUpline: false,
+    hasUpline: false, role: "master_partner", canRecruit: true,
     totals: { pending: 1200, claimable: 800, paid: 5000 },
     byLevel: { level1: 6000, level2: 1000 },
     ...over,

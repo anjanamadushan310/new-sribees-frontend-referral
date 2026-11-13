@@ -46,6 +46,7 @@ const Team: React.FC = () => {
   const { data: recruits = [], isLoading } = useQuery({
     queryKey: ["partner-recruits"],
     queryFn: partnerApi.recruits,
+    enabled: me?.role === "master_partner" && me?.canRecruit === true,
   });
 
   const recruitMutation = useMutation({
@@ -71,6 +72,7 @@ const Team: React.FC = () => {
   };
 
   const submitRecruit = async () => {
+    if (me?.role !== "master_partner" || me?.canRecruit !== true) return;
     let values: RecruitPartnerPayload;
     try {
       values = await recruitForm.validateFields();
@@ -168,7 +170,7 @@ const Team: React.FC = () => {
         onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
         activeTab="recruits"
         onSelectTab={() => {}}
-        hasUpline={me?.hasUpline}
+        isMasterPartner={me?.role === "master_partner" && me?.canRecruit === true}
         onOpenRecruit={() => {
           recruitForm.resetFields();
           setRecruitOpen(true);
@@ -180,7 +182,7 @@ const Team: React.FC = () => {
         <Header onSignOut={signOut} title="My Team" />
 
         <main className="m-0 w-auto max-w-none bg-slate-50 px-3 sm:px-7 pb-24 sm:pb-[30px] pt-1">
-          {me?.hasUpline ? (
+          {me?.role !== "master_partner" || me?.canRecruit !== true ? (
             /* Restricted Tier Notice */
             <div className="mb-6 rounded-2xl border border-amber-200/80 bg-amber-50/60 p-6 text-slate-800">
               <div className="flex items-start gap-4">
@@ -192,7 +194,7 @@ const Team: React.FC = () => {
                     Partner Account
                   </h3>
                   <p className="mt-1 text-sm text-amber-800/90 leading-relaxed m-0">
-                    Your account belongs to a Master Partner. Only Master Partners
+                    Only Master Partners
                     can recruit Partners. You continue to earn Level 1
                     commissions on your direct customer referrals.
                   </p>
@@ -385,7 +387,7 @@ const Team: React.FC = () => {
       </div>
 
       <RecruitModal
-        open={recruitOpen}
+        open={recruitOpen && me?.role === "master_partner" && me?.canRecruit === true}
         onOk={submitRecruit}
         onCancel={() => {
           setRecruitOpen(false);
