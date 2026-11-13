@@ -80,7 +80,7 @@ describe('Partner dashboard', () => {
         renderDashboard();
         expect(await screen.findByText('KAMAL7')).toBeInTheDocument();
         expect(screen.getByText('Earn up to 3% on selected products your customers buy.')).toBeInTheDocument();
-        expect(screen.getByText('TOTAL REFERRAL')).toBeInTheDocument();
+        expect(screen.queryByText('TOTAL REFERRAL')).not.toBeInTheDocument();
         expect(screen.getByText('TOTAL CUSTOMERS')).toBeInTheDocument();
         expect(screen.getByText('TOTAL TEAM MEMBERS')).toBeInTheDocument();
     });
@@ -102,6 +102,17 @@ describe('Partner dashboard', () => {
         expect(screen.queryByText(/My Team/)).not.toBeInTheDocument();
         expect(screen.getByRole('link', { name: /Partner Wallet/ })).toHaveAttribute('href', '/wallet');
         expect(api.recruits).not.toHaveBeenCalled();
+        expect(screen.queryByText('TOTAL TEAM MEMBERS')).not.toBeInTheDocument();
+        expect(screen.queryByText('LEVEL 02 EARNINGS')).not.toBeInTheDocument();
+    });
+
+    it('shows the approval route instead of collecting a new Partner password when approval is required', async () => {
+        api.me.mockResolvedValue(profile({ requiresUpgradeApproval: true }));
+        renderDashboard();
+        fireEvent.click((await screen.findByText('Recruit a partner')).closest('button')!);
+        expect(await screen.findByRole('heading', { name: 'Partner approval' })).toBeInTheDocument();
+        expect(screen.queryByPlaceholderText('e.g. Nadeesha Fernando')).not.toBeInTheDocument();
+        expect(api.recruit).not.toHaveBeenCalled();
     });
 
     it('recruits a partner only with a valid form', async () => {

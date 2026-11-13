@@ -6,6 +6,7 @@ import {
   FileText,
   User,
   Users,
+  Wallet,
   PanelLeftClose,
   PanelLeftOpen,
   UserPlus,
@@ -28,6 +29,7 @@ const SideBar: React.FC<SideBarProps> = ({
   activeTab,
   onSelectTab,
   isMasterPartner = false,
+  showWallet = false,
   onOpenRecruit,
   onSignOut,
 }) => {
@@ -62,6 +64,8 @@ const SideBar: React.FC<SideBarProps> = ({
       if (location.pathname !== "/") {
         navigate("/");
       }
+    } else if (key === "wallet") {
+      navigate("/wallet");
     } else if (key === "products") {
       if (location.pathname !== "/products") {
         navigate("/products");
@@ -91,6 +95,7 @@ const SideBar: React.FC<SideBarProps> = ({
       icon: <LayoutDashboard className="h-5 w-5 shrink-0" />,
       label: "Dashboard",
     },
+    ...(showWallet ? [{ key: "wallet", icon: <Wallet className="h-5 w-5 shrink-0" />, label: "Partner Wallet" }] : []),
     {
       key: "products",
       icon: <Package className="h-5 w-5 shrink-0" />,
@@ -118,7 +123,7 @@ const SideBar: React.FC<SideBarProps> = ({
   ];
 
   const isMoreActive =
-    isMoreOpen || activeTab === "customers" || activeTab === "recruits";
+    isMoreOpen || activeTab === "customers" || activeTab === "recruits" || activeTab === "wallet";
 
   return (
     <>
@@ -231,7 +236,7 @@ const SideBar: React.FC<SideBarProps> = ({
               isCollapsed ? "px-2" : "px-3.5"
             }`}
           >
-            {isMasterPartner && (
+            {isMasterPartner && onOpenRecruit && (
               <button
                 type="button"
                 onClick={onOpenRecruit}
@@ -427,6 +432,20 @@ const SideBar: React.FC<SideBarProps> = ({
                   </button>
                 </div>
 
+                {showWallet && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMoreOpen(false);
+                      handleMenuClick("wallet");
+                    }}
+                    className="mb-3 flex w-full items-center gap-3 rounded-2xl border border-pink-100 bg-pink-50 p-4 text-left text-[#D81B60] font-semibold"
+                  >
+                    <Wallet className="h-5 w-5" aria-hidden="true" />
+                    Partner Wallet
+                    <ChevronRight className="ml-auto h-4 w-4" aria-hidden="true" />
+                  </button>
+                )}
                 {/* Menu items */}
                 <div className="flex flex-col gap-2">
                   {/* My Customers */}
@@ -490,7 +509,7 @@ const SideBar: React.FC<SideBarProps> = ({
                   )}
 
                   {/* Recruit Partner */}
-                  {isMasterPartner && (
+                  {isMasterPartner && onOpenRecruit && (
                     <button
                       type="button"
                       onClick={() => {

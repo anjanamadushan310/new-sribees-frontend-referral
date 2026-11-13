@@ -10,6 +10,7 @@ const RecruitModal: React.FC<RecruitModalProps> = ({
   onOk,
   onCancel,
   confirmLoading = false,
+  requiresApproval = false,
   form,
 }) => {
   useEffect(() => {
@@ -51,6 +52,22 @@ const RecruitModal: React.FC<RecruitModalProps> = ({
   }, [form]);
 
   if (!open) return null;
+
+  if (requiresApproval) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="dialog" aria-modal="true" aria-labelledby="partner-approval-title">
+        <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
+          <h2 id="partner-approval-title" className="m-0 text-xl font-semibold text-slate-900">Partner approval</h2>
+          <p className="mt-4 text-sm leading-relaxed text-slate-600">A Super Admin approves new Partners and assigns them to your team.</p>
+          <p className="text-sm leading-relaxed text-slate-600">Ask the customer to contact Sribees support with their customer ID and your Master Partner code. After approval, they receive an invitation to choose their own password.</p>
+          <div className="mt-6 flex flex-wrap items-center gap-4">
+            <a href="mailto:support@sribeesonline.com" className="rounded-xl bg-[#D81B60] px-4 py-3 text-sm font-semibold text-white">Contact support</a>
+            <button type="button" onClick={onCancel} className="rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700">Close</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

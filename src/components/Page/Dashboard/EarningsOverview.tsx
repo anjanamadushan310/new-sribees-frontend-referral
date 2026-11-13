@@ -23,7 +23,7 @@ const EarningsOverview: React.FC<EarningsOverviewProps> = ({ totals }) => {
             value={totalEarnings}
             tagText="All-time commission"
             leftIcon={<Wallet className="h-5 w-5" />}
-            icon={<span className="text-base font-bold leading-none">$</span>}
+            icon={<Wallet className="h-5 w-5" />}
             colorScheme="rose"
           />
         </div>
@@ -31,7 +31,7 @@ const EarningsOverview: React.FC<EarningsOverviewProps> = ({ totals }) => {
           <StatCard
             title="PENDING COMMISSIONS"
             value={totals?.pending ?? 0}
-            tagText="Pending Payout"
+            tagText="Awaiting commission confirmation"
             leftIcon={<Clock className="h-5 w-5" />}
             icon={<Clock className="h-5 w-5" />}
             colorScheme="orange"
@@ -39,9 +39,9 @@ const EarningsOverview: React.FC<EarningsOverviewProps> = ({ totals }) => {
         </div>
         <div>
           <StatCard
-            title="TOTAL PAID"
+            title="PROCESSED COMMISSIONS"
             value={totals?.paid ?? 0}
-            tagText="Cleared & Processed"
+            tagText="Previously processed earnings"
             leftIcon={<CheckCircle2 className="h-5 w-5" />}
             icon={<CheckCircle2 className="h-5 w-5" />}
             colorScheme="emerald"

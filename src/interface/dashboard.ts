@@ -34,10 +34,12 @@ export interface EarningsOverviewProps {
 }
 
 export interface CommissionBreakdownProps {
+  isMasterPartner?: boolean;
   byLevel?: PartnerProfile["byLevel"];
 }
 
 export interface NetworkMetricsProps {
+  isMasterPartner?: boolean;
   customers?: PartnerCustomer[];
   recruits?: PartnerRecruit[];
   totalReferrals?: number;
@@ -64,6 +66,7 @@ export interface DashboardTabsProps {
 }
 
 export interface RecruitModalProps {
+  requiresApproval?: boolean;
   open: boolean;
   onOk: () => void;
   onCancel: () => void;

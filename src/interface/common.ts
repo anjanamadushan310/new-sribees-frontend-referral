@@ -19,6 +19,7 @@ export interface SideBarProps {
   activeTab: string;
   onSelectTab: (key: string) => void;
   isMasterPartner?: boolean;
+  showWallet?: boolean;
   onOpenRecruit?: () => void;
   onSignOut: () => void;
 }
