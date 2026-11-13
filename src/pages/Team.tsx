@@ -68,6 +68,7 @@ const Team: React.FC = () => {
 
   const signOut = () => {
     partnerApi.logout();
+    queryClient.clear();
     navigate("/login", { replace: true });
   };
 
@@ -149,28 +150,14 @@ const Team: React.FC = () => {
   };
 
   return (
-    <div className="relative h-screen max-h-screen overflow-hidden box-border bg-slate-50 sm:bg-gradient-to-br sm:from-[#A51F60] sm:to-[#880E4F] p-0 sm:p-3 flex">
-      {/* Polished ambient glass highlights & specular reflections (preserves brand colors) */}
-      <div
-        className="pointer-events-none absolute inset-0 hidden sm:block overflow-hidden"
-        aria-hidden="true"
-      >
-        {/* Top-left soft specular glow */}
-        <div className="absolute -top-[15%] -left-[10%] h-[420px] w-[420px] rounded-full bg-white/10 blur-[85px]" />
-        {/* Center ambient fill for depth */}
-        <div className="absolute top-1/3 left-1/3 h-[320px] w-[320px] rounded-full bg-pink-300/[0.08] blur-[95px]" />
-        {/* Bottom specular reflection */}
-        <div className="absolute -bottom-[20%] right-[10%] h-[380px] w-[380px] rounded-full bg-white/[0.07] blur-[85px]" />
-        {/* Crisp glass rim light on top edge */}
-        <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-      </div>
-
+    <div className="relative h-screen max-h-screen overflow-hidden box-border bg-slate-50 sm:bg-[#8B1447] p-0 sm:p-3 flex">
       <SideBar
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
         activeTab="recruits"
         onSelectTab={() => {}}
         isMasterPartner={me?.role === "master_partner" && me?.canRecruit === true}
+        showWallet={Boolean(me?.linkedUserId)}
         onOpenRecruit={() => {
           recruitForm.resetFields();
           setRecruitOpen(true);
@@ -178,10 +165,10 @@ const Team: React.FC = () => {
         onSignOut={signOut}
       />
 
-      <div className="custom-scrollbar relative z-10 min-w-0 flex-1 h-screen sm:h-[calc(100vh-24px)] max-h-screen sm:max-h-[calc(100vh-24px)] overflow-y-auto rounded-none sm:rounded-[17px] bg-slate-50 shadow-none sm:shadow-[0_20px_40px_rgba(15,23,42,.25)] sm:ring-1 sm:ring-white/20">
+      <div className="custom-scrollbar relative z-10 min-w-0 flex-1 h-screen sm:h-[calc(100vh-24px)] max-h-screen sm:max-h-[calc(100vh-24px)] overflow-y-auto rounded-none sm:rounded-[17px] bg-slate-50 shadow-none sm:ring-1 sm:ring-black/5">
         <Header onSignOut={signOut} title="My Team" />
 
-        <main className="m-0 w-auto max-w-none bg-slate-50 px-3 sm:px-7 pb-24 sm:pb-[30px] pt-1">
+        <main className="mx-auto w-full max-w-[1440px] bg-slate-50 px-4 sm:px-7 pb-28 sm:pb-8 pt-4">
           {me?.role !== "master_partner" || me?.canRecruit !== true ? (
             /* Restricted Tier Notice */
             <div className="mb-6 rounded-2xl border border-amber-200/80 bg-amber-50/60 p-6 text-slate-800">
@@ -387,6 +374,7 @@ const Team: React.FC = () => {
       </div>
 
       <RecruitModal
+        requiresApproval={me?.requiresUpgradeApproval}
         open={recruitOpen && me?.role === "master_partner" && me?.canRecruit === true}
         onOk={submitRecruit}
         onCancel={() => {

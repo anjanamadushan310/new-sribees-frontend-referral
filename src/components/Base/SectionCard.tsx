@@ -13,10 +13,10 @@ const SectionCard: React.FC<SectionCardProps> = ({
 }) => {
   return (
     <section
-      className={`mb-5 sm:mb-7 rounded-[17px] border border-slate-100 bg-white p-3.5 sm:p-5 shadow-[0_2px_5px_rgba(15,23,42,.04)] ${className}`}
+      className={`mb-6 rounded-2xl border border-slate-200/70 bg-white p-4 sm:p-6 ${className}`}
     >
       {(title || icon || extraHeader) && (
-        <div className="mb-[18px] flex items-center justify-between">
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             {icon && (
               <span className="grid h-8 w-8 place-items-center rounded-lg bg-pink-50 text-pink-500">
@@ -24,7 +24,7 @@ const SectionCard: React.FC<SectionCardProps> = ({
               </span>
             )}
             {title && (
-              <h3 className="m-0 text-lg font-bold text-[#273650] tracking-tight">
+              <h3 className="m-0 text-base font-semibold text-slate-900 tracking-tight">
                 {title}
               </h3>
             )}
