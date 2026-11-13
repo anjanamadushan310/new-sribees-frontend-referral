@@ -27,7 +27,7 @@ const SideBar: React.FC<SideBarProps> = ({
   onToggleCollapse: propOnToggleCollapse,
   activeTab,
   onSelectTab,
-  hasUpline = false,
+  isMasterPartner = false,
   onOpenRecruit,
   onSignOut,
 }) => {
@@ -106,7 +106,7 @@ const SideBar: React.FC<SideBarProps> = ({
       icon: <User className="h-5 w-5 shrink-0" />,
       label: "My Customers",
     },
-    ...(!hasUpline
+    ...(isMasterPartner
       ? [
           {
             key: "recruits",
@@ -178,7 +178,7 @@ const SideBar: React.FC<SideBarProps> = ({
                       SRIBEƎS
                     </span>
                     <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-white/20 text-[10px] font-bold uppercase tracking-wider text-pink-100 border border-white/20 leading-none">
-                      {hasUpline ? "Partner" : "Master Partner"}
+                      {isMasterPartner ? "Master Partner" : "Partner"}
                     </span>
                   </div>
                   <span className="text-[11px] font-medium text-pink-200/75 tracking-wide leading-tight mt-0.5">
@@ -231,7 +231,7 @@ const SideBar: React.FC<SideBarProps> = ({
               isCollapsed ? "px-2" : "px-3.5"
             }`}
           >
-            {!hasUpline && (
+            {isMasterPartner && (
               <button
                 type="button"
                 onClick={onOpenRecruit}
@@ -459,7 +459,7 @@ const SideBar: React.FC<SideBarProps> = ({
                   </button>
 
                   {/* My Team */}
-                  {!hasUpline && (
+                  {isMasterPartner && (
                     <button
                       type="button"
                       onClick={() => {
@@ -490,7 +490,7 @@ const SideBar: React.FC<SideBarProps> = ({
                   )}
 
                   {/* Recruit Partner */}
-                  {!hasUpline && (
+                  {isMasterPartner && (
                     <button
                       type="button"
                       onClick={() => {

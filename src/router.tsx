@@ -13,6 +13,7 @@ import Login from './pages/Login';
 import ForgotPassword from './pages/ForgotPassword';
 import SetPassword from './pages/SetPassword';
 import Dashboard from './pages/Dashboard';
+import PartnerWallet from './pages/PartnerWallet';
 import Products from './pages/Products';
 import Ledger from './pages/Ledger';
 import Customers from './pages/Customers';
@@ -80,6 +81,7 @@ const AppRouter: React.FC = () => (
                 path="/recruits"
                 element={<Navigate to="/team" replace />}
             />
+            <Route path="/wallet" element={<RequireAuth><PartnerWallet /></RequireAuth>} />
             <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
     </BrowserRouter>

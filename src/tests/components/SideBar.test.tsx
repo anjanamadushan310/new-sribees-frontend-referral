@@ -6,7 +6,7 @@ import SideBar from "../../components/SideBar/SideBar";
 const defaultProps = {
   activeTab: "dashboard",
   onSelectTab: vi.fn(),
-  hasUpline: false,
+  isMasterPartner: true,
   onOpenRecruit: vi.fn(),
   onSignOut: vi.fn(),
 };
@@ -251,8 +251,8 @@ describe("SideBar", () => {
       expect(screen.queryByText("More Options")).not.toBeInTheDocument();
     });
 
-    it("does not show My Team or Recruit Partner in More sheet when hasUpline is true", () => {
-      renderSideBar({ hasUpline: true });
+    it("does not show My Team or Recruit Partner in More sheet for an ordinary Partner", () => {
+      renderSideBar({ isMasterPartner: false });
 
       fireEvent.click(screen.getByRole("button", { name: "More" }));
 

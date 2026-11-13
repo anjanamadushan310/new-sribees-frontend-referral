@@ -18,7 +18,7 @@ export interface SideBarProps {
   onToggleCollapse?: () => void;
   activeTab: string;
   onSelectTab: (key: string) => void;
-  hasUpline?: boolean;
+  isMasterPartner?: boolean;
   onOpenRecruit?: () => void;
   onSignOut: () => void;
 }
