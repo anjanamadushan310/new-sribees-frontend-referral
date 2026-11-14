@@ -63,7 +63,7 @@ describe('Team Page', () => {
         expect(await screen.findByRole('heading', { level: 1, name: 'My Team' })).toBeInTheDocument();
         expect(await screen.findByText('TOTAL TEAM MEMBERS')).toBeInTheDocument();
         expect(screen.getByText('ACTIVE PARTNERS')).toBeInTheDocument();
-        expect(screen.getByText('LEVEL 2 EARNINGS')).toBeInTheDocument();
+        expect(screen.getByText('PARTNER COMMISSION')).toBeInTheDocument();
         expect(await screen.findByText('Nadeesha Fernando')).toBeInTheDocument();
         expect(screen.getByText('Saman Kumara')).toBeInTheDocument();
         expect(screen.getByText('Active')).toBeInTheDocument();

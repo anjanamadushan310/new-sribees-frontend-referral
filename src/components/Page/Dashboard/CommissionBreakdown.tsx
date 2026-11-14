@@ -8,15 +8,15 @@ export type { CommissionBreakdownProps };
 const CommissionBreakdown: React.FC<CommissionBreakdownProps> = ({ byLevel, isMasterPartner = false }) => {
   return (
     <SectionCard
-      title="Commission Level Breakdown"
+      title="Commission breakdown"
       icon={<GitFork className="h-5 w-5" />}
     >
       <div className={`grid grid-cols-1 gap-4 ${isMasterPartner ? "md:grid-cols-2" : ""}`}>
         <div>
           <StatCard
-            title="LEVEL 01 EARNINGS"
+            title="CUSTOMER COMMISSION"
             value={byLevel?.level1 ?? 0}
-            tagText="Direct Referrals"
+            tagText="Direct customer orders"
             leftIcon={<Crown className="h-5 w-5" />}
             icon={<Crown className="h-5 w-5" />}
             colorScheme="rose"
@@ -24,9 +24,9 @@ const CommissionBreakdown: React.FC<CommissionBreakdownProps> = ({ byLevel, isMa
         </div>
         {isMasterPartner && <div>
           <StatCard
-            title="LEVEL 02 EARNINGS"
+            title="PARTNER COMMISSION"
             value={byLevel?.level2 ?? 0}
-            tagText="Secondary Network"
+            tagText="Directly assigned Partners’ customer commission"
             leftIcon={<GitFork className="h-5 w-5" />}
             icon={<GitFork className="h-5 w-5" />}
             colorScheme="purple"

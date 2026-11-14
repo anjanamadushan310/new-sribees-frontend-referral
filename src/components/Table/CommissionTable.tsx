@@ -87,7 +87,7 @@ const CommissionTable: React.FC<CommissionTableProps> = ({
                           : "bg-purple-50 text-purple-700 border border-purple-200/70"
                       }`}
                     >
-                      L{row.level}
+                      {row.level === 1 ? "Customer" : "Partner"}
                     </span>
                     <span className="text-xs text-slate-500 font-medium">
                       {shortDate(row.date)}
@@ -155,7 +155,7 @@ const CommissionTable: React.FC<CommissionTableProps> = ({
                 <th className="py-3 px-3 w-10 text-center"></th>
                 <th className="py-3 px-4">Date</th>
                 <th className="py-3 px-4">Order</th>
-                <th className="py-3 px-4">Level</th>
+                <th className="py-3 px-4">Commission type</th>
                 <th className="py-3 px-4">Products</th>
                 <th className="py-3 px-4 text-right">Amount</th>
                 <th className="py-3 px-4">Status</th>
@@ -204,7 +204,7 @@ const CommissionTable: React.FC<CommissionTableProps> = ({
                               : "bg-purple-50 text-purple-700 border border-purple-200/70"
                           }`}
                         >
-                          L{row.level}
+                          {row.level === 1 ? "Customer" : "Partner"}
                         </span>
                       </td>
                       <td className="py-3.5 px-4 text-slate-600">

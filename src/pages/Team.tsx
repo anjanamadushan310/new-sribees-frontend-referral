@@ -218,7 +218,7 @@ const Team: React.FC = () => {
                   </div>
                   <div>
                     <StatCard
-                      title="LEVEL 2 EARNINGS"
+                      title="PARTNER COMMISSION"
                       value={level2Earned}
                       icon={<DollarSign className="h-6 w-6" />}
                       gradientClass="bg-gradient-to-br from-pink-500 to-rose-600"

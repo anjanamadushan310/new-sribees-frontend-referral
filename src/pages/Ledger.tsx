@@ -216,7 +216,7 @@ const Ledger: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
                 <StatCard
-                  title="LEVEL 1 EARNED"
+                  title="CUSTOMER COMMISSION"
                   value={level1Earned}
                   icon={<Crown className="h-6 w-6" />}
                   colorScheme="rose"
@@ -224,7 +224,7 @@ const Ledger: React.FC = () => {
               </div>
               <div>
                 <StatCard
-                  title="LEVEL 2 EARNED"
+                  title="PARTNER COMMISSION"
                   value={level2Earned}
                   icon={<GitFork className="h-6 w-6" />}
                   colorScheme="purple"
@@ -306,9 +306,9 @@ const Ledger: React.FC = () => {
                     onChange={(e) => setLevelFilter(e.target.value)}
                     className="h-10 appearance-none rounded-xl border border-slate-200 bg-white px-3 pr-8 text-xs font-medium text-slate-700 focus:outline-none focus:border-pink-600 focus:ring-2 focus:ring-pink-100 transition-all cursor-pointer"
                   >
-                    <option value="all">All Levels</option>
-                    <option value="1">Level 1 (Direct)</option>
-                    <option value="2">Level 2 (Team)</option>
+                    <option value="all">All commission types</option>
+                    <option value="1">Customer commission</option>
+                    <option value="2">Partner commission</option>
                   </select>
                   <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
                 </div>

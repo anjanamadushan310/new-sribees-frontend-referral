@@ -103,7 +103,7 @@ describe('Partner dashboard', () => {
         expect(screen.getByRole('link', { name: /Partner Wallet/ })).toHaveAttribute('href', '/wallet');
         expect(api.recruits).not.toHaveBeenCalled();
         expect(screen.queryByText('TOTAL TEAM MEMBERS')).not.toBeInTheDocument();
-        expect(screen.queryByText('LEVEL 02 EARNINGS')).not.toBeInTheDocument();
+        expect(screen.queryByText('PARTNER COMMISSION')).not.toBeInTheDocument();
     });
 
     it('shows the approval route instead of collecting a new Partner password when approval is required', async () => {
