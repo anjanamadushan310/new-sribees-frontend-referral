@@ -28,8 +28,8 @@ const ReferralBannerCard: React.FC<ReferralBannerCardProps> = ({
             : "Share your code with customers. Check your Ledger for commissions on eligible orders.")}
         </p>
       </div>
-      <div className="flex shrink-0 items-center justify-between gap-5 rounded-xl bg-pink-50 p-3 sm:p-4">
-        <strong className="font-mono text-xl tracking-widest text-[#88113e]">{referralCode ?? "—"}</strong>
+      <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 sm:shrink-0 sm:gap-5 rounded-xl bg-pink-50 p-3 sm:p-4">
+        <strong className="min-w-0 break-all font-mono text-lg tracking-wider sm:text-xl sm:tracking-widest text-[#88113e]">{referralCode ?? "—"}</strong>
         <button type="button" onClick={onCopy} disabled={!referralCode} aria-label="Copy code" title="Copy code" className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-[#D81B60] px-4 text-sm font-semibold text-white hover:bg-[#b41650]">
           <Copy className="h-4 w-4" aria-hidden="true" />Copy Code
         </button>

@@ -123,7 +123,7 @@ const SideBar: React.FC<SideBarProps> = ({
   ];
 
   const isMoreActive =
-    isMoreOpen || activeTab === "customers" || activeTab === "recruits" || activeTab === "wallet";
+    isMoreOpen || activeTab === "customers" || activeTab === "recruits" || (showWallet && activeTab === "products");
 
   return (
     <>
@@ -284,7 +284,7 @@ const SideBar: React.FC<SideBarProps> = ({
                   setIsMoreOpen(false);
                   handleMenuClick("dashboard");
                 }}
-                className={`flex flex-col items-center justify-center py-1 px-1 rounded-xl transition-all duration-150 cursor-pointer border-0 bg-transparent active:scale-95 ${
+                className={`flex flex-col items-center justify-center min-h-14 py-1 px-1 rounded-xl transition-all duration-150 cursor-pointer border-0 bg-transparent active:scale-95 ${
                   activeTab === "dashboard" && !isMoreOpen
                     ? "text-[#A51F60] font-bold"
                     : "text-slate-500 hover:text-slate-800 font-medium"
@@ -310,26 +310,26 @@ const SideBar: React.FC<SideBarProps> = ({
                 type="button"
                 onClick={() => {
                   setIsMoreOpen(false);
-                  handleMenuClick("products");
+                  handleMenuClick(showWallet ? "wallet" : "products");
                 }}
-                className={`flex flex-col items-center justify-center py-1 px-1 rounded-xl transition-all duration-150 cursor-pointer border-0 bg-transparent active:scale-95 ${
-                  activeTab === "products" && !isMoreOpen
+                className={`flex flex-col items-center justify-center min-h-14 py-1 px-1 rounded-xl transition-all duration-150 cursor-pointer border-0 bg-transparent active:scale-95 ${
+                  activeTab === (showWallet ? "wallet" : "products") && !isMoreOpen
                     ? "text-[#A51F60] font-bold"
                     : "text-slate-500 hover:text-slate-800 font-medium"
                 }`}
-                aria-label="Top Products"
+                aria-label={showWallet ? "Partner Wallet" : "Top Products"}
               >
                 <div
                   className={`p-1 rounded-xl transition-all ${
-                    activeTab === "products" && !isMoreOpen
+                    activeTab === (showWallet ? "wallet" : "products") && !isMoreOpen
                       ? "bg-pink-50 text-[#A51F60]"
                       : "text-slate-500"
                   }`}
                 >
-                  <Package className="h-5 w-5 shrink-0" />
+                  {showWallet ? <Wallet className="h-5 w-5 shrink-0" /> : <Package className="h-5 w-5 shrink-0" />}
                 </div>
                 <span className="text-[11px] leading-tight mt-0.5">
-                  Top Products
+                  {showWallet ? "Wallet" : "Products"}
                 </span>
               </button>
 
@@ -340,7 +340,7 @@ const SideBar: React.FC<SideBarProps> = ({
                   setIsMoreOpen(false);
                   handleMenuClick("commissions");
                 }}
-                className={`flex flex-col items-center justify-center py-1 px-1 rounded-xl transition-all duration-150 cursor-pointer border-0 bg-transparent active:scale-95 ${
+                className={`flex flex-col items-center justify-center min-h-14 py-1 px-1 rounded-xl transition-all duration-150 cursor-pointer border-0 bg-transparent active:scale-95 ${
                   activeTab === "commissions" && !isMoreOpen
                     ? "text-[#A51F60] font-bold"
                     : "text-slate-500 hover:text-slate-800 font-medium"
@@ -363,7 +363,7 @@ const SideBar: React.FC<SideBarProps> = ({
               <button
                 type="button"
                 onClick={() => setIsMoreOpen((prev) => !prev)}
-                className={`flex flex-col items-center justify-center py-1 px-1 rounded-xl transition-all duration-150 cursor-pointer border-0 bg-transparent active:scale-95 relative ${
+                className={`flex flex-col items-center justify-center min-h-14 py-1 px-1 rounded-xl transition-all duration-150 cursor-pointer border-0 bg-transparent active:scale-95 relative ${
                   isMoreActive
                     ? "text-[#A51F60] font-bold"
                     : "text-slate-500 hover:text-slate-800 font-medium"
@@ -425,7 +425,7 @@ const SideBar: React.FC<SideBarProps> = ({
                   <button
                     type="button"
                     onClick={() => setIsMoreOpen(false)}
-                    className="h-8 w-8 grid place-items-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 transition-colors cursor-pointer border-0"
+                    className="h-11 w-11 grid place-items-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 transition-colors cursor-pointer border-0"
                     aria-label="Close menu"
                   >
                     <X className="h-4 w-4" />
@@ -437,12 +437,10 @@ const SideBar: React.FC<SideBarProps> = ({
                     type="button"
                     onClick={() => {
                       setIsMoreOpen(false);
-                      handleMenuClick("wallet");
+                      handleMenuClick("products");
                     }}
-                    className="mb-3 flex w-full items-center gap-3 rounded-2xl border border-pink-100 bg-pink-50 p-4 text-left text-[#D81B60] font-semibold"
-                  >
-                    <Wallet className="h-5 w-5" aria-hidden="true" />
-                    Partner Wallet
+                    className="mb-3 flex min-h-12 w-full items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left font-semibold text-slate-700">
+                    <Package className="h-5 w-5" aria-hidden="true" />Top Products
                     <ChevronRight className="ml-auto h-4 w-4" aria-hidden="true" />
                   </button>
                 )}
@@ -500,7 +498,7 @@ const SideBar: React.FC<SideBarProps> = ({
                             My Team
                           </div>
                           <div className="text-xs text-slate-500 leading-tight mt-0.5">
-                            Manage partner recruits & levels
+                            View your assigned Partners
                           </div>
                         </div>
                       </div>
@@ -527,7 +525,7 @@ const SideBar: React.FC<SideBarProps> = ({
                             Recruit a Partner
                           </div>
                           <div className="text-xs text-slate-500 leading-tight mt-0.5">
-                            Add new partners under your code
+                            Partner invitations and approvals
                           </div>
                         </div>
                       </div>

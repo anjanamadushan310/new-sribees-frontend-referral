@@ -64,3 +64,17 @@ button:disabled {
         scroll-behavior: auto !important;
     }
 }
+
+@media (max-width: 639px) {
+    input, select, textarea {
+        font-size: 16px;
+        min-height: 44px;
+    }
+    main {
+        scroll-padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+    }
+    main input + button {
+        min-width: 36px;
+        min-height: 44px;
+    }
+}

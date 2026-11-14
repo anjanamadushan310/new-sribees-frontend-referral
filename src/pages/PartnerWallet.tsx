@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowDownToLine, ArrowRightLeft, Wallet, ShoppingBag, RefreshCw } from 'lucide-react';
@@ -53,11 +53,18 @@ export default function PartnerWallet() {
         queryKey: ['partner-wallet'],
         queryFn: async () => (await api.get<{ data: WalletData }>('/partner/wallet')).data.data,
     });
+    const requestForm = useRef<HTMLElement>(null);
     const [mode, setMode] = useState<'transfer' | 'withdraw' | null>(null);
     const [requestId, setRequestId] = useState('');
     const [busy, setBusy] = useState(false);
     const [feedback, setFeedback] = useState('');
     const [values, setValues] = useState({ amount: '', bank_name: '', branch_name: '', account_name: '', account_number: '' });
+
+    useEffect(() => {
+        if (!mode) return;
+        requestForm.current?.scrollIntoView?.({ block: 'start', behavior: 'instant' });
+        requestForm.current?.querySelector('input')?.focus({ preventScroll: true });
+    }, [mode]);
 
     const open = (next: 'transfer' | 'withdraw') => {
         setRequestId(crypto.randomUUID());
@@ -97,7 +104,7 @@ export default function PartnerWallet() {
     };
 
     return (
-        <div className="flex h-screen max-h-screen overflow-hidden bg-slate-50 p-0 sm:bg-[#8B1447] sm:p-3">
+        <div className="flex h-dvh max-h-dvh overflow-hidden bg-slate-50 p-0 sm:bg-[#8B1447] sm:p-3">
             <SideBar
                 collapsed={sidebarCollapsed}
                 onToggleCollapse={() => setSidebarCollapsed(value => !value)}
@@ -109,7 +116,7 @@ export default function PartnerWallet() {
             />
             <div className="custom-scrollbar relative min-w-0 flex-1 overflow-y-auto bg-slate-50 sm:rounded-2xl">
                 <Header title="Partner Wallet" onSignOut={signOut} />
-                <main className="mx-auto max-w-6xl px-4 pb-28 pt-6 sm:px-7 sm:pb-10">
+                <main className="mx-auto max-w-6xl px-4 pb-[calc(6rem+env(safe-area-inset-bottom))] pt-6 sm:px-7 sm:pb-10">
                     <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
                         <p className="m-0 text-sm text-slate-500">Manage your affiliate earnings</p>
                         <button className={secondaryButton} onClick={() => data.refetch()} disabled={data.isFetching}>
@@ -126,9 +133,9 @@ export default function PartnerWallet() {
                                 <p className="mb-2 text-sm text-pink-100">Available balance</p>
                                 <p className="m-0 break-words text-[clamp(1.6rem,5vw,3rem)] font-semibold tracking-tight tabular-nums"><span className="mr-2 text-lg font-normal">LKR</span>{money(data.data.balance)}</p>
                                 <p className="mt-4 text-sm text-pink-100">Pending commission · LKR {money(data.data.pendingCommission)}</p>
-                                <div className="mt-7 flex flex-wrap gap-3">
-                                    <button disabled={busy} onClick={() => open('withdraw')} className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-[#8B1447] hover:bg-pink-50"><ArrowDownToLine className="h-4 w-4" aria-hidden="true" />Request bank withdrawal</button>
-                                    <button disabled={busy} onClick={() => open('transfer')} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/30 px-4 py-3 text-sm font-semibold text-white hover:bg-white/10"><ArrowRightLeft className="h-4 w-4" aria-hidden="true" />Transfer to Sribees Wallet</button>
+                                <div className="mt-7 grid gap-3 sm:flex sm:flex-wrap">
+                                    <button disabled={busy} onClick={() => open('withdraw')} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-[#8B1447] hover:bg-pink-50"><ArrowDownToLine className="h-4 w-4" aria-hidden="true" />Request bank withdrawal</button>
+                                    <button disabled={busy} onClick={() => open('transfer')} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/30 px-4 py-3 text-sm font-semibold text-white hover:bg-white/10"><ArrowRightLeft className="h-4 w-4" aria-hidden="true" />Transfer to Sribees Wallet</button>
                                 </div>
                             </section>
                             <section className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
@@ -138,7 +145,7 @@ export default function PartnerWallet() {
                                 <p className="mt-5 border-t border-slate-100 pt-5 text-sm leading-relaxed text-slate-600">You can move Partner earnings into Sribees Wallet to buy groceries. Transfers are one-way.</p>
                             </section>
                         </div>
-                        {mode && <section role="dialog" aria-label={mode === 'transfer' ? 'Transfer to Sribees Wallet' : 'Request withdrawal'} className="mb-6 rounded-2xl border border-pink-200 bg-white p-5 sm:p-7">
+                        {mode && <section ref={requestForm} role="dialog" aria-label={mode === 'transfer' ? 'Transfer to Sribees Wallet' : 'Request withdrawal'} className="mb-6 scroll-mt-20 rounded-2xl border border-pink-200 bg-white p-5 sm:p-7">
                             <h2 className="m-0 text-xl font-semibold text-slate-900">{mode === 'transfer' ? 'Transfer to Sribees Wallet' : 'Request withdrawal'}</h2>
                             <p className="mt-2 text-sm leading-relaxed text-slate-500">{mode === 'transfer' ? 'This money becomes shopping credit and cannot be transferred back.' : 'Check the bank details carefully before confirming your withdrawal request.'}</p>
                             <form onSubmit={submit} className="mt-6 grid gap-5 sm:grid-cols-2">
@@ -150,7 +157,7 @@ export default function PartnerWallet() {
                                         <input className={inputStyle} required maxLength={field.key === 'account_number' ? 40 : 120} value={values[field.key]} onChange={event => setValues({ ...values, [field.key]: event.target.value })} disabled={busy} />
                                     </label>
                                 ))}
-                                <div className="flex flex-wrap gap-3 sm:col-span-2">
+                                <div className="grid grid-cols-2 gap-3 sm:col-span-2 sm:flex sm:flex-wrap">
                                     <button disabled={busy} className={primaryButton}>{busy ? 'Processing…' : 'Confirm'}</button>
                                     <button type="button" disabled={busy} onClick={() => setMode(null)} className={secondaryButton}>Cancel</button>
                                 </div>
@@ -160,7 +167,7 @@ export default function PartnerWallet() {
                             {data.data.withdrawals.length === 0 && <p className="py-6 text-center text-sm text-slate-500">No withdrawal requests.</p>}
                             <div className="divide-y divide-slate-100">
                                 {data.data.withdrawals.map(withdrawal => (
-                                    <div key={withdrawal.id} className="flex flex-wrap items-start justify-between gap-3 py-4">
+                                    <div key={withdrawal.id} className="flex flex-wrap items-start justify-between gap-3 break-words py-4">
                                         <div><p className="m-0 font-semibold text-slate-900">LKR {money(withdrawal.amount)}</p><p className="mb-0 mt-1 text-sm text-slate-500">{withdrawal.bankName} · {withdrawal.accountNumber}</p>{withdrawal.note && <p className="mb-0 mt-2 text-sm text-slate-600">{withdrawal.note}</p>}</div>
                                         <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium capitalize text-slate-700">{withdrawal.status.replaceAll('_', ' ')}</span>
                                     </div>
@@ -171,9 +178,9 @@ export default function PartnerWallet() {
                             {data.data.entries.length === 0 && <p className="py-6 text-center text-sm text-slate-500">Your commission credits, transfers and withdrawals will appear here.</p>}
                             <div className="divide-y divide-slate-100">
                                 {data.data.entries.map(entry => (
-                                    <div key={entry.id} className="flex items-start justify-between gap-4 py-4 text-sm">
+                                    <div key={entry.id} className="grid gap-2 py-4 text-sm sm:flex sm:items-start sm:justify-between sm:gap-4">
                                         <div className="min-w-0"><p className="m-0 font-medium capitalize text-slate-800">{entry.kind.replaceAll('_', ' ')}</p><p className="mb-0 mt-1 text-xs text-slate-500">{new Date(entry.date).toLocaleString()}</p></div>
-                                        <div className="shrink-0 text-right tabular-nums"><p className="m-0 font-semibold text-slate-900">LKR {money(entry.amount)}</p><p className="mb-0 mt-1 text-xs text-slate-500">Balance {money(entry.balanceAfter)}</p></div>
+                                        <div className="min-w-0 break-words tabular-nums sm:shrink-0 sm:text-right"><p className="m-0 font-semibold text-slate-900">LKR {money(entry.amount)}</p><p className="mb-0 mt-1 text-xs text-slate-500">Balance {money(entry.balanceAfter)}</p></div>
                                     </div>
                                 ))}
                             </div>
