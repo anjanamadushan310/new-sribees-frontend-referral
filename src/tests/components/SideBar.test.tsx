@@ -251,10 +251,9 @@ describe("SideBar", () => {
       expect(screen.queryByText("More Options")).not.toBeInTheDocument();
     });
 
-    it("offers the linked Partner Wallet in the mobile menu", () => {
+    it("opens the linked Partner Wallet directly from bottom navigation", () => {
       const onSelectTab = vi.fn();
       renderSideBar({ showWallet: true, isMasterPartner: false, onSelectTab });
-      fireEvent.click(screen.getByRole("button", { name: "More" }));
       fireEvent.click(screen.getByRole("button", { name: "Partner Wallet" }));
       expect(onSelectTab).toHaveBeenCalledWith("wallet");
       expect(screen.queryByText("More Options")).not.toBeInTheDocument();

@@ -76,7 +76,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       </div>
 
       {/* Navigation Controls */}
-      <nav className="flex items-center gap-1" aria-label="Pagination Navigation">
+      <nav className="flex w-full items-center justify-between gap-1 sm:w-auto" aria-label="Pagination Navigation">
         {/* First Page */}
         <button
           type="button"
@@ -84,7 +84,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           disabled={currentPage === 1}
           aria-label="Go to first page"
           title="First page"
-          className="h-8 w-8 inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-pink-50 hover:text-pink-600 hover:border-pink-200 disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-slate-400 disabled:hover:border-slate-200 disabled:cursor-not-allowed transition-all cursor-pointer"
+          className="h-11 w-11 sm:h-8 sm:w-8 inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-pink-50 hover:text-pink-600 hover:border-pink-200 disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-slate-400 disabled:hover:border-slate-200 disabled:cursor-not-allowed transition-all cursor-pointer"
         >
           <ChevronsLeft className="h-3.5 w-3.5" />
         </button>
@@ -96,13 +96,13 @@ export const Pagination: React.FC<PaginationProps> = ({
           disabled={currentPage === 1}
           aria-label="Go to previous page"
           title="Previous page"
-          className="h-8 w-8 inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-pink-50 hover:text-pink-600 hover:border-pink-200 disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-slate-400 disabled:hover:border-slate-200 disabled:cursor-not-allowed transition-all cursor-pointer"
+          className="h-11 w-11 sm:h-8 sm:w-8 inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-pink-50 hover:text-pink-600 hover:border-pink-200 disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-slate-400 disabled:hover:border-slate-200 disabled:cursor-not-allowed transition-all cursor-pointer"
         >
           <ChevronLeft className="h-3.5 w-3.5" />
         </button>
 
         {/* Page Number Buttons */}
-        <div className="flex items-center gap-1">
+        <div className="hidden items-center gap-1 sm:flex">
           {pageNumbers.map((page, index) => {
             if (typeof page === "string") {
               return (
@@ -135,6 +135,8 @@ export const Pagination: React.FC<PaginationProps> = ({
           })}
         </div>
 
+        <span className="text-sm font-medium tabular-nums text-slate-600 sm:hidden">{currentPage} / {totalPages}</span>
+
         {/* Next Page */}
         <button
           type="button"
@@ -142,7 +144,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           disabled={currentPage === totalPages}
           aria-label="Go to next page"
           title="Next page"
-          className="h-8 w-8 inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-pink-50 hover:text-pink-600 hover:border-pink-200 disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-slate-400 disabled:hover:border-slate-200 disabled:cursor-not-allowed transition-all cursor-pointer"
+          className="h-11 w-11 sm:h-8 sm:w-8 inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-pink-50 hover:text-pink-600 hover:border-pink-200 disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-slate-400 disabled:hover:border-slate-200 disabled:cursor-not-allowed transition-all cursor-pointer"
         >
           <ChevronRight className="h-3.5 w-3.5" />
         </button>
@@ -154,7 +156,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           disabled={currentPage === totalPages}
           aria-label="Go to last page"
           title="Last page"
-          className="h-8 w-8 inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-pink-50 hover:text-pink-600 hover:border-pink-200 disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-slate-400 disabled:hover:border-slate-200 disabled:cursor-not-allowed transition-all cursor-pointer"
+          className="h-11 w-11 sm:h-8 sm:w-8 inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-pink-50 hover:text-pink-600 hover:border-pink-200 disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-slate-400 disabled:hover:border-slate-200 disabled:cursor-not-allowed transition-all cursor-pointer"
         >
           <ChevronsRight className="h-3.5 w-3.5" />
         </button>

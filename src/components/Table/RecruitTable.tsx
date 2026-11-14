@@ -75,9 +75,9 @@ const RecruitTable: React.FC<RecruitTableProps> = ({
                 </div>
               </div>
 
-              {/* Bottom: Level 2 earned */}
+              {/* Bottom: Partner commission */}
               <div className="flex items-center justify-between border-t border-slate-100 pt-3 mt-1">
-                <span className="text-xs text-slate-500">Level 2 earned:</span>
+                <span className="text-xs text-slate-500">Partner commission:</span>
                 <span className="text-sm font-bold text-pink-700">
                   {money(r.total_earned)}
                 </span>
@@ -93,7 +93,7 @@ const RecruitTable: React.FC<RecruitTableProps> = ({
                 <th className="py-3 px-4">Partner</th>
                 <th className="py-3 px-4">Joined</th>
                 <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4 text-right">Level 2 earned</th>
+                <th className="py-3 px-4 text-right">Partner commission</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">

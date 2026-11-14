@@ -21,12 +21,12 @@ const StatCard: React.FC<StatCardProps> = ({
     : "—";
 
   return (
-    <div className={`flex min-h-32 items-start justify-between gap-3 rounded-2xl border border-slate-200/80 bg-white p-5 ${className}`}>
+    <div className={`flex min-h-28 sm:min-h-32 items-start justify-between gap-3 rounded-2xl border border-slate-200/80 bg-white p-4 sm:p-5 ${className}`}>
       <div className="min-w-0">
         <p className="m-0 text-xs font-semibold tracking-wide text-slate-500">{title}</p>
         <p className="my-3 flex flex-wrap items-baseline gap-1.5 tabular-nums text-slate-900">
           {prefix && <span className="text-sm font-medium text-slate-500">{prefix}</span>}
-          <span className="text-2xl font-semibold tracking-tight sm:text-3xl">{formattedValue}</span>
+          <span className="break-all text-2xl font-semibold tracking-tight sm:text-3xl">{formattedValue}</span>
         </p>
         {tagText && <p className="m-0 text-xs leading-relaxed text-slate-500">{tagText}</p>}
       </div>

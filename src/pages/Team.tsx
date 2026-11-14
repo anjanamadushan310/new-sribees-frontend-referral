@@ -150,7 +150,7 @@ const Team: React.FC = () => {
   };
 
   return (
-    <div className="relative h-screen max-h-screen overflow-hidden box-border bg-slate-50 sm:bg-[#8B1447] p-0 sm:p-3 flex">
+    <div className="relative h-dvh max-h-dvh overflow-hidden box-border bg-slate-50 sm:bg-[#8B1447] p-0 sm:p-3 flex">
       <SideBar
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
@@ -165,10 +165,10 @@ const Team: React.FC = () => {
         onSignOut={signOut}
       />
 
-      <div className="custom-scrollbar relative z-10 min-w-0 flex-1 h-screen sm:h-[calc(100vh-24px)] max-h-screen sm:max-h-[calc(100vh-24px)] overflow-y-auto rounded-none sm:rounded-[17px] bg-slate-50 shadow-none sm:ring-1 sm:ring-black/5">
+      <div className="custom-scrollbar relative z-10 min-w-0 flex-1 h-dvh sm:h-[calc(100dvh-24px)] max-h-dvh sm:max-h-[calc(100vh-24px)] overflow-y-auto rounded-none sm:rounded-[17px] bg-slate-50 shadow-none sm:ring-1 sm:ring-black/5">
         <Header onSignOut={signOut} title="My Team" />
 
-        <main className="mx-auto w-full max-w-[1440px] bg-slate-50 px-4 sm:px-7 pb-28 sm:pb-8 pt-4">
+        <main className="mx-auto w-full max-w-[1440px] bg-slate-50 px-4 sm:px-7 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:pb-8 pt-4">
           {me?.role !== "master_partner" || me?.canRecruit !== true ? (
             /* Restricted Tier Notice */
             <div className="mb-6 rounded-2xl border border-amber-200/80 bg-amber-50/60 p-6 text-slate-800">
