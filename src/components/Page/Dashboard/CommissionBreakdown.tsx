@@ -26,7 +26,7 @@ const CommissionBreakdown: React.FC<CommissionBreakdownProps> = ({ byLevel, isMa
           <StatCard
             title="PARTNER COMMISSION"
             value={byLevel?.level2 ?? 0}
-            tagText="Directly assigned Partners’ customer commission"
+            tagText="Share from assigned Partners’ customer orders"
             leftIcon={<GitFork className="h-5 w-5" />}
             icon={<GitFork className="h-5 w-5" />}
             colorScheme="purple"
