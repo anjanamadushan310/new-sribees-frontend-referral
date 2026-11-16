@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PartnerProfile } from '../../api/partner.api';
@@ -35,18 +35,13 @@ function renderDashboard() {
                 <MemoryRouter initialEntries={['/']}>
                     <Routes>
                         <Route path="/" element={<Dashboard />} />
+                        <Route path="/customers" element={<p>customer selection page</p>} />
                         <Route path="/login" element={<p>login page</p>} />
                     </Routes>
                 </MemoryRouter>
             </ToastProvider>
         </QueryClientProvider>,
     );
-}
-
-function modal(): HTMLElement {
-    const m = document.querySelector('.ant-modal');
-    expect(m).not.toBeNull();
-    return m as HTMLElement;
 }
 
 describe('Partner dashboard', () => {
@@ -106,34 +101,19 @@ describe('Partner dashboard', () => {
         expect(screen.queryByText('PARTNER COMMISSION')).not.toBeInTheDocument();
     });
 
-    it('shows the approval route instead of collecting a new Partner password when approval is required', async () => {
-        api.me.mockResolvedValue(profile({ requiresUpgradeApproval: true }));
+    it('directs a Master Partner to select an existing customer instead of freeform recruitment', async () => {
         renderDashboard();
-        fireEvent.click((await screen.findByText('Recruit a partner')).closest('button')!);
-        expect(await screen.findByRole('heading', { name: 'Partner approval' })).toBeInTheDocument();
-        expect(screen.queryByPlaceholderText('e.g. Nadeesha Fernando')).not.toBeInTheDocument();
+        fireEvent.click(await screen.findByRole('button', { name: /add a customer as partner/i }));
+        expect(await screen.findByText('customer selection page')).toBeInTheDocument();
         expect(api.recruit).not.toHaveBeenCalled();
     });
 
-    it('recruits a partner only with a valid form', async () => {
+    it('does not expose freeform partner recruitment fields', async () => {
         renderDashboard();
-        fireEvent.click((await screen.findByText('Recruit a partner')).closest('button')!);
-        await waitFor(() => modal());
-        fireEvent.click(within(modal()).getByText('Recruit').closest('button')!);
-        expect(await within(modal()).findByText('Name is required')).toBeInTheDocument();
+        await screen.findByText('KAMAL7');
+        expect(screen.queryByPlaceholderText('e.g. Nadeesha Fernando')).not.toBeInTheDocument();
+        expect(screen.queryByPlaceholderText('partner@example.com')).not.toBeInTheDocument();
         expect(api.recruit).not.toHaveBeenCalled();
-
-        fireEvent.change(within(modal()).getByPlaceholderText('e.g. Nadeesha Fernando'),
-            { target: { value: '  Nadeesha  ' } });
-        fireEvent.change(within(modal()).getByPlaceholderText('partner@example.com'),
-            { target: { value: 'nadeesha@example.test' } });
-        const password = modal().querySelector('input[type="password"]') as HTMLInputElement;
-        fireEvent.change(password, { target: { value: 'Strong-Pass-123' } });
-        fireEvent.click(within(modal()).getByText('Recruit').closest('button')!);
-        await waitFor(() => expect(api.recruit).toHaveBeenCalled());
-        expect(api.recruit.mock.calls[0][0]).toMatchObject({
-            full_name: 'Nadeesha', email: 'nadeesha@example.test', phone: undefined,
-        });
     });
 
     it('signing out clears the session and returns to the login page', async () => {

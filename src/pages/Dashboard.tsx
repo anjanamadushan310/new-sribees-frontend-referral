@@ -6,11 +6,10 @@
  * Never what a customer paid: the API does not return the order or line value,
  * so this screen could not show it even by mistake.
  */
-import React, { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import React from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { partnerApi } from "../api/partner.api";
-import type { RecruitPartnerPayload } from "../interface/partner";
 import { SideBar } from "../components/SideBar";
 import { Header } from "../components/Header";
 import {
@@ -18,8 +17,6 @@ import {
   EarningsOverview,
   NetworkMetrics,
   CommissionBreakdown,
-  RecruitModal,
-  useForm,
 } from "../components/Page/Dashboard";
 import { useToast } from "../components/Common/Toast";
 import { useSidebarCollapse } from "../hooks/useSidebarCollapse";
@@ -28,9 +25,7 @@ const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const { message } = useToast();
   const queryClient = useQueryClient();
-  const [recruitOpen, setRecruitOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useSidebarCollapse();
-  const [recruitForm] = useForm<RecruitPartnerPayload>();
 
   const { data: me, isLoading, isError, refetch } = useQuery({
     queryKey: ["partner-me"],
@@ -46,23 +41,6 @@ const Dashboard: React.FC = () => {
     queryKey: ["partner-recruits"],
     queryFn: partnerApi.recruits,
     enabled: me?.role === "master_partner" && me?.canRecruit === true,
-  });
-
-  const recruitMutation = useMutation({
-    mutationFn: (payload: RecruitPartnerPayload) => partnerApi.recruit(payload),
-    onSuccess: () => {
-      message.success(
-        "Partner recruited. Share their login details with them.",
-      );
-      setRecruitOpen(false);
-      recruitForm.resetFields();
-      queryClient.invalidateQueries({ queryKey: ["partner-recruits"] });
-    },
-    onError: (err: any) =>
-      message.error(
-        err.response?.data?.detail?.error?.message ??
-          "Could not recruit this partner.",
-      ),
   });
 
   const signOut = () => {
@@ -81,24 +59,6 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const submitRecruit = async () => {
-    if (me?.role !== "master_partner" || me?.canRecruit !== true) return;
-    let values: RecruitPartnerPayload;
-    try {
-      values = await recruitForm.validateFields();
-    } catch {
-      // The form already shows what is missing; an invalid form is not
-      // an error to throw (it surfaced as an unhandled rejection).
-      return;
-    }
-    recruitMutation.mutate({
-      full_name: values.full_name.trim(),
-      email: values.email.trim(),
-      phone: values.phone?.trim() || undefined,
-      password: values.password,
-    });
-  };
-
   return (
     <div className="relative h-dvh max-h-dvh overflow-hidden box-border bg-slate-50 sm:bg-[#8B1447] p-0 sm:p-3 flex">
       <SideBar
@@ -108,10 +68,7 @@ const Dashboard: React.FC = () => {
         onSelectTab={() => {}}
         isMasterPartner={me?.role === "master_partner" && me?.canRecruit === true}
         showWallet={Boolean(me?.linkedUserId)}
-        onOpenRecruit={() => {
-          recruitForm.resetFields();
-          setRecruitOpen(true);
-        }}
+        onOpenRecruit={() => navigate("/customers")}
         onSignOut={signOut}
       />
       <div className="custom-scrollbar relative z-10 min-w-0 flex-1 h-dvh sm:h-[calc(100dvh-24px)] max-h-dvh sm:max-h-[calc(100vh-24px)] overflow-y-auto rounded-none sm:rounded-[17px] bg-slate-50 shadow-none sm:ring-1 sm:ring-black/5">
@@ -139,17 +96,6 @@ const Dashboard: React.FC = () => {
         </main>
       </div>
 
-      <RecruitModal
-        requiresApproval={me?.requiresUpgradeApproval}
-        open={recruitOpen && me?.role === "master_partner" && me?.canRecruit === true}
-        onOk={submitRecruit}
-        onCancel={() => {
-          setRecruitOpen(false);
-          recruitForm.resetFields();
-        }}
-        confirmLoading={recruitMutation.isPending}
-        form={recruitForm}
-      />
     </div>
   );
 };

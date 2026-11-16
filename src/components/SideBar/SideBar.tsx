@@ -245,10 +245,10 @@ const SideBar: React.FC<SideBarProps> = ({
                     ? "p-0 flex items-center justify-center"
                     : "flex items-center justify-center gap-1.5 px-3"
                 }`}
-                title={isCollapsed ? "Recruit a partner" : undefined}
+                title={isCollapsed ? "Select a customer to make a Partner" : undefined}
               >
                 <UserPlus className="h-4 w-4 shrink-0" />
-                {!isCollapsed && <span>Recruit a partner</span>}
+                {!isCollapsed && <span>Add a customer as Partner</span>}
               </button>
             )}
             <button
