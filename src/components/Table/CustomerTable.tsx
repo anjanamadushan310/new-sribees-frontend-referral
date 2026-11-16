@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { UserPlus } from "lucide-react";
 import { money, shortDate } from "./tableUtils";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { Pagination } from "../Common/Pagination";
@@ -11,6 +12,9 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
   customers,
   loading = false,
   pageSize = 10,
+  canPromote = false,
+  promotingCustomerId = null,
+  onPromote,
 }) => {
   const isMobile = useIsMobile(768);
   const [currentPage, setCurrentPage] = useState(1);
@@ -85,6 +89,17 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
                   </span>
                 </div>
               </div>
+              {canPromote && onPromote && (
+                <button
+                  type="button"
+                  onClick={() => onPromote(c)}
+                  disabled={Boolean(promotingCustomerId)}
+                  className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl bg-pink-50 px-3 py-2 text-sm font-semibold text-pink-700 hover:bg-pink-100 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <UserPlus className="h-4 w-4" />
+                  {promotingCustomerId === c.user_id ? "Adding…" : "Make Partner"}
+                </button>
+              )}
             </div>
           ))}
         </div>
@@ -98,6 +113,7 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
                 <th className="py-3 px-4">Joined</th>
                 <th className="py-3 px-4 text-right">Orders</th>
                 <th className="py-3 px-4 text-right">You earned</th>
+                {canPromote && <th className="py-3 px-4 text-right">Action</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -119,6 +135,19 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
                   <td className="py-3.5 px-4 text-right font-bold text-slate-800">
                     {money(c.total_earned)}
                   </td>
+                  {canPromote && (
+                    <td className="py-3.5 px-4 text-right">
+                      <button
+                        type="button"
+                        onClick={() => onPromote?.(c)}
+                        disabled={Boolean(promotingCustomerId)}
+                        className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg bg-pink-50 px-3 py-1.5 font-semibold text-pink-700 hover:bg-pink-100 disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        <UserPlus className="h-4 w-4" />
+                        {promotingCustomerId === c.user_id ? "Adding…" : "Make Partner"}
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

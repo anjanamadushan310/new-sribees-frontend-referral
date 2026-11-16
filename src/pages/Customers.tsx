@@ -8,16 +8,16 @@ import {
   Search,
   ChevronDown,
   X,
+  UserPlus,
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { partnerApi } from "../api/partner.api";
-import type { RecruitPartnerPayload, CustomerSortBy } from "../interface";
+import type { PartnerCustomer, CustomerSortBy } from "../interface";
 import { SideBar } from "../components/SideBar";
 import { Header } from "../components/Header";
 import { SectionCard, StatCard } from "../components/Base";
 import { CustomerTable } from "../components/Table";
-import { RecruitModal, useForm } from "../components/Page/Dashboard";
 import { useToast } from "../components/Common/Toast";
 import { useSidebarCollapse } from "../hooks/useSidebarCollapse";
 
@@ -25,11 +25,11 @@ const Customers: React.FC = () => {
   const navigate = useNavigate();
   const { message } = useToast();
   const queryClient = useQueryClient();
-  const [recruitOpen, setRecruitOpen] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState<PartnerCustomer | null>(null);
+  const [consentConfirmed, setConsentConfirmed] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useSidebarCollapse();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<CustomerSortBy>("earned");
-  const [recruitForm] = useForm<RecruitPartnerPayload>();
 
   const { data: me } = useQuery({
     queryKey: ["partner-me"],
@@ -41,20 +41,26 @@ const Customers: React.FC = () => {
     queryFn: partnerApi.customers,
   });
 
-  const recruitMutation = useMutation({
-    mutationFn: (payload: RecruitPartnerPayload) => partnerApi.recruit(payload),
-    onSuccess: () => {
-      message.success(
-        "Partner recruited. Share their login details with them.",
+  const promoteMutation = useMutation({
+    mutationFn: (customer: PartnerCustomer) => partnerApi.upgradeCustomer(customer.user_id),
+    onSuccess: (result) => {
+      message[result.invitation_sent ? "success" : "info"](
+        result.invitation_sent
+          ? "Partner account created. A password setup link was sent to the customer's verified phone."
+          : "Partner account created, but SMS could not be sent. The customer can use Forgot Password in the Partner Portal.",
+        6000,
       );
-      setRecruitOpen(false);
-      recruitForm.resetFields();
+      setSelectedCustomer(null);
+      setConsentConfirmed(false);
+      queryClient.invalidateQueries({ queryKey: ["partner-customers"] });
       queryClient.invalidateQueries({ queryKey: ["partner-recruits"] });
+      queryClient.invalidateQueries({ queryKey: ["partner-me"] });
     },
     onError: (err: any) =>
       message.error(
         err.response?.data?.detail?.error?.message ??
-          "Could not recruit this partner.",
+          err.response?.data?.detail ??
+          "Could not make this customer a Partner.",
       ),
   });
 
@@ -64,20 +70,7 @@ const Customers: React.FC = () => {
     navigate("/login", { replace: true });
   };
 
-  const submitRecruit = async () => {
-    let values: RecruitPartnerPayload;
-    try {
-      values = await recruitForm.validateFields();
-    } catch {
-      return;
-    }
-    recruitMutation.mutate({
-      full_name: values.full_name.trim(),
-      email: values.email.trim(),
-      phone: values.phone?.trim() || undefined,
-      password: values.password,
-    });
-  };
+  const isMasterPartner = me?.role === "master_partner" && me?.canRecruit === true;
 
   // KPI Calculations
   const totalCustomers = customers.length;
@@ -135,10 +128,7 @@ const Customers: React.FC = () => {
         onSelectTab={() => {}}
         isMasterPartner={me?.role === "master_partner" && me?.canRecruit === true}
         showWallet={Boolean(me?.linkedUserId)}
-        onOpenRecruit={() => {
-          recruitForm.resetFields();
-          setRecruitOpen(true);
-        }}
+        onOpenRecruit={() => navigate("/customers")}
         onSignOut={signOut}
       />
 
@@ -267,6 +257,12 @@ const Customers: React.FC = () => {
               <CustomerTable
                 customers={filteredCustomers}
                 loading={isLoading}
+                canPromote={isMasterPartner}
+                promotingCustomerId={promoteMutation.isPending ? selectedCustomer?.user_id : null}
+                onPromote={(customer) => {
+                  setSelectedCustomer(customer);
+                  setConsentConfirmed(false);
+                }}
               />
             )}
           </SectionCard>
@@ -278,17 +274,36 @@ const Customers: React.FC = () => {
         </main>
       </div>
 
-      <RecruitModal
-        requiresApproval={me?.requiresUpgradeApproval}
-        open={recruitOpen}
-        onOk={submitRecruit}
-        onCancel={() => {
-          setRecruitOpen(false);
-          recruitForm.resetFields();
-        }}
-        confirmLoading={recruitMutation.isPending}
-        form={recruitForm}
-      />
+      {selectedCustomer && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/50 p-4" role="presentation">
+          <section className="w-full max-w-md rounded-2xl bg-white p-5 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="promote-customer-title">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2 id="promote-customer-title" className="m-0 text-lg font-bold text-slate-900">Make customer a Partner</h2>
+                <p className="mt-2 text-sm text-slate-600">{selectedCustomer.name} will join your Partner team. Their existing referral code and unpaid commissions will be carried over.</p>
+              </div>
+              <button type="button" aria-label="Close" onClick={() => setSelectedCustomer(null)} className="rounded-lg border-0 bg-transparent p-1 text-slate-500 hover:bg-slate-100"><X className="h-5 w-5" /></button>
+            </div>
+            <p className="mt-3 rounded-xl bg-blue-50 p-3 text-sm text-blue-900">A password setup link will be sent by SMS to the phone number verified in their Sribees account. No Super Admin approval is required.</p>
+            <label className="mt-4 flex cursor-pointer items-start gap-3 text-sm leading-5 text-slate-700">
+              <input type="checkbox" checked={consentConfirmed} onChange={(event) => setConsentConfirmed(event.target.checked)} className="mt-1 h-4 w-4 accent-pink-600" />
+              <span>I confirm that this customer agreed to become a Partner.</span>
+            </label>
+            <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+              <button type="button" onClick={() => setSelectedCustomer(null)} className="min-h-11 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700">Cancel</button>
+              <button
+                type="button"
+                disabled={!consentConfirmed || promoteMutation.isPending}
+                onClick={() => promoteMutation.mutate(selectedCustomer)}
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border-0 bg-pink-600 px-4 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <UserPlus className="h-4 w-4" />
+                {promoteMutation.isPending ? "Creating Partner…" : "Make Partner & Send SMS"}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
     </div>
   );
 };

@@ -11,11 +11,10 @@ import {
   ShieldAlert,
   RotateCcw,
 } from "lucide-react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { partnerApi } from "../api/partner.api";
 import type {
-  RecruitPartnerPayload,
   TeamStatusFilter,
   TeamSortBy,
 } from "../interface";
@@ -23,20 +22,15 @@ import { SideBar } from "../components/SideBar";
 import { Header } from "../components/Header";
 import { SectionCard, StatCard } from "../components/Base";
 import { RecruitTable } from "../components/Table";
-import { RecruitModal, useForm } from "../components/Page/Dashboard";
-import { useToast } from "../components/Common/Toast";
 import { useSidebarCollapse } from "../hooks/useSidebarCollapse";
 
 const Team: React.FC = () => {
   const navigate = useNavigate();
-  const { message } = useToast();
   const queryClient = useQueryClient();
-  const [recruitOpen, setRecruitOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useSidebarCollapse();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<TeamStatusFilter>("all");
   const [sortBy, setSortBy] = useState<TeamSortBy>("earned");
-  const [recruitForm] = useForm<RecruitPartnerPayload>();
 
   const { data: me } = useQuery({
     queryKey: ["partner-me"],
@@ -49,43 +43,10 @@ const Team: React.FC = () => {
     enabled: me?.role === "master_partner" && me?.canRecruit === true,
   });
 
-  const recruitMutation = useMutation({
-    mutationFn: (payload: RecruitPartnerPayload) => partnerApi.recruit(payload),
-    onSuccess: () => {
-      message.success(
-        "Partner recruited. Share their login details with them.",
-      );
-      setRecruitOpen(false);
-      recruitForm.resetFields();
-      queryClient.invalidateQueries({ queryKey: ["partner-recruits"] });
-    },
-    onError: (err: any) =>
-      message.error(
-        err.response?.data?.detail?.error?.message ??
-          "Could not recruit this partner.",
-      ),
-  });
-
   const signOut = () => {
     partnerApi.logout();
     queryClient.clear();
     navigate("/login", { replace: true });
-  };
-
-  const submitRecruit = async () => {
-    if (me?.role !== "master_partner" || me?.canRecruit !== true) return;
-    let values: RecruitPartnerPayload;
-    try {
-      values = await recruitForm.validateFields();
-    } catch {
-      return;
-    }
-    recruitMutation.mutate({
-      full_name: values.full_name.trim(),
-      email: values.email.trim(),
-      phone: values.phone?.trim() || undefined,
-      password: values.password,
-    });
   };
 
   // KPI Calculations
@@ -158,10 +119,7 @@ const Team: React.FC = () => {
         onSelectTab={() => {}}
         isMasterPartner={me?.role === "master_partner" && me?.canRecruit === true}
         showWallet={Boolean(me?.linkedUserId)}
-        onOpenRecruit={() => {
-          recruitForm.resetFields();
-          setRecruitOpen(true);
-        }}
+        onOpenRecruit={() => navigate("/customers")}
         onSignOut={signOut}
       />
 
@@ -243,14 +201,11 @@ const Team: React.FC = () => {
                   <div className="flex items-center gap-3">
                     <button
                       type="button"
-                      onClick={() => {
-                        recruitForm.resetFields();
-                        setRecruitOpen(true);
-                      }}
+                      onClick={() => navigate("/customers")}
                       className="inline-flex items-center gap-2 rounded-xl bg-pink-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-pink-700 transition-colors cursor-pointer border-0"
                     >
                       <UserPlus className="h-4 w-4" />
-                      <span>Recruit Partner</span>
+                        <span>Select Customer</span>
                     </button>
                     <span className="hidden sm:inline text-xs font-semibold text-slate-500">
                       {filteredRecruits.length} of {recruits.length} members
@@ -336,14 +291,11 @@ const Team: React.FC = () => {
                     {!hasActiveFilters && (
                       <button
                         type="button"
-                        onClick={() => {
-                          recruitForm.resetFields();
-                          setRecruitOpen(true);
-                        }}
+                        onClick={() => navigate("/customers")}
                         className="mt-4 inline-flex items-center gap-2 rounded-xl bg-pink-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-pink-700 transition-colors cursor-pointer border-0"
                       >
                         <UserPlus className="h-4 w-4" />
-                        <span>Recruit Your First Partner</span>
+                        <span>Select a Customer</span>
                       </button>
                     )}
                     {hasActiveFilters && (
@@ -373,17 +325,6 @@ const Team: React.FC = () => {
         </main>
       </div>
 
-      <RecruitModal
-        requiresApproval={me?.requiresUpgradeApproval}
-        open={recruitOpen && me?.role === "master_partner" && me?.canRecruit === true}
-        onOk={submitRecruit}
-        onCancel={() => {
-          setRecruitOpen(false);
-          recruitForm.resetFields();
-        }}
-        confirmLoading={recruitMutation.isPending}
-        form={recruitForm}
-      />
     </div>
   );
 };

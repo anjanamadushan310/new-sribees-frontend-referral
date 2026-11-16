@@ -10,32 +10,23 @@ import {
   ChevronDown,
   X,
 } from "lucide-react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { partnerApi } from "../api/partner.api";
-import type {
-  RecruitPartnerPayload,
-  ProductSortBy,
-  ProductViewMode,
-} from "../interface";
+import type { ProductSortBy, ProductViewMode } from "../interface";
 import { SideBar } from "../components/SideBar";
 import { Header } from "../components/Header";
 import { SectionCard, StatCard } from "../components/Base";
 import { TopProductsTable } from "../components/Table";
-import { RecruitModal, useForm } from "../components/Page/Dashboard";
-import { useToast } from "../components/Common/Toast";
 import { useSidebarCollapse } from "../hooks/useSidebarCollapse";
 
 const Products: React.FC = () => {
   const navigate = useNavigate();
-  const { message } = useToast();
   const queryClient = useQueryClient();
-  const [recruitOpen, setRecruitOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useSidebarCollapse();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<ProductSortBy>("earned");
   const [viewMode, setViewMode] = useState<ProductViewMode>("auto");
-  const [recruitForm] = useForm<RecruitPartnerPayload>();
 
   const { data: me } = useQuery({
     queryKey: ["partner-me"],
@@ -47,42 +38,10 @@ const Products: React.FC = () => {
     queryFn: partnerApi.topProducts,
   });
 
-  const recruitMutation = useMutation({
-    mutationFn: (payload: RecruitPartnerPayload) => partnerApi.recruit(payload),
-    onSuccess: () => {
-      message.success(
-        "Partner recruited. Share their login details with them.",
-      );
-      setRecruitOpen(false);
-      recruitForm.resetFields();
-      queryClient.invalidateQueries({ queryKey: ["partner-recruits"] });
-    },
-    onError: (err: any) =>
-      message.error(
-        err.response?.data?.detail?.error?.message ??
-          "Could not recruit this partner.",
-      ),
-  });
-
   const signOut = () => {
     partnerApi.logout();
     queryClient.clear();
     navigate("/login", { replace: true });
-  };
-
-  const submitRecruit = async () => {
-    let values: RecruitPartnerPayload;
-    try {
-      values = await recruitForm.validateFields();
-    } catch {
-      return;
-    }
-    recruitMutation.mutate({
-      full_name: values.full_name.trim(),
-      email: values.email.trim(),
-      phone: values.phone?.trim() || undefined,
-      password: values.password,
-    });
   };
 
   // KPI Calculations
@@ -133,10 +92,7 @@ const Products: React.FC = () => {
         onSelectTab={() => {}}
         isMasterPartner={me?.role === "master_partner" && me?.canRecruit === true}
         showWallet={Boolean(me?.linkedUserId)}
-        onOpenRecruit={() => {
-          recruitForm.resetFields();
-          setRecruitOpen(true);
-        }}
+        onOpenRecruit={() => navigate("/customers")}
         onSignOut={signOut}
       />
 
@@ -296,17 +252,6 @@ const Products: React.FC = () => {
         </main>
       </div>
 
-      <RecruitModal
-        requiresApproval={me?.requiresUpgradeApproval}
-        open={recruitOpen}
-        onOk={submitRecruit}
-        onCancel={() => {
-          setRecruitOpen(false);
-          recruitForm.resetFields();
-        }}
-        confirmLoading={recruitMutation.isPending}
-        form={recruitForm}
-      />
     </div>
   );
 };
