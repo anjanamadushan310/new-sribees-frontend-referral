@@ -62,6 +62,11 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
                   <h4 className="m-0 text-base font-bold text-slate-800 truncate">
                     {c.name}
                   </h4>
+                  {c.partner_role && (
+                    <span className="inline-block rounded-md bg-pink-50 px-2 py-0.5 text-xs font-semibold text-pink-700">
+                      {c.partner_role === "master_partner" ? "Master Partner" : "Partner"}
+                    </span>
+                  )}
                   <span className="font-mono text-xs text-slate-500 font-medium">
                     {c.member_id}
                   </span>
@@ -89,7 +94,7 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
                   </span>
                 </div>
               </div>
-              {canPromote && onPromote && (
+              {canPromote && onPromote && !c.partner_role && (
                 <button
                   type="button"
                   onClick={() => onPromote(c)}
@@ -122,7 +127,14 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
                   key={c.user_id}
                   className="hover:bg-slate-50/60 transition-colors"
                 >
-                  <td className="py-3.5 px-4 font-medium text-slate-800">{c.name}</td>
+                  <td className="py-3.5 px-4 font-medium text-slate-800">
+                    {c.name}
+                    {c.partner_role && (
+                      <span className="ml-2 inline-block rounded-md bg-pink-50 px-2 py-0.5 text-xs font-semibold text-pink-700">
+                        {c.partner_role === "master_partner" ? "Master Partner" : "Partner"}
+                      </span>
+                    )}
+                  </td>
                   <td className="py-3.5 px-4 font-mono text-xs text-slate-500">
                     {c.member_id}
                   </td>
@@ -137,6 +149,7 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
                   </td>
                   {canPromote && (
                     <td className="py-3.5 px-4 text-right">
+                      {!c.partner_role && (
                       <button
                         type="button"
                         onClick={() => onPromote?.(c)}
@@ -146,6 +159,7 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
                         <UserPlus className="h-4 w-4" />
                         {promotingCustomerId === c.user_id ? "Adding…" : "Make Partner"}
                       </button>
+                      )}
                     </td>
                   )}
                 </tr>
