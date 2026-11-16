@@ -6,7 +6,7 @@
  * Never what a customer paid: the API does not return the order or line value,
  * so this screen could not show it even by mistake.
  */
-import React, { useState } from "react";
+import React from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { partnerApi } from "../api/partner.api";
