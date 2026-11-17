@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { partnerApi } from '../../api/partner.api';
@@ -24,22 +24,41 @@ describe('customer invitation channels', () => {
     ]);
   });
 
-  it('resends links to an existing Partner without upgrading again', async () => {
+  it.each(['sms', 'email'] as const)('resends through only %s for an existing Partner', async (channel) => {
+    const channelLabel = channel === 'sms' ? 'SMS' : 'Email';
     api.customers.mockResolvedValue([
       { user_id: 'existing', name: 'Existing Partner', member_id: 'ABC123', joined_at: null,
         orders: 2, total_earned: 20, partner_role: 'partner' },
     ]);
     api.resendCustomerInvitation.mockResolvedValue({
-      invitation_sent: true, invitation_delivery: { sms: true, email: true },
+      invitation_sent: true, invitation_channel: channel,
+      invitation_delivery: { sms: channel === 'sms', email: channel === 'email' },
     });
     const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     render(<QueryClientProvider client={client}><ToastProvider><MemoryRouter><Customers /></MemoryRouter></ToastProvider></QueryClientProvider>);
     fireEvent.click(await screen.findByRole('button', { name: 'Resend setup links' }));
     expect(screen.getByRole('heading', { name: 'Resend password setup links' })).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Resend Email & SMS' }));
-    expect(await screen.findByText('Partner account ready. Password setup links were sent by email and SMS.')).toBeInTheDocument();
-    expect(api.resendCustomerInvitation).toHaveBeenCalledWith('existing');
+    fireEvent.click(screen.getByRole('radio', { name: channelLabel }));
+    fireEvent.click(screen.getByRole('button', { name: `Send link by ${channelLabel}` }));
+    expect(await screen.findByText(`Password setup link was sent by ${channelLabel}.`)).toBeInTheDocument();
+    expect(api.resendCustomerInvitation).toHaveBeenCalledWith('existing', channel);
     expect(api.upgradeCustomer).not.toHaveBeenCalled();
+  });
+
+  it('hides resend and its open dialog when setup completion is refreshed', async () => {
+    const customer = {
+      user_id: 'existing', name: 'Existing Partner', member_id: 'ABC123', joined_at: null,
+      orders: 2, total_earned: 20, partner_role: 'partner' as const, password_setup_completed: false,
+    };
+    api.customers.mockResolvedValue([customer]);
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    render(<QueryClientProvider client={client}><ToastProvider><MemoryRouter><Customers /></MemoryRouter></ToastProvider></QueryClientProvider>);
+    fireEvent.click(await screen.findByRole('button', { name: 'Resend setup links' }));
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    act(() => client.setQueryData(['partner-customers'], [{ ...customer, password_setup_completed: true }]));
+    await waitFor(() => expect(screen.queryByRole('button', { name: 'Resend setup links' })).not.toBeInTheDocument());
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.getByText('Existing Partner')).toBeInTheDocument();
   });
 
   it.each([

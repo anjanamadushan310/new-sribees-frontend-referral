@@ -106,7 +106,7 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
                   {promotingCustomerId === c.user_id ? "Adding…" : "Make Partner"}
                 </button>
               )}
-              {canPromote && onResend && c.partner_role && (
+              {canPromote && onResend && c.partner_role && !c.password_setup_completed && (
                 <button
                   type="button"
                   onClick={() => onResend(c)}
@@ -161,7 +161,7 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
                   </td>
                   {canPromote && (
                     <td className="py-3.5 px-4 text-right">
-                      {c.partner_role && onResend && (
+                      {c.partner_role && onResend && !c.password_setup_completed && (
                         <button
                           type="button"
                           onClick={() => onResend(c)}
