@@ -28,6 +28,7 @@ const Customers: React.FC = () => {
   const queryClient = useQueryClient();
   const [selectedCustomer, setSelectedCustomer] = useState<PartnerCustomer | null>(null);
   const [consentConfirmed, setConsentConfirmed] = useState(false);
+  const [resendChannel, setResendChannel] = useState<"email" | "sms">("sms");
   const [sidebarCollapsed, setSidebarCollapsed] = useSidebarCollapse();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<CustomerSortBy>("earned");
@@ -40,16 +41,26 @@ const Customers: React.FC = () => {
   const { data: customers = [], isLoading } = useQuery({
     queryKey: ["partner-customers"],
     queryFn: partnerApi.customers,
+    refetchInterval: (query) => query.state.data?.some(
+      (customer) => customer.partner_role && !customer.password_setup_completed,
+    ) ? 15_000 : false,
   });
 
   const partnerAction = useMutation({
     mutationFn: (customer: PartnerCustomer) => customer.partner_role
-      ? partnerApi.resendCustomerInvitation(customer.user_id)
+      ? partnerApi.resendCustomerInvitation(customer.user_id, resendChannel)
       : partnerApi.upgradeCustomer(customer.user_id),
     onSuccess: (result, customer) => {
       const accountStatus = customer.partner_role ? "Partner account ready" : "Partner account created";
       const delivery = result.invitation_delivery;
-      if (!delivery) {
+      if (customer.partner_role) {
+        const channelLabel = result.invitation_channel === "email" ? "Email" : "SMS";
+        if (result.invitation_sent) {
+          message.success(`Password setup link was sent by ${channelLabel}.`, 6000);
+        } else {
+          message.info(`${channelLabel} could not be sent. You can try the other delivery method.`, 6000);
+        }
+      } else if (!delivery) {
         message[result.invitation_sent ? "success" : "info"](
           result.invitation_sent
             ? `${accountStatus}. A password setup link was sent by SMS.`
@@ -86,8 +97,13 @@ const Customers: React.FC = () => {
   };
 
   const isResending = Boolean(selectedCustomer?.partner_role);
+  const selectedSetupComplete = customers.some(
+    (customer) => customer.user_id === selectedCustomer?.user_id && customer.password_setup_completed,
+  );
   const pendingLabel = isResending ? "Sending…" : "Creating Partner…";
-  const submitLabel = isResending ? "Resend Email & SMS" : "Make Partner & Send Links";
+  const submitLabel = isResending
+    ? `Send link by ${resendChannel === "email" ? "Email" : "SMS"}`
+    : "Make Partner & Send Links";
 
   const isMasterPartner = me?.role === "master_partner" && me?.canRecruit === true;
 
@@ -278,7 +294,10 @@ const Customers: React.FC = () => {
                 loading={isLoading}
                 canPromote={isMasterPartner}
                 promotingCustomerId={partnerAction.isPending ? selectedCustomer?.user_id : null}
-                onResend={(customer) => setSelectedCustomer(customer)}
+                onResend={(customer) => {
+                  setResendChannel("sms");
+                  setSelectedCustomer(customer);
+                }}
                 onPromote={(customer) => {
                   setSelectedCustomer(customer);
                   setConsentConfirmed(false);
@@ -294,7 +313,7 @@ const Customers: React.FC = () => {
         </main>
       </div>
 
-      {selectedCustomer && (
+      {selectedCustomer && !selectedSetupComplete && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/50 p-4" role="presentation">
           <section className="w-full max-w-md rounded-2xl bg-white p-5 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="promote-customer-title">
             <div className="flex items-start justify-between gap-4">
@@ -306,7 +325,24 @@ const Customers: React.FC = () => {
               </div>
               <button type="button" aria-label="Close" onClick={() => setSelectedCustomer(null)} className="rounded-lg border-0 bg-transparent p-1 text-slate-500 hover:bg-slate-100"><X className="h-5 w-5" /></button>
             </div>
-            <p className="mt-3 rounded-xl bg-blue-50 p-3 text-sm text-blue-900">Password setup links will be sent to the email address and verified phone number in their Sribees account. The customer can use either link to choose their password.{!isResending && " No Super Admin approval is required."}</p>
+            {isResending ? (
+              <fieldset className="mt-4 rounded-xl border border-slate-200 p-3" disabled={partnerAction.isPending}>
+                <legend className="px-1 text-sm font-semibold text-slate-700">Send setup link by</legend>
+                <div className="flex gap-5">
+                  <label className="flex min-h-10 items-center gap-2 text-sm">
+                    <input type="radio" name="invitation-channel" value="sms" checked={resendChannel === "sms"} onChange={() => setResendChannel("sms")} />
+                    SMS
+                  </label>
+                  <label className="flex min-h-10 items-center gap-2 text-sm">
+                    <input type="radio" name="invitation-channel" value="email" checked={resendChannel === "email"} onChange={() => setResendChannel("email")} />
+                    Email
+                  </label>
+                </div>
+                <p className="mt-2 text-xs text-slate-500">The link is sent only through your selected method, using the customer's registered contact details.</p>
+              </fieldset>
+            ) : (
+              <p className="mt-3 rounded-xl bg-blue-50 p-3 text-sm text-blue-900">Password setup links will be sent to the email address and verified phone number in their Sribees account. The customer can use either link to choose their password. No Super Admin approval is required.</p>
+            )}
             {!isResending && <label className="mt-4 flex cursor-pointer items-start gap-3 text-sm leading-5 text-slate-700">
               <input type="checkbox" checked={consentConfirmed} onChange={(event) => setConsentConfirmed(event.target.checked)} className="mt-1 h-4 w-4 accent-pink-600" />
               <span>I confirm that this customer agreed to become a Partner.</span>

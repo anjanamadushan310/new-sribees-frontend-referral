@@ -13,6 +13,8 @@ describe('promoted customer directory', () => {
     render(<CustomerTable canPromote onPromote={promote} onResend={resend} customers={[
       { user_id: 'upgraded', name: 'Upgraded customer', member_id: 'ABC123', joined_at: null,
         orders: 2, total_earned: 80, partner_role: 'partner' },
+      { user_id: 'completed', name: 'Completed Partner', member_id: 'DONE12', joined_at: null,
+        orders: 3, total_earned: 100, partner_role: 'master_partner', password_setup_completed: true },
       { user_id: 'customer', name: 'Regular customer', member_id: 'DEF456', joined_at: null,
         orders: 1, total_earned: 10 },
     ]} />);

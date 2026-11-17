@@ -23,6 +23,7 @@ export interface PartnerProfile {
 
 export interface PartnerCustomer {
   partner_role?: "partner" | "master_partner" | null;
+  password_setup_completed?: boolean;
   user_id: string;
   name: string;
   member_id: string;

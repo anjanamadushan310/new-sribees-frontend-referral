@@ -27,6 +27,7 @@ export type {
 
 export interface PartnerInvitationResult {
     invitation_sent: boolean;
+    invitation_channel?: 'email' | 'sms' | 'email_and_sms';
     invitation_delivery?: { sms: boolean; email: boolean };
 }
 
@@ -121,9 +122,10 @@ export const partnerApi = {
         await apiClient.post('/partner/recruits', payload);
     },
 
-    resendCustomerInvitation: async (userId: string): Promise<PartnerInvitationResult> => {
+    resendCustomerInvitation: async (userId: string, channel: 'email' | 'sms'): Promise<PartnerInvitationResult> => {
         const res = await apiClient.post<PartnerInvitationResult>(
-            `/partner/customers/${encodeURIComponent(userId)}/invitation`
+            `/partner/customers/${encodeURIComponent(userId)}/invitation`,
+            { invitation_channel: channel }
         );
         return res.data;
     },
