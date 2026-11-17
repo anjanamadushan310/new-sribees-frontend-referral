@@ -116,11 +116,21 @@ export const partnerApi = {
         await apiClient.post('/partner/recruits', payload);
     },
 
-    upgradeCustomer: async (userId: string): Promise<{ invitation_sent: boolean }> => {
-        const res = await apiClient.post<{ success: boolean; invitation_sent: boolean }>(
+    upgradeCustomer: async (userId: string): Promise<{
+        invitation_sent: boolean;
+        invitation_delivery?: { sms: boolean; email: boolean };
+    }> => {
+        const res = await apiClient.post<{
+            success: boolean;
+            invitation_sent: boolean;
+            invitation_delivery?: { sms: boolean; email: boolean };
+        }>(
             `/partner/customers/${encodeURIComponent(userId)}/upgrade`,
             { customer_consent_confirmed: true }
         );
-        return { invitation_sent: res.data.invitation_sent };
+        return {
+            invitation_sent: res.data.invitation_sent,
+            invitation_delivery: res.data.invitation_delivery,
+        };
     },
 };

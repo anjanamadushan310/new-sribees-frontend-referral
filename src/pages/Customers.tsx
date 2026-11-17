@@ -44,12 +44,23 @@ const Customers: React.FC = () => {
   const promoteMutation = useMutation({
     mutationFn: (customer: PartnerCustomer) => partnerApi.upgradeCustomer(customer.user_id),
     onSuccess: (result) => {
-      message[result.invitation_sent ? "success" : "info"](
-        result.invitation_sent
-          ? "Partner account created. A password setup link was sent to the customer's verified phone."
-          : "Partner account created, but SMS could not be sent. The customer can use Forgot Password in the Partner Portal.",
-        6000,
-      );
+      const delivery = result.invitation_delivery;
+      if (!delivery) {
+        message[result.invitation_sent ? "success" : "info"](
+          result.invitation_sent
+            ? "Partner account created. A password setup link was sent by SMS."
+            : "Partner account created, but the invitation could not be sent. Contact Sribees support for a new invitation.",
+          6000,
+        );
+      } else if (delivery.sms && delivery.email) {
+        message.success("Partner account created. Password setup links were sent by email and SMS.", 6000);
+      } else if (delivery.sms) {
+        message.info("Partner account created. SMS was sent, but the email could not be sent.", 6000);
+      } else if (delivery.email) {
+        message.info("Partner account created. Email was sent, but the SMS could not be sent.", 6000);
+      } else {
+        message.info("Partner account created, but email and SMS could not be sent. Contact Sribees support for a new invitation.", 6000);
+      }
       setSelectedCustomer(null);
       setConsentConfirmed(false);
       queryClient.invalidateQueries({ queryKey: ["partner-customers"] });
@@ -284,7 +295,7 @@ const Customers: React.FC = () => {
               </div>
               <button type="button" aria-label="Close" onClick={() => setSelectedCustomer(null)} className="rounded-lg border-0 bg-transparent p-1 text-slate-500 hover:bg-slate-100"><X className="h-5 w-5" /></button>
             </div>
-            <p className="mt-3 rounded-xl bg-blue-50 p-3 text-sm text-blue-900">A password setup link will be sent by SMS to the phone number verified in their Sribees account. No Super Admin approval is required.</p>
+            <p className="mt-3 rounded-xl bg-blue-50 p-3 text-sm text-blue-900">Password setup links will be sent to the email address and verified phone number in their Sribees account. The customer can use either link to choose their password. No Super Admin approval is required.</p>
             <label className="mt-4 flex cursor-pointer items-start gap-3 text-sm leading-5 text-slate-700">
               <input type="checkbox" checked={consentConfirmed} onChange={(event) => setConsentConfirmed(event.target.checked)} className="mt-1 h-4 w-4 accent-pink-600" />
               <span>I confirm that this customer agreed to become a Partner.</span>
@@ -298,7 +309,7 @@ const Customers: React.FC = () => {
                 className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border-0 bg-pink-600 px-4 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <UserPlus className="h-4 w-4" />
-                {promoteMutation.isPending ? "Creating Partner…" : "Make Partner & Send SMS"}
+                {promoteMutation.isPending ? "Creating Partner…" : "Make Partner & Send Links"}
               </button>
             </div>
           </section>
