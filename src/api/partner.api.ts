@@ -25,6 +25,11 @@ export type {
     RecruitPartnerPayload,
 };
 
+export interface PartnerInvitationResult {
+    invitation_sent: boolean;
+    invitation_delivery?: { sms: boolean; email: boolean };
+}
+
 export const partnerApi = {
     login: async (email: string, password: string): Promise<PartnerProfile['fullName']> => {
         const res = await apiClient.post<{
@@ -116,10 +121,14 @@ export const partnerApi = {
         await apiClient.post('/partner/recruits', payload);
     },
 
-    upgradeCustomer: async (userId: string): Promise<{
-        invitation_sent: boolean;
-        invitation_delivery?: { sms: boolean; email: boolean };
-    }> => {
+    resendCustomerInvitation: async (userId: string): Promise<PartnerInvitationResult> => {
+        const res = await apiClient.post<PartnerInvitationResult>(
+            `/partner/customers/${encodeURIComponent(userId)}/invitation`
+        );
+        return res.data;
+    },
+
+    upgradeCustomer: async (userId: string): Promise<PartnerInvitationResult> => {
         const res = await apiClient.post<{
             success: boolean;
             invitation_sent: boolean;

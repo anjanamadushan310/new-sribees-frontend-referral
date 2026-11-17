@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { UserPlus } from "lucide-react";
+import { Send, UserPlus } from "lucide-react";
 import { money, shortDate } from "./tableUtils";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { Pagination } from "../Common/Pagination";
@@ -15,6 +15,7 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
   canPromote = false,
   promotingCustomerId = null,
   onPromote,
+  onResend,
 }) => {
   const isMobile = useIsMobile(768);
   const [currentPage, setCurrentPage] = useState(1);
@@ -105,6 +106,17 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
                   {promotingCustomerId === c.user_id ? "Adding…" : "Make Partner"}
                 </button>
               )}
+              {canPromote && onResend && c.partner_role && (
+                <button
+                  type="button"
+                  onClick={() => onResend(c)}
+                  disabled={Boolean(promotingCustomerId)}
+                  className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl bg-pink-50 px-3 py-2 text-sm font-semibold text-pink-700 hover:bg-pink-100 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <Send className="h-4 w-4" />
+                  {promotingCustomerId === c.user_id ? "Sending…" : "Resend setup links"}
+                </button>
+              )}
             </div>
           ))}
         </div>
@@ -149,6 +161,17 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
                   </td>
                   {canPromote && (
                     <td className="py-3.5 px-4 text-right">
+                      {c.partner_role && onResend && (
+                        <button
+                          type="button"
+                          onClick={() => onResend(c)}
+                          disabled={Boolean(promotingCustomerId)}
+                          className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg bg-pink-50 px-3 py-1.5 font-semibold text-pink-700 hover:bg-pink-100 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                          <Send className="h-4 w-4" />
+                          {promotingCustomerId === c.user_id ? "Sending…" : "Resend setup links"}
+                        </button>
+                      )}
                       {!c.partner_role && (
                       <button
                         type="button"
