@@ -7,7 +7,7 @@ import { ToastProvider } from '../../components/Common/Toast';
 import Customers from '../../pages/Customers';
 
 vi.mock('../../api/partner.api', () => ({
-  partnerApi: { me: vi.fn(), customers: vi.fn(), upgradeCustomer: vi.fn(), logout: vi.fn() },
+  partnerApi: { me: vi.fn(), customers: vi.fn(), upgradeCustomer: vi.fn(), resendCustomerInvitation: vi.fn(), logout: vi.fn() },
 }));
 const api = vi.mocked(partnerApi);
 
@@ -22,6 +22,24 @@ describe('customer invitation channels', () => {
     api.customers.mockResolvedValue([
       { user_id: 'customer', name: 'Customer Test', member_id: 'ABC123', joined_at: null, orders: 0, total_earned: 0 },
     ]);
+  });
+
+  it('resends links to an existing Partner without upgrading again', async () => {
+    api.customers.mockResolvedValue([
+      { user_id: 'existing', name: 'Existing Partner', member_id: 'ABC123', joined_at: null,
+        orders: 2, total_earned: 20, partner_role: 'partner' },
+    ]);
+    api.resendCustomerInvitation.mockResolvedValue({
+      invitation_sent: true, invitation_delivery: { sms: true, email: true },
+    });
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    render(<QueryClientProvider client={client}><ToastProvider><MemoryRouter><Customers /></MemoryRouter></ToastProvider></QueryClientProvider>);
+    fireEvent.click(await screen.findByRole('button', { name: 'Resend setup links' }));
+    expect(screen.getByRole('heading', { name: 'Resend password setup links' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Resend Email & SMS' }));
+    expect(await screen.findByText('Partner account ready. Password setup links were sent by email and SMS.')).toBeInTheDocument();
+    expect(api.resendCustomerInvitation).toHaveBeenCalledWith('existing');
+    expect(api.upgradeCustomer).not.toHaveBeenCalled();
   });
 
   it.each([

@@ -10,6 +10,7 @@ export interface CustomerTableProps {
   canPromote?: boolean;
   promotingCustomerId?: string | null;
   onPromote?: (customer: PartnerCustomer) => void;
+  onResend?: (customer: PartnerCustomer) => void;
 }
 
 export type CustomerSortBy = "earned" | "orders" | "recent" | "name";

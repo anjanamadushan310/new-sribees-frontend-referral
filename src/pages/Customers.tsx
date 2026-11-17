@@ -9,6 +9,7 @@ import {
   ChevronDown,
   X,
   UserPlus,
+  Send,
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
@@ -41,25 +42,28 @@ const Customers: React.FC = () => {
     queryFn: partnerApi.customers,
   });
 
-  const promoteMutation = useMutation({
-    mutationFn: (customer: PartnerCustomer) => partnerApi.upgradeCustomer(customer.user_id),
-    onSuccess: (result) => {
+  const partnerAction = useMutation({
+    mutationFn: (customer: PartnerCustomer) => customer.partner_role
+      ? partnerApi.resendCustomerInvitation(customer.user_id)
+      : partnerApi.upgradeCustomer(customer.user_id),
+    onSuccess: (result, customer) => {
+      const accountStatus = customer.partner_role ? "Partner account ready" : "Partner account created";
       const delivery = result.invitation_delivery;
       if (!delivery) {
         message[result.invitation_sent ? "success" : "info"](
           result.invitation_sent
-            ? "Partner account created. A password setup link was sent by SMS."
-            : "Partner account created, but the invitation could not be sent. Contact Sribees support for a new invitation.",
+            ? `${accountStatus}. A password setup link was sent by SMS.`
+            : `${accountStatus}, but the invitation could not be sent. Contact Sribees support for a new invitation.`,
           6000,
         );
       } else if (delivery.sms && delivery.email) {
-        message.success("Partner account created. Password setup links were sent by email and SMS.", 6000);
+        message.success(`${accountStatus}. Password setup links were sent by email and SMS.`, 6000);
       } else if (delivery.sms) {
-        message.info("Partner account created. SMS was sent, but the email could not be sent.", 6000);
+        message.info(`${accountStatus}. SMS was sent, but the email could not be sent.`, 6000);
       } else if (delivery.email) {
-        message.info("Partner account created. Email was sent, but the SMS could not be sent.", 6000);
+        message.info(`${accountStatus}. Email was sent, but the SMS could not be sent.`, 6000);
       } else {
-        message.info("Partner account created, but email and SMS could not be sent. Contact Sribees support for a new invitation.", 6000);
+        message.info(`${accountStatus}, but email and SMS could not be sent. Contact Sribees support for a new invitation.`, 6000);
       }
       setSelectedCustomer(null);
       setConsentConfirmed(false);
@@ -67,11 +71,11 @@ const Customers: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ["partner-recruits"] });
       queryClient.invalidateQueries({ queryKey: ["partner-me"] });
     },
-    onError: (err: any) =>
+    onError: (err: any, customer) =>
       message.error(
         err.response?.data?.detail?.error?.message ??
           err.response?.data?.detail ??
-          "Could not make this customer a Partner.",
+          (customer.partner_role ? "Could not resend the setup links." : "Could not make this customer a Partner."),
       ),
   });
 
@@ -80,6 +84,10 @@ const Customers: React.FC = () => {
     queryClient.clear();
     navigate("/login", { replace: true });
   };
+
+  const isResending = Boolean(selectedCustomer?.partner_role);
+  const pendingLabel = isResending ? "Sending…" : "Creating Partner…";
+  const submitLabel = isResending ? "Resend Email & SMS" : "Make Partner & Send Links";
 
   const isMasterPartner = me?.role === "master_partner" && me?.canRecruit === true;
 
@@ -269,7 +277,8 @@ const Customers: React.FC = () => {
                 customers={filteredCustomers}
                 loading={isLoading}
                 canPromote={isMasterPartner}
-                promotingCustomerId={promoteMutation.isPending ? selectedCustomer?.user_id : null}
+                promotingCustomerId={partnerAction.isPending ? selectedCustomer?.user_id : null}
+                onResend={(customer) => setSelectedCustomer(customer)}
                 onPromote={(customer) => {
                   setSelectedCustomer(customer);
                   setConsentConfirmed(false);
@@ -290,26 +299,28 @@ const Customers: React.FC = () => {
           <section className="w-full max-w-md rounded-2xl bg-white p-5 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="promote-customer-title">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h2 id="promote-customer-title" className="m-0 text-lg font-bold text-slate-900">Make customer a Partner</h2>
-                <p className="mt-2 text-sm text-slate-600">{selectedCustomer.name} will join your Partner team. Their existing referral code and unpaid commissions will be carried over.</p>
+                <h2 id="promote-customer-title" className="m-0 text-lg font-bold text-slate-900">{isResending ? "Resend password setup links" : "Make customer a Partner"}</h2>
+                <p className="mt-2 text-sm text-slate-600">{isResending
+                  ? `Send new password setup links to ${selectedCustomer.name}.`
+                  : `${selectedCustomer.name} will join your Partner team. Their existing referral code and unpaid commissions will be carried over.`}</p>
               </div>
               <button type="button" aria-label="Close" onClick={() => setSelectedCustomer(null)} className="rounded-lg border-0 bg-transparent p-1 text-slate-500 hover:bg-slate-100"><X className="h-5 w-5" /></button>
             </div>
-            <p className="mt-3 rounded-xl bg-blue-50 p-3 text-sm text-blue-900">Password setup links will be sent to the email address and verified phone number in their Sribees account. The customer can use either link to choose their password. No Super Admin approval is required.</p>
-            <label className="mt-4 flex cursor-pointer items-start gap-3 text-sm leading-5 text-slate-700">
+            <p className="mt-3 rounded-xl bg-blue-50 p-3 text-sm text-blue-900">Password setup links will be sent to the email address and verified phone number in their Sribees account. The customer can use either link to choose their password.{!isResending && " No Super Admin approval is required."}</p>
+            {!isResending && <label className="mt-4 flex cursor-pointer items-start gap-3 text-sm leading-5 text-slate-700">
               <input type="checkbox" checked={consentConfirmed} onChange={(event) => setConsentConfirmed(event.target.checked)} className="mt-1 h-4 w-4 accent-pink-600" />
               <span>I confirm that this customer agreed to become a Partner.</span>
-            </label>
+            </label>}
             <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               <button type="button" onClick={() => setSelectedCustomer(null)} className="min-h-11 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700">Cancel</button>
               <button
                 type="button"
-                disabled={!consentConfirmed || promoteMutation.isPending}
-                onClick={() => promoteMutation.mutate(selectedCustomer)}
+                disabled={(!isResending && !consentConfirmed) || partnerAction.isPending}
+                onClick={() => partnerAction.mutate(selectedCustomer)}
                 className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border-0 bg-pink-600 px-4 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <UserPlus className="h-4 w-4" />
-                {promoteMutation.isPending ? "Creating Partner…" : "Make Partner & Send Links"}
+                {isResending ? <Send className="h-4 w-4" /> : <UserPlus className="h-4 w-4" />}
+                {partnerAction.isPending ? pendingLabel : submitLabel}
               </button>
             </div>
           </section>
