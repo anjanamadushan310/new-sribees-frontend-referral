@@ -1,3 +1,4 @@
+import TeamInvitations from "../components/TeamInvitations";
 /**
  * Partner dashboard — invite code, earnings, customers and recruits.
  *
@@ -81,6 +82,8 @@ const Dashboard: React.FC = () => {
             <h2 className="m-0 text-2xl font-semibold tracking-tight text-slate-900">{me ? `Welcome, ${me.fullName}` : "Your partner overview"}</h2>
           </div>
           <ReferralSection profile={me} loading={isLoading} onCopy={copyCode} />
+
+          {me?.role === "master_partner" && me.canRecruit && <TeamInvitations />}
 
           {me?.linkedUserId && (
             <Link to="/wallet" className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-[#8B1447] p-5 font-semibold text-white sm:p-6">
